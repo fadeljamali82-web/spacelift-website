@@ -16,100 +16,100 @@ type SectionType = {
 const sections: SectionType[] = [
     {
         id: "hero",
-        eyebrow: "DIGITAL SURFACE MANUFACTURING",
-        title: "We Build the Physical Layer of Branded Environments.",
+        eyebrow: "MULTI-SURFACE ENVIRONMENT DELIVERY",
+        title: "The One-Stop Partner for Branded Physical Environments.",
         body:
-            "SpaceLift Studio translates spatial ambition into engineered physical execution. We help brands, venues, and project teams create environments that feel intentional, unified, and built with authority through digitally manufactured surfaces, disciplined material thinking, and project-ready production.",
+            "SpaceLift Studio helps brands, venues, hospitality groups, and project teams turn complex environment needs into coordinated physical outcomes. We combine design-aware execution, manufacturing depth, logistics clarity, and rollout discipline so the final space feels intentional, unified, and built with authority.",
         images: [
             "/images/hero.png",
-            "/images/home-hero-structure.png",
+            "/images/projects-riyadh-exhibitions.png",
             "/images/industries-corporate.png",
         ],
-        alt: "Architectural branded environment with structural clarity and premium lighting",
+        alt: "Premium branded environment showing coordinated physical execution at scale",
         theme: "light",
     },
     {
         id: "fragmentation",
         eyebrow: "THE REAL PROBLEM",
-        title: "Most Spaces Do Not Break at Once. They Fall Apart in Pieces.",
+        title: "Most Environment Problems Start with Fragmentation, Not Failure.",
         body:
-            "The issue is rarely one dramatic failure. It is visual fragmentation: mismatched surfaces, inconsistent finish quality, weak transitions, disconnected graphic systems, and materials that stop speaking the same language. The space may be expensive, but it no longer feels resolved.",
+            "What weakens a space is usually not one dramatic mistake. It is a chain of smaller breakdowns: disconnected vendors, mismatched surfaces, drifting finish quality, weak transitions, and execution teams working without one clear standard. The result may still be expensive, but it no longer feels resolved.",
         images: [
             "/images/home-problem-fragmentation.png",
             "/images/trust-wall.png",
             "/images/industries-sports.png",
         ],
-        alt: "Fragmented premium environment showing disconnection and material inconsistency",
+        alt: "Fragmented premium environment showing inconsistent surfaces and visual disconnect",
         theme: "dark",
     },
     {
         id: "material-control",
         eyebrow: "MATERIAL CONTROL",
-        title: "The Surface Is Never Superficial. It Is Where Perception Becomes Real.",
+        title: "The Surface Is Where Brand Perception Stops Being Abstract.",
         body:
-            "Every environment is judged first through what it reveals on the surface: texture, light response, tonal discipline, finish quality, edge behavior, and material confidence. We engineer those decisions so the result feels deliberate up close, not just impressive from a distance.",
+            "People judge environments through what they can actually see and feel: texture, tonal discipline, edge quality, finish consistency, and how confidently materials behave under real light. We engineer those decisions carefully so the work holds up both visually and physically, not just in concept.",
         images: [
             "/images/home-material-control.png",
             "/images/solutions-dsm.png",
             "/images/solutions-lfp.png",
         ],
-        alt: "Close-up of premium material control and refined surface system",
+        alt: "Close-up of premium material quality and controlled surface execution",
         theme: "light",
     },
     {
         id: "scale-distribution",
         eyebrow: "ROLL OUT WITH DISCIPLINE",
-        title: "A Strong Concept Means Very Little if It Weakens at Scale.",
+        title: "A Strong Idea Is Not Enough. It Has to Survive Scale.",
         body:
-            "Large-format execution introduces a harsher test. Files must hold. Materials must remain stable. Finishes must stay consistent. Distribution must support real deployment. We build systems that survive replication, so authority is not lost when one environment becomes many.",
+            "The real test begins when a concept has to move through production, packaging, shipping, sequencing, and deployment without losing clarity. Files must hold. Materials must stay stable. Finishes must remain consistent. The system has to arrive ready for real-world execution, not just presentation.",
         images: [
             "/images/home-scale-distribution.png",
             "/images/facility.png",
-            "/images/industries-hospitality.png",
+            "/images/projects-hawana-salalah.png",
         ],
-        alt: "Scaled manufacturing and distribution environment for branded physical systems",
+        alt: "Large-scale production and distribution environment supporting rollout discipline",
         theme: "dark",
     },
     {
         id: "precision-detail",
         eyebrow: "PRECISION DETAIL",
-        title: "Credibility Lives in the Details People Notice Without Naming.",
+        title: "Credibility Lives in the Details Buyers Notice Immediately.",
         body:
-            "Alignment, registration, finish continuity, edge cleanliness, tonal accuracy, and compositional balance determine whether an environment feels engineered or improvised. Those details are not decorative extras. They are the difference between a branded space and a believable one.",
+            "Alignment, registration, edge cleanliness, finish continuity, tonal accuracy, and compositional balance all shape whether an environment feels engineered or improvised. Those details are not decorative extras. They are the signals that tell people whether the brand was executed with control.",
         images: [
             "/images/home-precision-detail.png",
             "/images/trust-wall.png",
             "/images/solutions-lfp.png",
         ],
-        alt: "Precision architectural detail with refined alignment and illuminated surface transition",
+        alt: "Precision detail showing finish quality, edge control, and premium alignment",
         theme: "light",
     },
     {
         id: "forward-execution",
         eyebrow: "FORWARD EXECUTION",
-        title: "Fast Projects Still Need Structure.",
+        title: "Speed Matters. Structure Matters More.",
         body:
-            "Speed without control creates expensive noise. We are built for project-based environments where teams need technical clarity, manufacturing readiness, and execution discipline working together under pressure. Momentum matters, but only when the outcome still lands with precision.",
+            "Fast-moving projects do not fail because momentum exists. They fail when momentum outruns coordination. SpaceLift is built for environments where technical clarity, production readiness, and execution discipline need to move together under pressure without creating expensive noise downstream.",
         images: [
             "/images/home-forward-execution.png",
-            "/images/industries-corporate.png",
+            "/images/projects-dubai-silicon.png",
             "/images/industries-cultural.png",
         ],
-        alt: "Dark architectural corridor expressing movement, execution, and forward momentum",
+        alt: "Dark corridor expressing disciplined execution, movement, and structured momentum",
         theme: "dark",
     },
     {
         id: "installation-integrity",
         eyebrow: "FINAL IMPACT",
-        title: "Installation Is Where the Brand Either Lands with Authority or Slips in Public.",
+        title: "Installation Is Where Strategy Becomes Public.",
         body:
-            "The final environment reveals every upstream decision. If the system was resolved correctly, the space feels seamless, intentional, and inevitable. If not, compromise becomes visible immediately. We design for that final moment because installation is not the end of the process. It is the proof of it.",
+            "The finished environment reveals whether every upstream decision was resolved correctly. When the system is right, the outcome feels seamless, intentional, and inevitable. When it is not, compromise becomes visible immediately. That is why we design for the final moment, not just the production phase before it.",
         images: [
             "/images/home-installation-integrity.png",
-            "/images/industries-hospitality.png",
+            "/images/projects-vakko.png",
             "/images/hero.png",
         ],
-        alt: "Premium final installation environment with strong brand presence and spatial cohesion",
+        alt: "Installed premium branded environment with strong finish quality and delivery cohesion",
         theme: "light",
     },
 ];
@@ -215,8 +215,8 @@ function SectionBlock({
                     >
                         <Reveal>
                             <div className="mb-5 flex items-center gap-4 md:mb-6">
-                                <span className="h-px w-8 md:w-10 bg-[#f97316]" />
-                                <span className="text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.24em] md:tracking-[0.28em] text-[#f97316]">
+                                <span className="h-px w-8 bg-[#f97316] md:w-10" />
+                                <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#f97316] md:text-[11px] md:tracking-[0.28em]">
                                     {section.eyebrow}
                                 </span>
                             </div>
@@ -233,7 +233,7 @@ function SectionBlock({
 
                         <Reveal delay={140}>
                             <p
-                                className={`mt-6 md:mt-8 max-w-[700px] text-[16px] leading-7 md:text-[18px] md:leading-8 lg:text-[19px] ${isDark ? "text-white/68" : "text-[#5f6672]"
+                                className={`mt-6 max-w-[700px] text-[16px] leading-7 md:mt-8 md:text-[18px] md:leading-8 lg:text-[19px] ${isDark ? "text-white/70" : "text-[#5f6672]"
                                     }`}
                             >
                                 {section.body}
@@ -245,19 +245,19 @@ function SectionBlock({
                                 <div className="mt-8 flex flex-col gap-4 sm:mt-10 sm:flex-row">
                                     <Link
                                         href="/contact"
-                                        className="inline-flex min-h-[56px] w-full sm:w-auto items-center justify-center bg-[#f97316] px-6 sm:px-8 text-[12px] sm:text-[13px] font-bold uppercase tracking-[0.06em] text-white transition duration-300 hover:-translate-y-[2px] hover:bg-[#ea580c] hover:shadow-[0_14px_30px_rgba(249,115,22,0.28)]"
+                                        className="inline-flex min-h-[56px] w-full items-center justify-center bg-[#f97316] px-6 text-[12px] font-bold uppercase tracking-[0.06em] text-white transition duration-300 hover:-translate-y-[2px] hover:bg-[#ea580c] hover:shadow-[0_14px_30px_rgba(249,115,22,0.28)] sm:w-auto sm:px-8 sm:text-[13px]"
                                     >
-                                        Start Project Discussion
+                                        Start a Project Review
                                     </Link>
 
                                     <Link
                                         href="/solutions"
-                                        className={`inline-flex min-h-[56px] w-full sm:w-auto items-center justify-center border px-6 sm:px-8 text-[12px] sm:text-[13px] font-bold uppercase tracking-[0.06em] transition duration-300 hover:-translate-y-[2px] ${isDark
+                                        className={`inline-flex min-h-[56px] w-full items-center justify-center border px-6 text-[12px] font-bold uppercase tracking-[0.06em] transition duration-300 hover:-translate-y-[2px] sm:w-auto sm:px-8 sm:text-[13px] ${isDark
                                                 ? "border-white/20 text-white hover:border-[#f97316] hover:text-[#f97316]"
                                                 : "border-[#f97316] text-[#f97316] hover:bg-[#f97316] hover:text-white"
                                             }`}
                                     >
-                                        Explore Capabilities
+                                        Explore Our System
                                     </Link>
                                 </div>
                             </Reveal>
@@ -268,19 +268,19 @@ function SectionBlock({
                                 <div className="mt-8 flex flex-col gap-4 sm:mt-10 sm:flex-row">
                                     <Link
                                         href="/contact"
-                                        className="inline-flex min-h-[56px] w-full sm:w-auto items-center justify-center bg-[#f97316] px-6 sm:px-8 text-[12px] sm:text-[13px] font-bold uppercase tracking-[0.06em] text-white transition duration-300 hover:-translate-y-[2px] hover:bg-[#ea580c] hover:shadow-[0_14px_30px_rgba(249,115,22,0.28)]"
+                                        className="inline-flex min-h-[56px] w-full items-center justify-center bg-[#f97316] px-6 text-[12px] font-bold uppercase tracking-[0.06em] text-white transition duration-300 hover:-translate-y-[2px] hover:bg-[#ea580c] hover:shadow-[0_14px_30px_rgba(249,115,22,0.28)] sm:w-auto sm:px-8 sm:text-[13px]"
                                     >
                                         Start Your Project
                                     </Link>
 
                                     <Link
                                         href="/process"
-                                        className={`inline-flex min-h-[56px] w-full sm:w-auto items-center justify-center border px-6 sm:px-8 text-[12px] sm:text-[13px] font-bold uppercase tracking-[0.06em] transition duration-300 hover:-translate-y-[2px] ${isDark
+                                        className={`inline-flex min-h-[56px] w-full items-center justify-center border px-6 text-[12px] font-bold uppercase tracking-[0.06em] transition duration-300 hover:-translate-y-[2px] sm:w-auto sm:px-8 sm:text-[13px] ${isDark
                                                 ? "border-white/20 text-white hover:border-[#f97316] hover:text-[#f97316]"
                                                 : "border-[#f97316] text-[#f97316] hover:bg-[#f97316] hover:text-white"
                                             }`}
                                     >
-                                        View Our Process
+                                        View Delivery Model
                                     </Link>
                                 </div>
                             </Reveal>
@@ -293,15 +293,13 @@ function SectionBlock({
                     >
                         <Reveal delay={120}>
                             <div
-                                className={`group relative overflow-hidden rounded-[22px] md:rounded-[28px] border ${isDark ? "border-white/10" : "border-black/5"
-                                    } bg-black/5 shadow-[0_24px_80px_rgba(0,0,0,0.16)] transition duration-500 hover:-translate-y-[4px] hover:shadow-[0_32px_100px_rgba(0,0,0,0.24)]`}
-                                style={{
-                                    transformStyle: "preserve-3d",
-                                }}
+                                className={`group relative overflow-hidden rounded-[22px] border bg-black/5 shadow-[0_24px_80px_rgba(0,0,0,0.16)] transition duration-500 hover:-translate-y-[4px] hover:shadow-[0_32px_100px_rgba(0,0,0,0.24)] md:rounded-[28px] ${isDark ? "border-white/10" : "border-black/5"
+                                    }`}
+                                style={{ transformStyle: "preserve-3d" }}
                             >
                                 <div className="absolute inset-0 z-10 bg-gradient-to-tr from-transparent via-white/[0.03] to-transparent opacity-0 transition duration-500 group-hover:opacity-100" />
 
-                                <div className="relative aspect-[4/3] sm:aspect-[16/10] w-full overflow-hidden">
+                                <div className="relative aspect-[4/3] w-full overflow-hidden sm:aspect-[16/10]">
                                     <SmartImage
                                         sources={section.images}
                                         alt={section.alt}
@@ -312,8 +310,8 @@ function SectionBlock({
                                 <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/10" />
 
                                 <div className="absolute bottom-4 left-4 md:bottom-5 md:left-5">
-                                    <div className="rounded-full border border-white/15 bg-black/35 px-3 py-2 md:px-4 backdrop-blur-sm transition duration-500 group-hover:translate-x-1">
-                                        <span className="text-[9px] md:text-[10px] font-semibold uppercase tracking-[0.18em] md:tracking-[0.22em] text-white/80">
+                                    <div className="rounded-full border border-white/15 bg-black/35 px-3 py-2 backdrop-blur-sm transition duration-500 group-hover:translate-x-1 md:px-4">
+                                        <span className="text-[9px] font-semibold uppercase tracking-[0.18em] text-white/80 md:text-[10px] md:tracking-[0.22em]">
                                             Section {String(index + 1).padStart(2, "0")}
                                         </span>
                                     </div>
