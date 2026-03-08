@@ -299,6 +299,17 @@ export default function ProjectsPage() {
         event.currentTarget.style.setProperty('--my', `${y}px`);
     };
 
+    const handleProjectSelect = (index: number) => {
+        setActiveIndex(index);
+
+        if (typeof window !== 'undefined') {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth',
+            });
+        }
+    };
+
     return (
         <main className="relative min-h-screen overflow-hidden bg-[#060606] text-white">
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,175,84,0.16),_transparent_28%),radial-gradient(circle_at_80%_18%,_rgba(255,149,0,0.10),_transparent_20%),linear-gradient(180deg,_#0a0a0a_0%,_#050505_100%)]" />
@@ -445,7 +456,7 @@ export default function ProjectsPage() {
                                 <button
                                     key={project.slug}
                                     type="button"
-                                    onClick={() => setActiveIndex(index)}
+                                    onClick={() => handleProjectSelect(index)}
                                     onMouseMove={handleCardMouseMove}
                                     className={`project-card group relative block w-full overflow-hidden rounded-[30px] border text-left transition-all duration-500 ${isActive
                                             ? 'border-[#f39a37]/40 bg-[rgba(255,255,255,0.07)] shadow-[0_26px_90px_rgba(0,0,0,0.35)]'
@@ -557,92 +568,92 @@ export default function ProjectsPage() {
             </section>
 
             <style jsx global>{`
-        .glow-orb {
-          position: absolute;
-          border-radius: 9999px;
-          filter: blur(80px);
-          opacity: 0.32;
-          pointer-events: none;
-          mix-blend-mode: screen;
-        }
+                .glow-orb {
+                    position: absolute;
+                    border-radius: 9999px;
+                    filter: blur(80px);
+                    opacity: 0.32;
+                    pointer-events: none;
+                    mix-blend-mode: screen;
+                }
 
-        .glow-orb-1 {
-          top: 120px;
-          left: -120px;
-          width: 320px;
-          height: 320px;
-          background: rgba(243, 154, 55, 0.22);
-          animation: floatOrbOne 11s ease-in-out infinite;
-        }
+                .glow-orb-1 {
+                    top: 120px;
+                    left: -120px;
+                    width: 320px;
+                    height: 320px;
+                    background: rgba(243, 154, 55, 0.22);
+                    animation: floatOrbOne 11s ease-in-out infinite;
+                }
 
-        .glow-orb-2 {
-          top: 25%;
-          right: -80px;
-          width: 280px;
-          height: 280px;
-          background: rgba(255, 186, 95, 0.16);
-          animation: floatOrbTwo 14s ease-in-out infinite;
-        }
+                .glow-orb-2 {
+                    top: 25%;
+                    right: -80px;
+                    width: 280px;
+                    height: 280px;
+                    background: rgba(255, 186, 95, 0.16);
+                    animation: floatOrbTwo 14s ease-in-out infinite;
+                }
 
-        .glow-orb-3 {
-          bottom: 8%;
-          left: 40%;
-          width: 320px;
-          height: 320px;
-          background: rgba(255, 125, 12, 0.12);
-          animation: floatOrbThree 13s ease-in-out infinite;
-        }
+                .glow-orb-3 {
+                    bottom: 8%;
+                    left: 40%;
+                    width: 320px;
+                    height: 320px;
+                    background: rgba(255, 125, 12, 0.12);
+                    animation: floatOrbThree 13s ease-in-out infinite;
+                }
 
-        .project-card {
-          --mx: 50%;
-          --my: 50%;
-          will-change: transform, border-color, background-color;
-          transform: translateZ(0);
-        }
+                .project-card {
+                    --mx: 50%;
+                    --my: 50%;
+                    will-change: transform, border-color, background-color;
+                    transform: translateZ(0);
+                }
 
-        .project-card:hover {
-          transform: translateY(-3px);
-        }
+                .project-card:hover {
+                    transform: translateY(-3px);
+                }
 
-        .project-spotlight {
-          background: radial-gradient(
-            500px circle at var(--mx) var(--my),
-            rgba(243, 154, 55, 0.18),
-            rgba(255, 255, 255, 0.04) 24%,
-            transparent 56%
-          );
-        }
+                .project-spotlight {
+                    background: radial-gradient(
+                        500px circle at var(--mx) var(--my),
+                        rgba(243, 154, 55, 0.18),
+                        rgba(255, 255, 255, 0.04) 24%,
+                        transparent 56%
+                    );
+                }
 
-        @keyframes floatOrbOne {
-          0%,
-          100% {
-            transform: translate3d(0, 0, 0) scale(1);
-          }
-          50% {
-            transform: translate3d(60px, 30px, 0) scale(1.08);
-          }
-        }
+                @keyframes floatOrbOne {
+                    0%,
+                    100% {
+                        transform: translate3d(0, 0, 0) scale(1);
+                    }
+                    50% {
+                        transform: translate3d(60px, 30px, 0) scale(1.08);
+                    }
+                }
 
-        @keyframes floatOrbTwo {
-          0%,
-          100% {
-            transform: translate3d(0, 0, 0) scale(1);
-          }
-          50% {
-            transform: translate3d(-50px, 35px, 0) scale(1.1);
-          }
-        }
+                @keyframes floatOrbTwo {
+                    0%,
+                    100% {
+                        transform: translate3d(0, 0, 0) scale(1);
+                    }
+                    50% {
+                        transform: translate3d(-50px, 35px, 0) scale(1.1);
+                    }
+                }
 
-        @keyframes floatOrbThree {
-          0%,
-          100% {
-            transform: translate3d(0, 0, 0) scale(1);
-          }
-          50% {
-            transform: translate3d(0, -35px, 0) scale(1.06);
-          }
-        }
-      `}</style>
+                @keyframes floatOrbThree {
+                    0%,
+                    100% {
+                        transform: translate3d(0, 0, 0) scale(1);
+                    }
+                    50% {
+                        transform: translate3d(0, -35px, 0) scale(1.06);
+                    }
+                }
+            `}</style>
         </main>
     );
 }
