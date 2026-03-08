@@ -1,7 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+    ScanSearch,
+    PenTool,
+    Factory,
+    PackageCheck,
+    Rocket,
+    ArrowUpRight,
+} from "lucide-react";
 
 type StepType = {
     id: string;
@@ -9,9 +17,11 @@ type StepType = {
     eyebrow: string;
     title: string;
     body: string;
-    bullets: string[];
+    signals: string[];
+    outcome: string;
     image: string;
     alt: string;
+    icon: React.ComponentType<{ className?: string }>;
 };
 
 const steps: StepType[] = [
@@ -19,65 +29,77 @@ const steps: StepType[] = [
         id: "discovery",
         number: "01",
         eyebrow: "STRATEGIC DISCOVERY",
-        title: "We start by reducing ambiguity before it becomes cost.",
+        title: "We define the execution logic before complexity turns into cost.",
         body:
-            "The first stage is not about rushing into output. It is about clarifying what the environment needs to achieve, what constraints exist, what surfaces matter most, and where fragmentation is most likely to damage quality. This stage gives the project a stronger technical and commercial footing before execution begins.",
-        bullets: [
-            "Environment goals and application review",
-            "Surface priorities and material direction",
-            "Constraint mapping and execution risk awareness",
-            "Clearer path before production commitment",
+            "The process starts by removing ambiguity early. We clarify what the environment must achieve, where the pressure points are, which surfaces matter most, what finish standards are non-negotiable, and where fragmentation is most likely to damage the final result. This stage gives the project a much stronger strategic and technical footing before production begins.",
+        signals: [
+            "Environment goals and high-risk zones are mapped early",
+            "Material priorities are identified before downstream compromise",
+            "Execution constraints are surfaced before they become expensive",
+            "Decision-making starts from clarity, not from reaction",
         ],
+        outcome:
+            "The project begins with structure, not guesswork.",
         image: "/images/capability-spec-driven-projects.png",
-        alt: "Strategic discovery and spec-driven planning for premium environment delivery",
+        alt: "Strategic discovery and process planning for premium environment delivery",
+        icon: ScanSearch,
     },
     {
         id: "translation",
         number: "02",
         eyebrow: "DESIGN & TECHNICAL TRANSLATION",
-        title: "We translate intent into systems that can actually be built correctly.",
+        title: "We translate visual intent into systems that can actually be built correctly.",
         body:
-            "A strong concept is only valuable if it survives scale, finish standards, installation reality, and operational pressure. This stage converts visual ambition into production-ready logic, aligning files, applications, material behavior, and install conditions so the work remains credible once it becomes physical.",
-        bullets: [
-            "Design-to-manufacturing alignment",
-            "Material-aware technical preparation",
-            "Execution logic built into the system early",
-            "Fewer downstream compromises during rollout",
+            "A concept is only as strong as its ability to survive real-world application. This stage turns creative direction into technical logic, aligning design intent with scale, finish standards, material behavior, file preparation, and install reality. It is where visual ambition is protected from avoidable execution loss.",
+        signals: [
+            "Creative intent is aligned with manufacturable reality",
+            "Surface applications are resolved with technical discipline",
+            "Files and specs are prepared for execution, not just approval",
+            "Install logic is considered before the work reaches the field",
         ],
+        outcome:
+            "Design quality is protected before production pressure begins.",
         image: "/images/capability-digital-surface-manufacturing.png",
         alt: "Technical translation and production preparation for branded environments",
+        icon: PenTool,
     },
     {
         id: "manufacturing",
         number: "03",
         eyebrow: "CONTROLLED MANUFACTURING",
-        title: "We manufacture with finish discipline, consistency, and deployment in mind.",
+        title: "We produce with finish discipline, consistency control, and deployment in mind.",
         body:
-            "This is where the project becomes real. Production is handled with the understanding that quality is not only visual; it is dimensional, material, and operational. The focus is not just output volume. It is producing systems that hold their authority across surfaces, scale, and final use conditions.",
-        bullets: [
-            "Architectural-grade digital surface production",
-            "Finish discipline and consistency control",
-            "Material handling designed for real application",
-            "Install-ready preparation instead of disconnected output",
+            "This is where the work becomes physical. Our manufacturing approach is not just about output. It is about producing systems that hold their authority across surfaces, dimensions, finish conditions, and real use environments. Quality is treated as a built-in process standard, not as a cosmetic afterthought.",
+        signals: [
+            "Finish consistency is treated as part of the system, not a final hope",
+            "Production decisions are made with real application in mind",
+            "Material behavior is managed for quality, not just speed",
+            "Execution discipline stays visible through the finished output",
         ],
+        outcome:
+            "Production supports premium results instead of weakening them.",
         image: "/images/capability-color-managed-production.png",
         alt: "Controlled manufacturing and quality-driven production workflow",
+        icon: Factory,
     },
     {
         id: "readiness",
         number: "04",
         eyebrow: "INSTALL-READY SYSTEMS",
-        title: "We prepare the work so the field does not have to solve what should have been solved upstream.",
+        title: "We organize the output so the field does not have to solve what should have been solved upstream.",
         body:
-            "Packaging, sequencing, labeling, and deployment logic matter more than most vendors admit. This stage reduces friction in the final mile by organizing output around installation and rollout reality, not around internal convenience. The result is a cleaner handoff and a more reliable final execution environment.",
-        bullets: [
-            "Packaging and sequencing aligned to deployment",
-            "Install-ready organization and system logic",
-            "Better handoff conditions for field execution",
-            "Reduced friction across phases and locations",
+            "Packaging, sequencing, labeling, and deployment logic are where many projects start to lose control. We structure this stage around rollout reality, not internal convenience. That means preparing systems so handoff is cleaner, installation is more coherent, and the final execution environment has fewer chances to break down.",
+        signals: [
+            "Packaging logic supports deployment, not warehouse convenience",
+            "Sequencing reduces confusion during installation",
+            "System readiness improves field efficiency and clarity",
+            "The final mile is treated as part of quality, not outside it",
         ],
+        outcome:
+            "The project arrives more ready, more legible, and more executable.",
         image: "/images/capability-install-ready-systems.png",
         alt: "Install-ready systems and deployment preparation for premium environments",
+        icon: PackageCheck,
     },
     {
         id: "execution",
@@ -85,23 +107,26 @@ const steps: StepType[] = [
         eyebrow: "ROLLOUT & EXECUTION",
         title: "We support the final environment so the brand lands with authority in public.",
         body:
-            "The finished environment is where every upstream decision becomes visible. This stage ensures the work arrives with the coordination, readiness, and execution support required to preserve quality in the final outcome. That is why our process is built around delivery integrity, not just production completion.",
-        bullets: [
-            "Rollout support across real deployment conditions",
-            "More accountable coordination through final execution",
-            "Protection of finish quality in the public-facing result",
-            "A cleaner path from strategy to installed environment",
+            "The installed environment is where every upstream decision becomes visible. This final stage is about protecting the integrity of the result through better coordination, stronger readiness, and a process that understands that delivery quality matters just as much as production quality. That is how the brand arrives resolved rather than compromised.",
+        signals: [
+            "The final environment is treated as proof of the whole system",
+            "Execution support protects finish quality under real conditions",
+            "Coordination remains active through the public-facing outcome",
+            "Delivery integrity becomes part of the brand experience itself",
         ],
+        outcome:
+            "The brand lands with more authority because the process held together.",
         image: "/images/capability-single-partner-execution.png",
         alt: "Rollout execution and single-partner delivery for branded physical environments",
+        icon: Rocket,
     },
 ];
 
 function Reveal({
     children,
     delay = 0,
-    y = 24,
-    scale = 0.988,
+    y = 22,
+    scale = 0.99,
 }: {
     children: React.ReactNode;
     delay?: number;
@@ -137,7 +162,7 @@ function Reveal({
                 transform: visible
                     ? "translate3d(0,0,0) scale(1)"
                     : `translate3d(0,${y}px,0) scale(${scale})`,
-                transition: `opacity 760ms cubic-bezier(0.22,1,0.36,1) ${delay}ms, transform 960ms cubic-bezier(0.22,1,0.36,1) ${delay}ms`,
+                transition: `opacity 760ms cubic-bezier(0.22,1,0.36,1) ${delay}ms, transform 980ms cubic-bezier(0.22,1,0.36,1) ${delay}ms`,
             }}
         >
             {children}
@@ -145,177 +170,244 @@ function Reveal({
     );
 }
 
-function ProcessImage({
-    src,
-    alt,
-    priority = false,
+function ProcessPreview({
+    step,
+    activeIndex,
+    total,
 }: {
-    src: string;
-    alt: string;
-    priority?: boolean;
+    step: StepType;
+    activeIndex: number;
+    total: number;
 }) {
-    const cardRef = useRef<HTMLDivElement | null>(null);
-    const [glow, setGlow] = useState({ x: 50, y: 50 });
-    const [parallaxOffset, setParallaxOffset] = useState(0);
-
-    useEffect(() => {
-        const node = cardRef.current;
-        if (!node) return;
-
-        const handleScroll = () => {
-            const rect = node.getBoundingClientRect();
-            const viewport = window.innerHeight || 1;
-            const center = rect.top + rect.height / 2;
-            const distance = center - viewport / 2;
-            const normalized = Math.max(-1, Math.min(1, distance / viewport));
-            setParallaxOffset(normalized * -12);
-        };
-
-        handleScroll();
-        window.addEventListener("scroll", handleScroll, { passive: true });
-        window.addEventListener("resize", handleScroll);
-
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-            window.removeEventListener("resize", handleScroll);
-        };
-    }, []);
-
-    const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / rect.width) * 100;
-        const y = ((e.clientY - rect.top) / rect.height) * 100;
-        setGlow({ x, y });
-    };
+    const Icon = step.icon;
 
     return (
-        <div
-            ref={cardRef}
-            onMouseMove={handleMove}
-            className="group premium-image-card relative overflow-hidden rounded-[22px] border border-white/10 bg-black/5 shadow-[0_24px_80px_rgba(0,0,0,0.16)] transition duration-500 hover:-translate-y-[5px] hover:shadow-[0_34px_110px_rgba(0,0,0,0.26)] md:rounded-[28px]"
-        >
-            <div
-                className="pointer-events-none absolute inset-0 z-[2] opacity-0 transition duration-500 group-hover:opacity-100"
-                style={{
-                    background: `radial-gradient(circle at ${glow.x}% ${glow.y}%, rgba(255,255,255,0.16), rgba(255,255,255,0.04) 18%, rgba(249,115,22,0.10) 34%, transparent 58%)`,
-                }}
-            />
-            <div className="pointer-events-none absolute inset-0 z-[2] opacity-0 transition duration-700 group-hover:opacity-100">
-                <div className="premium-sheen absolute -left-1/3 top-0 h-full w-1/2 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-            </div>
+        <div className="lg:sticky lg:top-28">
+            <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.04] p-5 shadow-[0_20px_80px_rgba(0,0,0,0.18)] backdrop-blur-sm md:p-6">
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.14),transparent_38%)]" />
 
-            <div className="relative aspect-[4/3] w-full overflow-hidden sm:aspect-[16/10]">
-                <img
-                    src={src}
-                    alt={alt}
-                    loading={priority ? "eager" : "lazy"}
-                    className="h-[112%] w-full object-cover transition duration-700 group-hover:scale-[1.04]"
-                    style={{
-                        transform: `translate3d(0px, ${parallaxOffset}px, 0px) scale(1.02)`,
-                    }}
-                />
-            </div>
+                <div className="relative">
+                    <div className="mb-5 flex items-center justify-between">
+                        <div className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-black/20 px-4 py-2 backdrop-blur-md">
+                            <Icon className="h-4 w-4 text-[#f97316]" />
+                            <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/75">
+                                Live Process View
+                            </span>
+                        </div>
 
-            <div className="pointer-events-none absolute inset-0 z-[3] ring-1 ring-inset ring-white/10" />
-            <div className="absolute right-0 top-0 z-[3] h-full w-[24%] bg-gradient-to-l from-[#f97316]/10 to-transparent opacity-60 transition duration-500 group-hover:opacity-100" />
+                        <div className="text-[11px] font-semibold tracking-[0.18em] text-white/35">
+                            {String(activeIndex + 1).padStart(2, "0")} /{" "}
+                            {String(total).padStart(2, "0")}
+                        </div>
+                    </div>
+
+                    <div className="mb-5 overflow-hidden rounded-[22px] border border-white/10">
+                        <div className="relative aspect-[16/10] w-full overflow-hidden">
+                            <img
+                                src={step.image}
+                                alt={step.alt}
+                                className="h-full w-full object-cover transition duration-700"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent" />
+                            <div className="absolute bottom-4 left-4 rounded-full border border-white/15 bg-black/35 px-3 py-2 backdrop-blur-md">
+                                <span className="text-[9px] font-semibold uppercase tracking-[0.18em] text-white/80">
+                                    Step {step.number}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mb-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-[#f97316]">
+                        {step.eyebrow}
+                    </div>
+
+                    <h3 className="max-w-[620px] text-[28px] font-black leading-[0.98] tracking-[-0.04em] text-white md:text-[34px]">
+                        {step.title}
+                    </h3>
+
+                    <p className="mt-4 text-[15px] leading-7 text-white/70 md:text-[16px]">
+                        {step.outcome}
+                    </p>
+
+                    <div className="mt-6">
+                        <div className="mb-3 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/35">
+                            Progress
+                        </div>
+
+                        <div className="h-[3px] w-full overflow-hidden rounded-full bg-white/10">
+                            <div
+                                className="h-full rounded-full bg-[#f97316] transition-all duration-700 ease-out"
+                                style={{
+                                    width: `${((activeIndex + 1) / total) * 100}%`,
+                                    boxShadow: "0 0 18px rgba(249,115,22,0.45)",
+                                }}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
 
-function StepBlock({
+function SignalCard({
+    text,
+    i,
+    active,
+}: {
+    text: string;
+    i: number;
+    active: boolean;
+}) {
+    return (
+        <div
+            className={`group relative overflow-hidden rounded-[18px] border p-4 transition-all duration-500 ${active
+                    ? "border-[#f97316]/25 bg-white/[0.045] hover:-translate-y-[3px] hover:border-[#f97316]/40 hover:bg-white/[0.06]"
+                    : "border-white/8 bg-white/[0.03] hover:-translate-y-[3px] hover:bg-white/[0.05]"
+                }`}
+            style={{ transitionDelay: `${i * 40}ms` }}
+        >
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.10),transparent_42%)] opacity-0 transition duration-500 group-hover:opacity-100" />
+            <div className="relative">
+                <div className="mb-3 flex items-center justify-between">
+                    <div className="text-[11px] font-semibold tracking-[0.18em] text-[#f97316]">
+                        0{i + 1}
+                    </div>
+                    <ArrowUpRight className="h-4 w-4 text-white/25 transition duration-300 group-hover:translate-x-[2px] group-hover:-translate-y-[2px] group-hover:text-[#f97316]" />
+                </div>
+                <p className="text-[14px] leading-6 text-white/76">{text}</p>
+            </div>
+        </div>
+    );
+}
+
+function StepCard({
     step,
     index,
+    active,
+    setRef,
 }: {
     step: StepType;
     index: number;
+    active: boolean;
+    setRef: (el: HTMLDivElement | null, i: number) => void;
 }) {
-    const reverse = index % 2 === 1;
+    const Icon = step.icon;
 
     return (
-        <section className="relative overflow-hidden bg-[#0c0f14] text-white">
-            <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                <div
-                    className={`ambient-orb absolute -top-20 ${reverse ? "right-[8%]" : "left-[8%]"
-                        } h-44 w-44 rounded-full bg-[#f97316]/12 blur-3xl md:h-56 md:w-56`}
-                />
-                <div
-                    className={`ambient-orb-delayed absolute bottom-[12%] ${reverse ? "left-[12%]" : "right-[12%]"
-                        } h-28 w-28 rounded-full bg-white/[0.03] blur-3xl`}
-                />
-                <div
-                    className={`absolute bottom-10 ${reverse ? "left-[10%]" : "right-[10%]"
-                        } h-px w-24 md:w-40 bg-gradient-to-r from-transparent via-[#f97316]/55 to-transparent`}
-                />
-                <div className="premium-divider-sweep absolute bottom-0 left-0 h-px w-full opacity-40" />
-            </div>
+        <div
+            ref={(el) => setRef(el, index)}
+            className={`relative overflow-hidden rounded-[28px] border p-6 transition-all duration-500 md:p-7 ${active
+                    ? "border-[#f97316]/28 bg-white/[0.06] shadow-[0_24px_80px_rgba(249,115,22,0.08)]"
+                    : "border-white/10 bg-white/[0.035]"
+                }`}
+        >
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.12),transparent_40%)] opacity-70" />
 
-            <div className="mx-auto max-w-[1450px] px-6 py-16 md:px-10 md:py-20 lg:px-14 lg:py-24 xl:py-28">
-                <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-14 xl:gap-16">
-                    <div
-                        className={`lg:col-span-5 ${reverse ? "lg:order-2" : "lg:order-1"
-                            }`}
-                    >
-                        <Reveal>
-                            <div className="mb-5 flex items-center gap-4 md:mb-6">
-                                <span className="text-[34px] font-black leading-none tracking-[-0.06em] text-[#f97316] md:text-[42px]">
-                                    {step.number}
-                                </span>
-                                <div className="h-px flex-1 bg-gradient-to-r from-[#f97316]/70 to-transparent" />
+            <div className="relative">
+                <div className="mb-6 flex items-start justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                        <div
+                            className={`inline-flex h-12 w-12 items-center justify-center rounded-full border backdrop-blur-md transition duration-500 ${active
+                                    ? "border-[#f97316]/35 bg-[#f97316]/10 shadow-[0_0_24px_rgba(249,115,22,0.18)]"
+                                    : "border-white/10 bg-white/[0.04]"
+                                }`}
+                        >
+                            <Icon
+                                className={`h-5 w-5 ${active ? "text-[#f97316]" : "text-white/70"
+                                    }`}
+                            />
+                        </div>
+
+                        <div>
+                            <div className="text-[11px] font-semibold tracking-[0.18em] text-[#f97316]">
+                                STEP {step.number}
                             </div>
-                        </Reveal>
-
-                        <Reveal delay={50}>
-                            <div className="mb-4 text-[10px] font-semibold uppercase tracking-[0.24em] text-[#f97316] md:text-[11px] md:tracking-[0.28em]">
+                            <div className="mt-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/38">
                                 {step.eyebrow}
                             </div>
-                        </Reveal>
-
-                        <Reveal delay={100}>
-                            <h2 className="max-w-[760px] text-[38px] font-black leading-[0.96] tracking-[-0.05em] sm:text-[46px] md:text-[56px] lg:text-[62px] xl:text-[74px]">
-                                {step.title}
-                            </h2>
-                        </Reveal>
-
-                        <Reveal delay={160}>
-                            <p className="mt-6 max-w-[720px] text-[16px] leading-7 text-white/70 md:mt-8 md:text-[18px] md:leading-8 lg:text-[19px]">
-                                {step.body}
-                            </p>
-                        </Reveal>
-
-                        <Reveal delay={230}>
-                            <ul className="mt-8 space-y-4 md:mt-10">
-                                {step.bullets.map((point, i) => (
-                                    <li
-                                        key={i}
-                                        className="group flex items-start gap-3 text-[14px] leading-6 text-white/78 md:text-[15px] md:leading-7"
-                                    >
-                                        <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[#f97316] shadow-[0_0_14px_rgba(249,115,22,0.45)] transition-transform duration-300 group-hover:scale-125" />
-                                        <span>{point}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </Reveal>
+                        </div>
                     </div>
 
                     <div
-                        className={`lg:col-span-7 ${reverse ? "lg:order-1" : "lg:order-2"
+                        className={`h-2.5 w-2.5 rounded-full transition duration-500 ${active
+                                ? "bg-[#f97316] shadow-[0_0_18px_rgba(249,115,22,0.55)]"
+                                : "bg-white/16"
                             }`}
-                    >
-                        <Reveal delay={120}>
-                            <ProcessImage
-                                src={step.image}
-                                alt={step.alt}
-                                priority={index < 2}
-                            />
-                        </Reveal>
+                    />
+                </div>
+
+                <h3 className="max-w-[760px] text-[30px] font-black leading-[0.98] tracking-[-0.04em] text-white md:text-[38px]">
+                    {step.title}
+                </h3>
+
+                <p className="mt-5 max-w-[880px] text-[15px] leading-7 text-white/70 md:text-[17px] md:leading-8">
+                    {step.body}
+                </p>
+
+                <div className="mt-8 grid gap-4 md:grid-cols-2">
+                    {step.signals.map((signal, i) => (
+                        <SignalCard key={i} text={signal} i={i} active={active} />
+                    ))}
+                </div>
+
+                <div className="mt-8 rounded-[18px] border border-white/10 bg-black/20 px-5 py-4 backdrop-blur-md">
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#f97316]">
+                        Why this stage matters
                     </div>
+                    <p className="mt-3 text-[15px] leading-7 text-white/76">
+                        {step.outcome}
+                    </p>
                 </div>
             </div>
-        </section>
+        </div>
     );
 }
 
 export default function ProcessPage() {
+    const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
+    const [activeIndex, setActiveIndex] = useState(0);
+
+    useEffect(() => {
+        const elements = stepRefs.current.filter(Boolean) as HTMLDivElement[];
+        if (!elements.length) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const visible = entries
+                    .filter((entry) => entry.isIntersecting)
+                    .sort(
+                        (a, b) =>
+                            Math.abs(a.boundingClientRect.top) -
+                            Math.abs(b.boundingClientRect.top)
+                    );
+
+                if (visible[0]) {
+                    const idx = Number(
+                        (visible[0].target as HTMLElement).dataset.processIndex
+                    );
+                    if (!Number.isNaN(idx)) setActiveIndex(idx);
+                }
+            },
+            {
+                threshold: 0.35,
+                rootMargin: "-10% 0px -30% 0px",
+            }
+        );
+
+        elements.forEach((el) => observer.observe(el));
+        return () => observer.disconnect();
+    }, []);
+
+    const activeStep = useMemo(() => steps[activeIndex] ?? steps[0], [activeIndex]);
+
+    const setRef = (el: HTMLDivElement | null, i: number) => {
+        stepRefs.current[i] = el;
+        if (el) {
+            el.dataset.processIndex = String(i);
+        }
+    };
+
     return (
         <main className="bg-[#0c0f14] text-white">
             <section className="relative overflow-hidden">
@@ -337,18 +429,17 @@ export default function ProcessPage() {
 
                     <Reveal delay={80}>
                         <h1 className="max-w-[1180px] text-[40px] font-black leading-[0.96] tracking-[-0.05em] sm:text-[48px] md:text-[60px] lg:text-[78px]">
-                            A Delivery System Built to Reduce Friction, Protect Quality, and
-                            Hold Up in the Real World.
+                            A Premium Execution Methodology Built to Reduce Friction at Every Stage.
                         </h1>
                     </Reveal>
 
                     <Reveal delay={150}>
                         <p className="mt-6 max-w-[920px] text-[16px] leading-7 text-white/70 md:mt-8 md:text-[18px] md:leading-8 lg:text-[20px]">
-                            Our process exists to do more than move a project forward. It is
-                            built to reduce ambiguity, protect finish quality, align
-                            execution, and create a more accountable path from strategy to
-                            installed environment. This is how SpaceLift turns complex
-                            physical requirements into more controlled outcomes.
+                            SpaceLift’s process is not a list of disconnected steps. It is a
+                            controlled system for turning complex physical requirements into
+                            more coherent, more install-ready, and more credible final
+                            environments. The goal is not just movement. The goal is
+                            execution integrity.
                         </p>
                     </Reveal>
 
@@ -365,19 +456,19 @@ export default function ProcessPage() {
 
                             <div>
                                 <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#f97316]">
-                                    CONTROL
+                                    TRANSLATION
                                 </div>
                                 <p className="mt-3 text-[14px] leading-6 text-white/72 md:text-[15px] md:leading-7">
-                                    Technical translation and manufacturing discipline stay aligned.
+                                    Design intent is protected by technical discipline.
                                 </p>
                             </div>
 
                             <div>
                                 <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#f97316]">
-                                    READINESS
+                                    CONTROL
                                 </div>
                                 <p className="mt-3 text-[14px] leading-6 text-white/72 md:text-[15px] md:leading-7">
-                                    Output is organized for deployment, not just production completion.
+                                    Quality is built into the system, not inspected into it later.
                                 </p>
                             </div>
 
@@ -386,7 +477,7 @@ export default function ProcessPage() {
                                     DELIVERY
                                 </div>
                                 <p className="mt-3 text-[14px] leading-6 text-white/72 md:text-[15px] md:leading-7">
-                                    The final environment is treated as proof of the whole system.
+                                    The final environment is treated as proof of the whole model.
                                 </p>
                             </div>
                         </div>
@@ -394,28 +485,47 @@ export default function ProcessPage() {
                 </div>
             </section>
 
-            {steps.map((step, index) => (
-                <StepBlock key={step.id} step={step} index={index} />
-            ))}
+            <section className="relative overflow-hidden bg-[#0c0f14]">
+                <div className="mx-auto grid max-w-[1450px] gap-10 px-6 pb-16 md:px-10 md:pb-20 lg:grid-cols-[0.95fr_1.05fr] lg:gap-12 lg:px-14 lg:pb-24">
+                    <ProcessPreview
+                        step={activeStep}
+                        activeIndex={activeIndex}
+                        total={steps.length}
+                    />
 
-            <section className="mx-auto max-w-[1450px] px-6 pb-16 pt-14 md:px-10 md:pb-20 md:pt-16 lg:px-14 lg:pb-24 lg:pt-20">
+                    <div className="space-y-8">
+                        {steps.map((step, index) => (
+                            <Reveal key={step.id} delay={index * 40}>
+                                <StepCard
+                                    step={step}
+                                    index={index}
+                                    active={activeIndex === index}
+                                    setRef={setRef}
+                                />
+                            </Reveal>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            <section className="mx-auto max-w-[1450px] px-6 pb-16 pt-6 md:px-10 md:pb-20 lg:px-14 lg:pb-24">
                 <Reveal>
                     <div className="rounded-[26px] border border-white/10 bg-white/[0.04] p-6 shadow-[0_18px_60px_rgba(0,0,0,0.14)] backdrop-blur-sm md:p-8 lg:p-10">
                         <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
                             <div>
                                 <div className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#f97316] md:text-[11px] md:tracking-[0.28em]">
-                                    WHY IT WORKS
+                                    WHY THIS MATTERS
                                 </div>
 
                                 <h2 className="mt-4 max-w-[900px] text-[34px] font-black leading-[0.98] tracking-[-0.05em] sm:text-[40px] md:text-[48px] lg:text-[58px]">
-                                    The process is the product when execution quality actually matters.
+                                    Buyers do not only feel the final design. They feel the quality of the process behind it.
                                 </h2>
 
                                 <p className="mt-5 max-w-[840px] text-[16px] leading-7 text-white/70 md:text-[18px] md:leading-8">
-                                    Most breakdowns are process breakdowns first. That is why
-                                    SpaceLift is structured around clarity, translation, control,
-                                    readiness, and delivery integrity rather than disconnected
-                                    production steps.
+                                    The strongest final environments usually come from processes
+                                    that reduce ambiguity, protect finish standards, and stay
+                                    coordinated through real deployment pressure. That is what
+                                    this system is designed to do.
                                 </p>
                             </div>
 
