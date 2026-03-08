@@ -336,44 +336,48 @@ function StepCard({
                     />
                 </div>
 
-                <div className="mb-7 overflow-hidden rounded-[22px] border border-white/10">
-                    <div className="relative aspect-[16/10] w-full overflow-hidden">
-                        <img
-                            src={step.image}
-                            alt={step.alt}
-                            className="h-full w-full object-cover transition duration-700 hover:scale-[1.02]"
-                            loading={index < 2 ? "eager" : "lazy"}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent" />
-                        <div className="absolute bottom-4 left-4 rounded-full border border-white/15 bg-black/35 px-3 py-2 backdrop-blur-md">
-                            <span className="text-[9px] font-semibold uppercase tracking-[0.18em] text-white/80">
-                                Step {step.number}
-                            </span>
+                <div className="grid gap-7 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+                    <div className="overflow-hidden rounded-[22px] border border-white/10">
+                        <div className="relative aspect-[16/10] w-full overflow-hidden">
+                            <img
+                                src={step.image}
+                                alt={step.alt}
+                                className="h-full w-full object-cover transition duration-700 hover:scale-[1.02]"
+                                loading={index < 2 ? "eager" : "lazy"}
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent" />
+                            <div className="absolute bottom-4 left-4 rounded-full border border-white/15 bg-black/35 px-3 py-2 backdrop-blur-md">
+                                <span className="text-[9px] font-semibold uppercase tracking-[0.18em] text-white/80">
+                                    Step {step.number}
+                                </span>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <h3 className="max-w-[760px] text-[30px] font-black leading-[0.98] tracking-[-0.04em] text-white md:text-[38px]">
-                    {step.title}
-                </h3>
+                    <div>
+                        <h3 className="max-w-[760px] text-[30px] font-black leading-[0.98] tracking-[-0.04em] text-white md:text-[38px]">
+                            {step.title}
+                        </h3>
 
-                <p className="mt-5 max-w-[880px] text-[15px] leading-7 text-white/70 md:text-[17px] md:leading-8">
-                    {step.body}
-                </p>
+                        <p className="mt-5 max-w-[880px] text-[15px] leading-7 text-white/70 md:text-[17px] md:leading-8">
+                            {step.body}
+                        </p>
 
-                <div className="mt-8 grid gap-4 md:grid-cols-2">
-                    {step.signals.map((signal, i) => (
-                        <SignalCard key={i} text={signal} i={i} active={active} />
-                    ))}
-                </div>
+                        <div className="mt-8 grid gap-4 md:grid-cols-2">
+                            {step.signals.map((signal, i) => (
+                                <SignalCard key={i} text={signal} i={i} active={active} />
+                            ))}
+                        </div>
 
-                <div className="mt-8 rounded-[18px] border border-white/10 bg-black/20 px-5 py-4 backdrop-blur-md">
-                    <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#f97316]">
-                        Why this stage matters
+                        <div className="mt-8 rounded-[18px] border border-white/10 bg-black/20 px-5 py-4 backdrop-blur-md">
+                            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#f97316]">
+                                Why this stage matters
+                            </div>
+                            <p className="mt-3 text-[15px] leading-7 text-white/76">
+                                {step.outcome}
+                            </p>
+                        </div>
                     </div>
-                    <p className="mt-3 text-[15px] leading-7 text-white/76">
-                        {step.outcome}
-                    </p>
                 </div>
             </div>
         </div>
