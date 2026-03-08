@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import {
     ScanSearch,
@@ -112,7 +111,7 @@ const steps: StepType[] = [
         eyebrow: "ROLLOUT & EXECUTION",
         title: "We support the final environment so the brand lands with authority in public.",
         body:
-            "The installed environment is where every upstream decision becomes visible. This stage is about protecting the result through better coordination, stronger readiness, and a process that understands delivery quality matters just as much as production quality. That is how the brand arrives resolved rather than compromised.",
+            "The installed environment is where every upstream decision becomes visible. This final stage is about protecting the result through better coordination, stronger readiness, and a process that understands delivery quality matters just as much as production quality. That is how the brand arrives resolved rather than compromised.",
         signals: [
             "The final environment is treated as proof of the whole system",
             "Execution support protects finish quality under real conditions",
@@ -131,7 +130,7 @@ const steps: StepType[] = [
 function Reveal({
     children,
     delay = 0,
-    y = 24,
+    y = 22,
     scale = 0.99,
 }: {
     children: React.ReactNode;
@@ -232,7 +231,9 @@ function StepSection({
 
             <div className="mx-auto max-w-[1450px] px-6 py-14 md:px-10 md:py-18 lg:px-14 lg:py-22 xl:py-24">
                 <div
-                    className={`grid items-center gap-8 lg:grid-cols-[1.02fr_0.98fr] lg:gap-10 xl:gap-14 ${reverse ? "lg:[&>*:first-child]:order-2 lg:[&>*:last-child]:order-1" : ""
+                    className={`grid items-center gap-8 lg:grid-cols-[1.02fr_0.98fr] lg:gap-10 xl:gap-14 ${reverse
+                            ? "lg:[&>*:first-child]:order-2 lg:[&>*:last-child]:order-1"
+                            : ""
                         }`}
                 >
                     <Reveal delay={40}>
@@ -322,47 +323,6 @@ export default function ProcessPage() {
             {steps.map((step, index) => (
                 <StepSection key={step.id} step={step} index={index} />
             ))}
-
-            <section className="mx-auto max-w-[1450px] px-6 pb-16 pt-6 md:px-10 md:pb-20 lg:px-14 lg:pb-24">
-                <Reveal>
-                    <div className="rounded-[26px] border border-white/10 bg-white/[0.04] p-6 shadow-[0_18px_60px_rgba(0,0,0,0.14)] backdrop-blur-sm md:p-8 lg:p-10">
-                        <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
-                            <div>
-                                <div className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#f97316] md:text-[11px] md:tracking-[0.28em]">
-                                    WHY THIS MATTERS
-                                </div>
-
-                                <h2 className="mt-4 max-w-[900px] text-[34px] font-black leading-[0.98] tracking-[-0.05em] sm:text-[40px] md:text-[48px] lg:text-[58px]">
-                                    Buyers do not only feel the final design. They feel the quality of the process behind it.
-                                </h2>
-
-                                <p className="mt-5 max-w-[840px] text-[16px] leading-7 text-white/70 md:text-[18px] md:leading-8">
-                                    The strongest final environments usually come from processes
-                                    that reduce ambiguity, protect finish standards, and stay
-                                    coordinated through real deployment pressure. That is what
-                                    this system is designed to do.
-                                </p>
-                            </div>
-
-                            <div className="flex flex-col gap-4 sm:flex-row lg:justify-end">
-                                <Link
-                                    href="/contact"
-                                    className="premium-cta inline-flex min-h-[56px] items-center justify-center bg-[#f97316] px-8 text-[12px] font-bold uppercase tracking-[0.06em] text-white transition duration-300 sm:text-[13px]"
-                                >
-                                    Start a Project Review
-                                </Link>
-
-                                <Link
-                                    href="/solutions"
-                                    className="premium-ghost-cta inline-flex min-h-[56px] items-center justify-center border border-[#f97316] px-8 text-[12px] font-bold uppercase tracking-[0.06em] text-[#f97316] transition duration-300 hover:bg-[#f97316] hover:text-white sm:text-[13px]"
-                                >
-                                    View Solutions
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
-                </Reveal>
-            </section>
         </main>
     );
 }
