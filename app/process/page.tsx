@@ -38,8 +38,7 @@ const steps: StepType[] = [
             "Execution constraints are surfaced before they become expensive",
             "Decision-making starts from clarity, not from reaction",
         ],
-        outcome:
-            "The project begins with structure, not guesswork.",
+        outcome: "The project begins with structure, not guesswork.",
         image: "/images/capability-spec-driven-projects.png",
         alt: "Strategic discovery and process planning for premium environment delivery",
         icon: ScanSearch,
@@ -335,6 +334,23 @@ function StepCard({
                                 : "bg-white/16"
                             }`}
                     />
+                </div>
+
+                <div className="mb-7 overflow-hidden rounded-[22px] border border-white/10">
+                    <div className="relative aspect-[16/10] w-full overflow-hidden">
+                        <img
+                            src={step.image}
+                            alt={step.alt}
+                            className="h-full w-full object-cover transition duration-700 hover:scale-[1.02]"
+                            loading={index < 2 ? "eager" : "lazy"}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent" />
+                        <div className="absolute bottom-4 left-4 rounded-full border border-white/15 bg-black/35 px-3 py-2 backdrop-blur-md">
+                            <span className="text-[9px] font-semibold uppercase tracking-[0.18em] text-white/80">
+                                Step {step.number}
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
                 <h3 className="max-w-[760px] text-[30px] font-black leading-[0.98] tracking-[-0.04em] text-white md:text-[38px]">
