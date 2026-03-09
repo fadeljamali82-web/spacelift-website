@@ -13,44 +13,43 @@ type Stage = {
 };
 
 const TOTAL_FRAMES = 160;
-const SCROLL_SECTION_HEIGHT_VH = 520;
 
 const stages: Stage[] = [
     {
         id: "stage-1",
         label: "STAGE 01 · BASE CONDITION",
-        title: "A beautiful architectural shell can still feel unresolved.",
+        title: "A strong architectural shell can still feel unresolved.",
         body:
-            "This is where many environments begin: strong proportions, premium volume, and architectural quality, but without the surface language, finish hierarchy, and spatial identity needed to make the space unforgettable.",
+            "Good bones are not the same as a finished experience. Many spaces begin with impressive volume and clean architecture, but without the surface language, finish hierarchy, and visual identity needed to make the environment memorable.",
         progressStart: 0,
-        progressEnd: 0.22,
+        progressEnd: 0.2,
     },
     {
         id: "stage-2",
-        label: "STAGE 02 · SURFACE ACTIVATION",
-        title: "The transformation begins at the surface level, not with clutter.",
+        label: "STAGE 02 · FLOOR ACTIVATION",
+        title: "Transformation begins through the surfaces people feel first.",
         body:
-            "Floor treatment starts to define movement, atmosphere, and control. The goal is not to add noise. It is to introduce rhythm, contrast, and a more intentional spatial experience.",
-        progressStart: 0.22,
-        progressEnd: 0.44,
+            "The floor starts defining movement, contrast, atmosphere, and visual control. The goal is not clutter. It is to establish a stronger spatial language that immediately changes how the room is experienced.",
+        progressStart: 0.2,
+        progressEnd: 0.4,
     },
     {
         id: "stage-3",
         label: "STAGE 03 · WALL SYSTEMS",
         title: "Walls stop being background and start carrying identity.",
         body:
-            "Integrated panel systems, embedded architectural graphics, and stronger material relationships begin to shape how the environment is perceived. The room starts to feel authored instead of merely finished.",
-        progressStart: 0.44,
-        progressEnd: 0.66,
+            "Integrated panel systems, embedded architectural graphics, and stronger material relationships begin to shape how the environment is perceived. The space starts to feel authored rather than merely completed.",
+        progressStart: 0.4,
+        progressEnd: 0.62,
     },
     {
         id: "stage-4",
         label: "STAGE 04 · FINISH DISCIPLINE",
         title: "Premium impact comes from cohesion, not isolated moments.",
         body:
-            "As lighting, material depth, focal treatments, and finish contrast lock together, the space gains authority. This is where structure becomes emotion and the environment starts to feel worth remembering.",
-        progressStart: 0.66,
-        progressEnd: 0.88,
+            "As surface systems, focal treatments, material contrast, and lighting depth lock together, the room gains authority. This is where structure becomes emotion and the environment starts to feel worth remembering.",
+        progressStart: 0.62,
+        progressEnd: 0.84,
     },
     {
         id: "stage-5",
@@ -58,7 +57,7 @@ const stages: Stage[] = [
         title: "The final environment lands with clarity, control, and wow factor.",
         body:
             "What began as a quiet shell now reads as a fully resolved branded environment. The difference is not decoration. It is disciplined execution across surfaces, lighting, and spatial identity.",
-        progressStart: 0.88,
+        progressStart: 0.84,
         progressEnd: 1,
     },
 ];
@@ -83,16 +82,49 @@ function getActiveStage(progress: number) {
     );
 }
 
+function drawImageCover(
+    canvas: HTMLCanvasElement,
+    image: HTMLImageElement,
+    dpr: number
+) {
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const cssWidth = canvas.clientWidth;
+    const cssHeight = canvas.clientHeight;
+
+    if (!cssWidth || !cssHeight) return;
+
+    const targetWidth = Math.floor(cssWidth * dpr);
+    const targetHeight = Math.floor(cssHeight * dpr);
+
+    if (canvas.width !== targetWidth || canvas.height !== targetHeight) {
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+    }
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const imgWidth = image.naturalWidth;
+    const imgHeight = image.naturalHeight;
+
+    if (!imgWidth || !imgHeight) return;
+
+    const scale = Math.max(canvas.width / imgWidth, canvas.height / imgHeight);
+    const drawWidth = imgWidth * scale;
+    const drawHeight = imgHeight * scale;
+    const dx = (canvas.width - drawWidth) / 2;
+    const dy = (canvas.height - drawHeight) / 2;
+
+    ctx.drawImage(image, dx, dy, drawWidth, drawHeight);
+}
+
 function Reveal({
     children,
     delay = 0,
-    y = 18,
-    scale = 0.99,
 }: {
     children: React.ReactNode;
     delay?: number;
-    y?: number;
-    scale?: number;
 }) {
     const ref = useRef<HTMLDivElement | null>(null);
     const [visible, setVisible] = useState(false);
@@ -120,10 +152,8 @@ function Reveal({
             ref={ref}
             style={{
                 opacity: visible ? 1 : 0,
-                transform: visible
-                    ? "translate3d(0,0,0) scale(1)"
-                    : `translate3d(0,${y}px,0) scale(${scale})`,
-                transition: `opacity 760ms cubic-bezier(0.22,1,0.36,1) ${delay}ms, transform 980ms cubic-bezier(0.22,1,0.36,1) ${delay}ms`,
+                transform: visible ? "translateY(0px)" : "translateY(18px)",
+                transition: `opacity 700ms ease ${delay}ms, transform 900ms cubic-bezier(0.22,1,0.36,1) ${delay}ms`,
             }}
         >
             {children}
@@ -132,72 +162,147 @@ function Reveal({
 }
 
 export default function HomePage() {
-    const scrollSectionRef = useRef<HTMLElement | null>(null);
+    const sectionRef = useRef<HTMLElement | null>(null);
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
+    const imagesRef = useRef<(HTMLImageElement | null)[]>([]);
+    const loadedRef = useRef<boolean[]>([]);
     const [progress, setProgress] = useState(0);
-    const [frame, setFrame] = useState(1);
-    const [loadedFrame, setLoadedFrame] = useState(1);
+    const [currentFrame, setCurrentFrame] = useState(1);
+    const [mounted, setMounted] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
 
     const frameSources = useMemo(
-        () => Array.from({ length: TOTAL_FRAMES }, (_, i) => getFrameSrc(i + 1)),
+        () =>
+            Array.from({ length: TOTAL_FRAMES }, (_, i) => getFrameSrc(i + 1)),
         []
     );
 
     const activeStage = getActiveStage(progress);
     const isFinalStage = activeStage.id === "stage-5";
+    const scrollHeight = isMobile ? 340 : 420;
 
     useEffect(() => {
-        const criticalFrames = [1, 2, 3, 4, 5, 12, 24, 36, 48, 60, 80, 100, 120, 140, 160];
-        criticalFrames.forEach((n) => {
-            const img = new window.Image();
-            img.src = getFrameSrc(n);
-        });
+        setMounted(true);
+
+        const updateViewportMode = () => {
+            setIsMobile(window.innerWidth < 1024);
+        };
+
+        updateViewportMode();
+        window.addEventListener("resize", updateViewportMode);
+        return () => window.removeEventListener("resize", updateViewportMode);
+    }, []);
+
+    const findBestLoadedFrame = (targetFrame: number) => {
+        const targetIndex = targetFrame - 1;
+
+        if (loadedRef.current[targetIndex]) return targetFrame;
+
+        for (let i = targetIndex; i >= 0; i -= 1) {
+            if (loadedRef.current[i]) return i + 1;
+        }
+
+        for (let i = targetIndex + 1; i < TOTAL_FRAMES; i += 1) {
+            if (loadedRef.current[i]) return i + 1;
+        }
+
+        return 1;
+    };
+
+    const drawFrame = (frameNumber: number) => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const bestFrame = findBestLoadedFrame(frameNumber);
+        const image = imagesRef.current[bestFrame - 1];
+
+        if (!image) return;
+
+        const dpr = typeof window !== "undefined" ? Math.min(window.devicePixelRatio || 1, 2) : 1;
+        drawImageCover(canvas, image, dpr);
+    };
+
+    useEffect(() => {
+        if (!mounted) return;
+
+        imagesRef.current = new Array(TOTAL_FRAMES).fill(null);
+        loadedRef.current = new Array(TOTAL_FRAMES).fill(false);
 
         let cancelled = false;
-        let nextIndex = 0;
 
-        const preloadBatch = () => {
+        const eagerFrames = Array.from({ length: 18 }, (_, i) => i + 1);
+
+        eagerFrames.forEach((frame) => {
+            const img = new window.Image();
+            img.decoding = "async";
+            img.src = getFrameSrc(frame);
+            img.onload = () => {
+                if (cancelled) return;
+                imagesRef.current[frame - 1] = img;
+                loadedRef.current[frame - 1] = true;
+                if (frame === 1) drawFrame(1);
+            };
+        });
+
+        let nextFrame = 19;
+
+        const preloadRest = () => {
             if (cancelled) return;
-            const batchSize = 6;
 
-            for (let i = 0; i < batchSize && nextIndex < frameSources.length; i += 1) {
+            const batchSize = 8;
+            for (let i = 0; i < batchSize && nextFrame <= TOTAL_FRAMES; i += 1) {
+                const frame = nextFrame;
                 const img = new window.Image();
-                img.src = frameSources[nextIndex];
-                nextIndex += 1;
+                img.decoding = "async";
+                img.src = getFrameSrc(frame);
+                img.onload = () => {
+                    if (cancelled) return;
+                    imagesRef.current[frame - 1] = img;
+                    loadedRef.current[frame - 1] = true;
+                };
+                nextFrame += 1;
             }
 
-            if (nextIndex < frameSources.length) {
-                window.setTimeout(preloadBatch, 80);
+            if (nextFrame <= TOTAL_FRAMES) {
+                window.setTimeout(preloadRest, 60);
             }
         };
 
-        if ("requestIdleCallback" in window) {
-            (
-                window as Window & {
-                    requestIdleCallback: (cb: () => void) => number;
-                }
-            ).requestIdleCallback(preloadBatch);
-        } else {
-            window.setTimeout(preloadBatch, 300);
-        }
+        window.setTimeout(preloadRest, 100);
 
         return () => {
             cancelled = true;
         };
-    }, [frameSources]);
+    }, [mounted]);
 
     useEffect(() => {
+        if (!mounted) return;
+
+        const handleResize = () => {
+            drawFrame(currentFrame);
+        };
+
+        handleResize();
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, [mounted, currentFrame]);
+
+    useEffect(() => {
+        if (!mounted) return;
+
         let ticking = false;
 
-        const update = () => {
+        const updateScrollFilm = () => {
             ticking = false;
-            const section = scrollSectionRef.current;
+
+            const section = sectionRef.current;
             if (!section) return;
 
             const rect = section.getBoundingClientRect();
             const viewportHeight = window.innerHeight;
             const totalScrollable = Math.max(section.offsetHeight - viewportHeight, 1);
-            const scrolledWithinSection = clamp(-rect.top, 0, totalScrollable);
-            const nextProgress = clamp(scrolledWithinSection / totalScrollable, 0, 1);
+            const scrolledInside = clamp(-rect.top, 0, totalScrollable);
+            const nextProgress = clamp(scrolledInside / totalScrollable, 0, 1);
             const nextFrame = clamp(
                 Math.round(nextProgress * (TOTAL_FRAMES - 1)) + 1,
                 1,
@@ -205,17 +310,18 @@ export default function HomePage() {
             );
 
             setProgress(nextProgress);
-            setFrame((prev) => (prev !== nextFrame ? nextFrame : prev));
+            setCurrentFrame((prev) => (prev !== nextFrame ? nextFrame : prev));
+            drawFrame(nextFrame);
         };
 
         const onScrollOrResize = () => {
             if (!ticking) {
                 ticking = true;
-                window.requestAnimationFrame(update);
+                window.requestAnimationFrame(updateScrollFilm);
             }
         };
 
-        update();
+        updateScrollFilm();
 
         window.addEventListener("scroll", onScrollOrResize, { passive: true });
         window.addEventListener("resize", onScrollOrResize);
@@ -224,46 +330,41 @@ export default function HomePage() {
             window.removeEventListener("scroll", onScrollOrResize);
             window.removeEventListener("resize", onScrollOrResize);
         };
-    }, []);
+    }, [mounted]);
 
     return (
         <main className="bg-[#060709] text-white">
             <section
-                ref={scrollSectionRef}
+                ref={sectionRef}
                 className="relative"
-                style={{ height: `${SCROLL_SECTION_HEIGHT_VH}vh` }}
+                style={{ height: `${scrollHeight}vh` }}
             >
                 <div className="sticky top-0 h-screen overflow-hidden bg-[#060709]">
                     <div className="pointer-events-none absolute inset-0">
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,165,84,0.10),transparent_28%),linear-gradient(180deg,#07080a_0%,#060709_100%)]" />
-                        <div className="absolute inset-0 opacity-[0.06] [background-image:linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:70px_70px]" />
+                        <div className="absolute inset-0 opacity-[0.05] [background-image:linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:70px_70px]" />
                         <div className="absolute left-[-6%] top-[6%] h-52 w-52 rounded-full bg-[#f97316]/12 blur-3xl" />
                         <div className="absolute right-[-4%] top-[12%] h-44 w-44 rounded-full bg-white/[0.04] blur-3xl" />
                     </div>
 
                     <div className="relative flex h-full flex-col">
-                        <div className="relative h-[60vh] shrink-0 overflow-hidden border-b border-white/8 bg-[#060709]">
-                            <img
-                                src={getFrameSrc(frame)}
-                                alt="Space transformation sequence"
-                                className="h-full w-full object-cover"
-                                loading="eager"
-                                decoding="async"
-                                fetchPriority="high"
-                                onLoad={() => setLoadedFrame(frame)}
-                                onError={() => console.error(`Missing frame: ${getFrameSrc(frame)}`)}
+                        <div className="relative h-[58vh] shrink-0 overflow-hidden border-b border-white/8 bg-[#060709] sm:h-[60vh]">
+                            <canvas
+                                ref={canvasRef}
+                                className="block h-full w-full"
+                                aria-label="Scroll-driven architectural transformation"
                             />
 
-                            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.16)_0%,rgba(0,0,0,0.06)_45%,rgba(0,0,0,0.38)_100%)]" />
-                            <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[#060709]/70 to-transparent" />
+                            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.12)_0%,rgba(0,0,0,0.04)_45%,rgba(0,0,0,0.32)_100%)]" />
+                            <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#060709]/70 to-transparent" />
 
-                            <div className="absolute left-5 top-5 z-10 rounded-full border border-white/12 bg-black/25 px-4 py-2 backdrop-blur-md sm:left-8 sm:top-8">
+                            <div className="absolute left-4 top-4 z-10 rounded-full border border-white/12 bg-black/25 px-4 py-2 backdrop-blur-md sm:left-8 sm:top-8">
                                 <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/82 sm:text-[11px]">
-                                    Scroll Film · Frame {padFrameNumber(loadedFrame)} / {TOTAL_FRAMES}
+                                    Scroll Film · Frame {padFrameNumber(currentFrame)} / {TOTAL_FRAMES}
                                 </span>
                             </div>
 
-                            <div className="absolute bottom-5 left-5 right-5 z-10 sm:bottom-8 sm:left-8 sm:right-8">
+                            <div className="absolute bottom-4 left-4 right-4 z-10 sm:bottom-8 sm:left-8 sm:right-8">
                                 <div className="flex items-center justify-between gap-4 rounded-full border border-white/10 bg-black/25 px-4 py-3 backdrop-blur-md">
                                     <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/76 sm:text-[11px]">
                                         Transformation Progress
@@ -283,9 +384,9 @@ export default function HomePage() {
                         </div>
 
                         <div className="relative flex min-h-0 flex-1 items-center bg-[#060709]">
-                            <div className="mx-auto flex h-full w-full max-w-[1450px] items-center px-5 py-6 sm:px-8 md:px-10 lg:px-14">
-                                <div className="grid w-full gap-6 lg:grid-cols-[0.76fr_0.24fr] lg:gap-8">
-                                    <div className="rounded-[28px] border border-white/10 bg-white/[0.045] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur-xl md:p-8">
+                            <div className="mx-auto flex h-full w-full max-w-[1450px] items-center px-4 py-5 sm:px-8 md:px-10 lg:px-14">
+                                <div className="grid w-full gap-5 lg:grid-cols-[0.76fr_0.24fr] lg:gap-8">
+                                    <div className="rounded-[24px] border border-white/10 bg-white/[0.045] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur-xl sm:rounded-[28px] sm:p-6 md:p-8">
                                         <div className="mb-5 flex items-center gap-4">
                                             <span className="h-px w-10 bg-[#f97316]" />
                                             <span className="text-[10px] font-semibold uppercase tracking-[0.26em] text-[#f97316] md:text-[11px]">
@@ -293,12 +394,12 @@ export default function HomePage() {
                                             </span>
                                         </div>
 
-                                        <div className="min-h-[136px] md:min-h-[162px]">
-                                            <h1 className="max-w-[920px] text-[32px] font-black leading-[0.98] tracking-[-0.05em] text-white sm:text-[38px] md:text-[48px] lg:text-[58px]">
+                                        <div className="min-h-[150px] sm:min-h-[168px] md:min-h-[182px]">
+                                            <h1 className="max-w-[920px] text-[28px] font-black leading-[0.98] tracking-[-0.05em] text-white sm:text-[36px] md:text-[44px] lg:text-[56px]">
                                                 {activeStage.title}
                                             </h1>
 
-                                            <p className="mt-5 max-w-[900px] text-[15px] leading-7 text-white/72 md:text-[18px] md:leading-8">
+                                            <p className="mt-5 max-w-[900px] text-[14px] leading-7 text-white/72 sm:text-[15px] md:text-[17px] md:leading-8">
                                                 {activeStage.body}
                                             </p>
                                         </div>
@@ -328,13 +429,13 @@ export default function HomePage() {
                                         </div>
                                     </div>
 
-                                    <div className="grid gap-4 self-stretch md:grid-cols-3 lg:grid-cols-1">
+                                    <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-1">
                                         {stages.map((stage) => {
                                             const active = stage.id === activeStage.id;
                                             return (
                                                 <div
                                                     key={stage.id}
-                                                    className={`rounded-[22px] border px-4 py-4 transition-all duration-300 ${active
+                                                    className={`rounded-[20px] border px-4 py-4 transition-all duration-300 ${active
                                                             ? "border-[#f97316]/35 bg-[#f97316]/10 shadow-[0_0_0_1px_rgba(249,115,22,0.10)]"
                                                             : "border-white/8 bg-white/[0.03]"
                                                         }`}
