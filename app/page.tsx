@@ -1,187 +1,93 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-type SectionType = {
+type Stage = {
     id: string;
-    eyebrow: string;
+    label: string;
     title: string;
     body: string;
-    bullets?: string[];
-    images: string[];
-    alt: string;
-    theme: "light" | "dark";
+    progressStart: number;
+    progressEnd: number;
 };
 
-const sections: SectionType[] = [
+const TOTAL_FRAMES = 160;
+const SCROLL_SECTION_HEIGHT_VH = 520;
+
+const stages: Stage[] = [
     {
-        id: "hero",
-        eyebrow: "MULTI-SURFACE ENVIRONMENT DELIVERY",
-        title: "The Premium One-Stop Partner for Complex Physical Environments.",
+        id: "stage-1",
+        label: "STAGE 01 · BASE CONDITION",
+        title: "A beautiful architectural shell can still feel unresolved.",
         body:
-            "SpaceLift Studio helps brands, venues, hospitality groups, and project teams turn fragmented environment challenges into coordinated physical outcomes. We combine strategic consultation, design-aware technical translation, controlled manufacturing, logistics clarity, and install-ready delivery so the final space feels unified, credible, and built with authority.",
-        bullets: [
-            "One accountable partner across execution stages",
-            "Design-aware translation from concept to physical reality",
-            "Controlled manufacturing and premium finish discipline",
-            "Rollout clarity for demanding real-world environments",
-        ],
-        images: [
-            "/images/hero.png",
-            "/images/projects-riyadh-exhibitions.png",
-            "/images/industries-corporate.png",
-        ],
-        alt: "Premium branded physical environment showing coordinated execution and architectural quality",
-        theme: "light",
+            "This is where many environments begin: premium volume, strong proportions, and good bones, but without the surface language, finish hierarchy, and spatial identity needed to make the space unforgettable.",
+        progressStart: 0,
+        progressEnd: 0.22,
     },
     {
-        id: "fragmentation",
-        eyebrow: "THE REAL PROBLEM",
-        title: "Most Environment Failures Begin Long Before Installation.",
+        id: "stage-2",
+        label: "STAGE 02 · SURFACE ACTIVATION",
+        title: "The transformation begins at the surface level, not with clutter.",
         body:
-            "The breakdown is rarely one dramatic event. It starts earlier, through disconnected vendors, mismatched surfaces, weak transitions, drifting finish quality, unclear approvals, and execution teams working without one unified standard. The project may still get completed, but it no longer feels fully resolved.",
-        bullets: [
-            "Too many handoffs dilute accountability",
-            "Disconnected vendors create quality drift",
-            "Weak coordination increases risk at scale",
-            "Compromise becomes visible in the final environment",
-        ],
-        images: [
-            "/images/home-problem-fragmentation.png",
-            "/images/trust-wall.png",
-            "/images/industries-sports.png",
-        ],
-        alt: "Fragmented premium environment showing visual inconsistency and unresolved material transitions",
-        theme: "dark",
+            "Floor treatment starts to define movement, visual rhythm, and atmosphere. The goal is not to add noise. It is to introduce control, contrast, and a more intentional spatial experience.",
+        progressStart: 0.22,
+        progressEnd: 0.44,
     },
     {
-        id: "material-control",
-        eyebrow: "MATERIAL CONTROL",
-        title: "The Surface Is Where Perception Becomes Physical.",
+        id: "stage-3",
+        label: "STAGE 03 · WALL SYSTEMS",
+        title: "Walls stop being background and start carrying identity.",
         body:
-            "A branded environment is judged through what it reveals up close: texture, tonal discipline, edge behavior, finish continuity, and material confidence under real light. We treat those decisions as strategic, not decorative, because surface quality is one of the first places credibility is either reinforced or lost.",
-        bullets: [
-            "Material selection guided by real application logic",
-            "Finish quality built for visual and physical performance",
-            "Closer control over alignment, edge behavior, and tone",
-            "Premium outcomes that hold up beyond first impressions",
-        ],
-        images: [
-            "/images/home-material-control.png",
-            "/images/solutions-dsm.png",
-            "/images/solutions-lfp.png",
-        ],
-        alt: "Close-up of premium material control and refined production detail",
-        theme: "light",
+            "Integrated panel systems, embedded architectural graphics, and stronger material relationships begin to shape how the environment is perceived. The room starts to feel authored instead of merely finished.",
+        progressStart: 0.44,
+        progressEnd: 0.66,
     },
     {
-        id: "quality-assurance",
-        eyebrow: "QUALITY ASSURANCE",
-        title: "Premium Work Depends on Control, Not Assumption.",
+        id: "stage-4",
+        label: "STAGE 04 · FINISH DISCIPLINE",
+        title: "Premium impact comes from cohesion, not isolated moments.",
         body:
-            "Quality is not a final check added at the end. It must be built into the way files are prepared, materials are selected, finishes are reviewed, packaging is sequenced, and delivery is coordinated. Our system is designed to reduce avoidable errors before they become visible in the finished space.",
-        bullets: [
-            "Technical review before production commitment",
-            "Finish and consistency discipline during execution",
-            "Install-ready packaging and sequencing logic",
-            "Reduced downstream rework and fewer public compromises",
-        ],
-        images: [
-            "/images/facility.png",
-            "/images/solutions-dsm.png",
-            "/images/projects-vakko.png",
-        ],
-        alt: "Production and quality assurance environment supporting controlled execution",
-        theme: "dark",
+            "As lighting, material depth, focal treatments, and finish contrast lock together, the space gains authority. This is where structure becomes emotion and the environment starts to feel worth remembering.",
+        progressStart: 0.66,
+        progressEnd: 0.88,
     },
     {
-        id: "scale-distribution",
-        eyebrow: "ROLL OUT WITH DISCIPLINE",
-        title: "A Strong Concept Has to Survive Scale, Shipping, and Deployment.",
+        id: "stage-5",
+        label: "STAGE 05 · FINAL IMPACT",
+        title: "The final environment lands with clarity, control, and wow factor.",
         body:
-            "The real test starts when a project moves beyond ideas and into manufacturing, packaging, logistics, and rollout. Files must hold. Materials must remain stable. Delivery must stay organized. The system has to arrive ready for execution in the field, not just approval in a presentation.",
-        bullets: [
-            "Install-ready systems instead of disconnected output",
-            "Packaging and sequencing that support deployment",
-            "More structure across logistics and phased delivery",
-            "Scalable execution without losing finish consistency",
-        ],
-        images: [
-            "/images/home-scale-distribution.png",
-            "/images/facility.png",
-            "/images/projects-hawana-salalah.png",
-        ],
-        alt: "Scaled production and distribution environment showing rollout discipline",
-        theme: "light",
-    },
-    {
-        id: "precision-detail",
-        eyebrow: "PRECISION DETAIL",
-        title: "Credibility Lives in the Details Buyers Notice Immediately.",
-        body:
-            "Alignment, registration, edge cleanliness, tonal accuracy, finish continuity, and compositional balance all shape whether a space feels engineered or improvised. These details are not extras. They are the signals that tell people whether the brand was executed with care, discipline, and control.",
-        bullets: [
-            "Precision strengthens premium perception",
-            "Refined detailing reduces visual noise",
-            "Consistency creates trust across environments",
-            "Execution quality becomes visible without explanation",
-        ],
-        images: [
-            "/images/home-precision-detail.png",
-            "/images/trust-wall.png",
-            "/images/solutions-lfp.png",
-        ],
-        alt: "Precision architectural detail showing premium finish and alignment control",
-        theme: "dark",
-    },
-    {
-        id: "forward-execution",
-        eyebrow: "FORWARD EXECUTION",
-        title: "Fast Projects Still Need Structure, Systems, and Readiness.",
-        body:
-            "Project pressure does not excuse weak coordination. In high-demand environments, speed only works when technical clarity, manufacturing readiness, logistics planning, and execution discipline move together. The goal is not simply to move faster. It is to move with fewer breakdowns.",
-        bullets: [
-            "Structured execution for project-based environments",
-            "Readiness across production, packaging, and deployment",
-            "Reduced friction under deadline pressure",
-            "More confidence for teams managing real operational constraints",
-        ],
-        images: [
-            "/images/home-forward-execution.png",
-            "/images/projects-dubai-silicon.png",
-            "/images/industries-cultural.png",
-        ],
-        alt: "Dark controlled corridor expressing speed, readiness, and execution structure",
-        theme: "light",
-    },
-    {
-        id: "final-impact",
-        eyebrow: "FINAL IMPACT",
-        title: "Installation Is Where the Brand Becomes Public.",
-        body:
-            "The final environment reveals whether upstream decisions were made with enough discipline. If the system was resolved correctly, the result feels seamless, intentional, and inevitable. If not, compromise becomes visible immediately. That is why we design around delivery quality, not just production output.",
-        bullets: [
-            "Final execution is treated as proof, not afterthought",
-            "Better upstream coordination protects the finished result",
-            "Install-readiness reduces friction in the last mile",
-            "The brand lands with more authority in public-facing space",
-        ],
-        images: [
-            "/images/home-installation-integrity.png",
-            "/images/projects-vakko.png",
-            "/images/hero.png",
-        ],
-        alt: "Installed premium branded environment with strong final execution quality",
-        theme: "dark",
+            "What began as a quiet shell now reads as a fully resolved branded environment. The difference is not decoration. It is disciplined execution across surfaces, lighting, and spatial identity.",
+        progressStart: 0.88,
+        progressEnd: 1,
     },
 ];
+
+function clamp(value: number, min: number, max: number) {
+    return Math.min(Math.max(value, min), max);
+}
+
+function padFrameNumber(frame: number) {
+    return String(frame).padStart(3, "0");
+}
+
+function getFrameSrc(frame: number) {
+    return `/images/home-hero-sequence/v1/ezgif-frame-${padFrameNumber(frame)}.jpg`;
+}
+
+function getActiveStage(progress: number) {
+    return (
+        stages.find(
+            (stage) => progress >= stage.progressStart && progress <= stage.progressEnd
+        ) ?? stages[stages.length - 1]
+    );
+}
 
 function Reveal({
     children,
     delay = 0,
-    y = 28,
-    scale = 0.985,
+    y = 18,
+    scale = 0.99,
 }: {
     children: React.ReactNode;
     delay?: number;
@@ -215,10 +121,9 @@ function Reveal({
             style={{
                 opacity: visible ? 1 : 0,
                 transform: visible
-                    ? "translate3d(0px,0px,0px) scale(1)"
-                    : `translate3d(0px,${y}px,0px) scale(${scale})`,
-                transition: `opacity 780ms cubic-bezier(0.22,1,0.36,1) ${delay}ms, transform 1050ms cubic-bezier(0.22,1,0.36,1) ${delay}ms`,
-                willChange: "transform, opacity",
+                    ? "translate3d(0,0,0) scale(1)"
+                    : `translate3d(0,${y}px,0) scale(${scale})`,
+                transition: `opacity 760ms cubic-bezier(0.22,1,0.36,1) ${delay}ms, transform 980ms cubic-bezier(0.22,1,0.36,1) ${delay}ms`,
             }}
         >
             {children}
@@ -226,330 +131,295 @@ function Reveal({
     );
 }
 
-function SmartImage({
-    sources,
-    alt,
-    priority = false,
-    parallaxOffset = 0,
-}: {
-    sources: string[];
-    alt: string;
-    priority?: boolean;
-    parallaxOffset?: number;
-}) {
-    const [index, setIndex] = useState(0);
+export default function HomePage() {
+    const scrollSectionRef = useRef<HTMLElement | null>(null);
+    const [progress, setProgress] = useState(0);
+    const [frame, setFrame] = useState(1);
 
-    return (
-        <img
-            src={sources[index]}
-            alt={alt}
-            loading={priority ? "eager" : "lazy"}
-            onError={() => {
-                if (index < sources.length - 1) setIndex(index + 1);
-            }}
-            className="h-[112%] w-full object-cover transition duration-700 group-hover:scale-[1.04]"
-            style={{
-                transform: `translate3d(0px, ${parallaxOffset}px, 0px) scale(1.02)`,
-                willChange: "transform",
-            }}
-        />
+    const frameSources = useMemo(
+        () => Array.from({ length: TOTAL_FRAMES }, (_, i) => getFrameSrc(i + 1)),
+        []
     );
-}
 
-function InteractiveImageCard({
-    section,
-    index,
-}: {
-    section: SectionType;
-    index: number;
-}) {
-    const cardRef = useRef<HTMLDivElement | null>(null);
-    const [hovered, setHovered] = useState(false);
-    const [glow, setGlow] = useState({ x: 50, y: 50 });
-    const [parallaxOffset, setParallaxOffset] = useState(0);
+    const activeStage = getActiveStage(progress);
+    const isFinalStage = activeStage.id === "stage-5";
 
     useEffect(() => {
-        const node = cardRef.current;
-        if (!node) return;
+        const preloadCriticalFrames = [1, 2, 3, 4, 5, 12, 24, 36, 48, 60, 80, 100, 120, 140, 160];
+        preloadCriticalFrames.forEach((n) => {
+            const img = new window.Image();
+            img.src = getFrameSrc(n);
+        });
 
-        const handleScroll = () => {
-            const rect = node.getBoundingClientRect();
-            const viewport = window.innerHeight || 1;
-            const center = rect.top + rect.height / 2;
-            const distance = center - viewport / 2;
-            const normalized = Math.max(-1, Math.min(1, distance / viewport));
-            setParallaxOffset(normalized * -12);
+        let cancelled = false;
+        let nextIndex = 0;
+
+        const preloadBatch = () => {
+            if (cancelled) return;
+            const batchSize = 6;
+
+            for (let i = 0; i < batchSize && nextIndex < frameSources.length; i += 1) {
+                const img = new window.Image();
+                img.src = frameSources[nextIndex];
+                nextIndex += 1;
+            }
+
+            if (nextIndex < frameSources.length) {
+                window.setTimeout(preloadBatch, 80);
+            }
         };
 
-        handleScroll();
-        window.addEventListener("scroll", handleScroll, { passive: true });
-        window.addEventListener("resize", handleScroll);
+        if ("requestIdleCallback" in window) {
+            (window as Window & {
+                requestIdleCallback: (cb: () => void) => number;
+            }).requestIdleCallback(preloadBatch);
+        } else {
+            window.setTimeout(preloadBatch, 300);
+        }
 
         return () => {
-            window.removeEventListener("scroll", handleScroll);
-            window.removeEventListener("resize", handleScroll);
+            cancelled = true;
+        };
+    }, [frameSources]);
+
+    useEffect(() => {
+        let ticking = false;
+
+        const update = () => {
+            ticking = false;
+            const section = scrollSectionRef.current;
+            if (!section) return;
+
+            const rect = section.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+            const totalScrollable = Math.max(section.offsetHeight - viewportHeight, 1);
+            const scrolledWithinSection = clamp(-rect.top, 0, totalScrollable);
+            const nextProgress = clamp(scrolledWithinSection / totalScrollable, 0, 1);
+            const nextFrame = clamp(
+                Math.round(nextProgress * (TOTAL_FRAMES - 1)) + 1,
+                1,
+                TOTAL_FRAMES
+            );
+
+            setProgress(nextProgress);
+            setFrame((prev) => (prev !== nextFrame ? nextFrame : prev));
+        };
+
+        const onScrollOrResize = () => {
+            if (!ticking) {
+                ticking = true;
+                window.requestAnimationFrame(update);
+            }
+        };
+
+        update();
+
+        window.addEventListener("scroll", onScrollOrResize, { passive: true });
+        window.addEventListener("resize", onScrollOrResize);
+
+        return () => {
+            window.removeEventListener("scroll", onScrollOrResize);
+            window.removeEventListener("resize", onScrollOrResize);
         };
     }, []);
 
-    const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / rect.width) * 100;
-        const y = ((e.clientY - rect.top) / rect.height) * 100;
-        setGlow({ x, y });
-    };
-
     return (
-        <Reveal delay={120}>
-            <div
-                ref={cardRef}
-                onMouseEnter={() => setHovered(true)}
-                onMouseLeave={() => setHovered(false)}
-                onMouseMove={handleMove}
-                className={`group premium-image-card relative overflow-hidden rounded-[22px] border bg-black/5 shadow-[0_24px_80px_rgba(0,0,0,0.16)] transition duration-500 hover:-translate-y-[5px] hover:shadow-[0_34px_110px_rgba(0,0,0,0.26)] md:rounded-[28px] ${section.theme === "dark" ? "border-white/10" : "border-black/5"
-                    }`}
+        <main className="bg-[#060709] text-white">
+            <section
+                ref={scrollSectionRef}
+                className="relative"
+                style={{ height: `${SCROLL_SECTION_HEIGHT_VH}vh` }}
             >
-                <div className="absolute inset-0 z-[1] bg-gradient-to-tr from-transparent via-white/[0.03] to-transparent opacity-0 transition duration-500 group-hover:opacity-100" />
-
-                <div
-                    className="pointer-events-none absolute inset-0 z-[2] opacity-0 transition duration-500 group-hover:opacity-100"
-                    style={{
-                        background: `radial-gradient(circle at ${glow.x}% ${glow.y}%, rgba(255,255,255,0.16), rgba(255,255,255,0.04) 18%, rgba(249,115,22,0.10) 34%, transparent 58%)`,
-                    }}
-                />
-
-                <div className="pointer-events-none absolute inset-0 z-[2] opacity-0 transition duration-700 group-hover:opacity-100">
-                    <div className="premium-sheen absolute -left-1/3 top-0 h-full w-1/2 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                </div>
-
-                <div className="relative aspect-[4/3] w-full overflow-hidden sm:aspect-[16/10]">
-                    <SmartImage
-                        sources={section.images}
-                        alt={section.alt}
-                        priority={index < 2}
-                        parallaxOffset={parallaxOffset}
-                    />
-                </div>
-
-                <div className="pointer-events-none absolute inset-0 z-[3] ring-1 ring-inset ring-white/10" />
-
-                <div className="absolute bottom-4 left-4 z-[4] md:bottom-5 md:left-5">
-                    <div className="rounded-full border border-white/15 bg-black/35 px-3 py-2 backdrop-blur-md transition duration-500 group-hover:translate-x-1 md:px-4">
-                        <span className="text-[9px] font-semibold uppercase tracking-[0.18em] text-white/80 md:text-[10px] md:tracking-[0.22em]">
-                            Section {String(index + 1).padStart(2, "0")}
-                        </span>
+                <div className="sticky top-0 h-screen overflow-hidden bg-[#060709]">
+                    <div className="pointer-events-none absolute inset-0">
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,165,84,0.10),transparent_28%),linear-gradient(180deg,#07080a_0%,#060709_100%)]" />
+                        <div className="absolute inset-0 opacity-[0.06] [background-image:linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:70px_70px]" />
+                        <div className="absolute left-[-6%] top-[6%] h-52 w-52 rounded-full bg-[#f97316]/12 blur-3xl" />
+                        <div className="absolute right-[-4%] top-[12%] h-44 w-44 rounded-full bg-white/[0.04] blur-3xl" />
                     </div>
-                </div>
 
-                <div className="absolute right-0 top-0 z-[3] h-full w-[24%] bg-gradient-to-l from-[#f97316]/10 to-transparent opacity-60 transition duration-500 group-hover:opacity-100" />
+                    <div className="relative flex h-full flex-col">
+                        <div className="relative h-[60vh] shrink-0 overflow-hidden border-b border-white/8">
+                            <img
+                                key={frame}
+                                src={getFrameSrc(frame)}
+                                alt="Space transformation sequence"
+                                className="h-full w-full object-cover"
+                                loading="eager"
+                                decoding="async"
+                                fetchPriority="high"
+                            />
 
-                <div
-                    className={`pointer-events-none absolute inset-x-0 bottom-0 z-[3] h-px transition-opacity duration-500 ${hovered ? "opacity-100" : "opacity-70"
-                        }`}
-                    style={{
-                        background:
-                            "linear-gradient(90deg, transparent 0%, rgba(249,115,22,0.0) 12%, rgba(249,115,22,0.7) 50%, rgba(249,115,22,0.0) 88%, transparent 100%)",
-                    }}
-                />
-            </div>
-        </Reveal>
-    );
-}
+                            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.16)_0%,rgba(0,0,0,0.06)_45%,rgba(0,0,0,0.38)_100%)]" />
 
-function SectionBlock({
-    section,
-    index,
-}: {
-    section: SectionType;
-    index: number;
-}) {
-    const reverse = index % 2 === 1;
-    const isDark = section.theme === "dark";
+                            <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[#060709]/70 to-transparent" />
 
-    return (
-        <section
-            className={`relative overflow-hidden ${isDark ? "bg-[#0c0f14] text-white" : "bg-[#f6f4ef] text-[#111111]"
-                }`}
-        >
-            <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                <div
-                    className={`ambient-orb absolute -top-20 ${reverse ? "right-[8%]" : "left-[8%]"
-                        } h-44 w-44 rounded-full blur-3xl md:h-56 md:w-56 ${isDark ? "bg-[#f97316]/12" : "bg-[#f97316]/9"
-                        }`}
-                />
-                <div
-                    className={`ambient-orb-delayed absolute bottom-[12%] ${reverse ? "left-[12%]" : "right-[12%]"
-                        } h-28 w-28 rounded-full blur-3xl ${isDark ? "bg-white/[0.03]" : "bg-[#f97316]/6"
-                        }`}
-                />
-                <div
-                    className={`absolute bottom-10 ${reverse ? "left-[10%]" : "right-[10%]"
-                        } h-[1px] w-24 md:w-40 bg-gradient-to-r from-transparent via-[#f97316]/55 to-transparent`}
-                />
-                <div className="premium-divider-sweep absolute bottom-0 left-0 h-px w-full opacity-40" />
-            </div>
-
-            <div className="mx-auto max-w-[1450px] px-6 py-16 md:px-10 md:py-20 lg:px-14 lg:py-24 xl:py-28">
-                <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-14 xl:gap-16">
-                    <div
-                        className={`lg:col-span-5 ${reverse ? "lg:order-2" : "lg:order-1"}`}
-                    >
-                        <Reveal delay={10} y={22}>
-                            <div className="mb-5 flex items-center gap-4 md:mb-6">
-                                <span className="h-px w-8 bg-[#f97316] md:w-10" />
-                                <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#f97316] md:text-[11px] md:tracking-[0.28em]">
-                                    {section.eyebrow}
+                            <div className="absolute left-5 top-5 z-10 rounded-full border border-white/12 bg-black/25 px-4 py-2 backdrop-blur-md sm:left-8 sm:top-8">
+                                <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/82 sm:text-[11px]">
+                                    Scroll Film · Frame {padFrameNumber(frame)} / {TOTAL_FRAMES}
                                 </span>
                             </div>
-                        </Reveal>
 
-                        <Reveal delay={90} y={26} scale={0.982}>
-                            <h2
-                                className={`max-w-[760px] text-[38px] font-black leading-[0.96] tracking-[-0.05em] sm:text-[46px] md:text-[56px] lg:text-[62px] xl:text-[74px] ${isDark ? "text-white" : "text-[#111111]"
-                                    }`}
-                            >
-                                {section.title}
-                            </h2>
-                        </Reveal>
-
-                        <Reveal delay={170} y={22} scale={0.988}>
-                            <p
-                                className={`mt-6 max-w-[720px] text-[16px] leading-7 md:mt-8 md:text-[18px] md:leading-8 lg:text-[19px] ${isDark ? "text-white/70" : "text-[#5f6672]"
-                                    }`}
-                            >
-                                {section.body}
-                            </p>
-                        </Reveal>
-
-                        {section.bullets && (
-                            <Reveal delay={240} y={18} scale={0.99}>
-                                <ul className="mt-8 space-y-4 md:mt-10">
-                                    {section.bullets.map((point, i) => (
-                                        <li
-                                            key={i}
-                                            className={`group flex items-start gap-3 text-[14px] leading-6 md:text-[15px] md:leading-7 ${isDark ? "text-white/78" : "text-[#3f4650]"
-                                                }`}
-                                            style={{
-                                                transitionDelay: `${i * 40}ms`,
-                                            }}
-                                        >
-                                            <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[#f97316] shadow-[0_0_14px_rgba(249,115,22,0.45)] transition-transform duration-300 group-hover:scale-125" />
-                                            <span>{point}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </Reveal>
-                        )}
-
-                        {index === 0 && (
-                            <Reveal delay={300} y={18} scale={0.992}>
-                                <div className="mt-8 flex flex-col gap-4 sm:mt-10 sm:flex-row">
-                                    <Link
-                                        href="/contact"
-                                        className="premium-cta inline-flex min-h-[56px] w-full items-center justify-center bg-[#f97316] px-6 text-[12px] font-bold uppercase tracking-[0.06em] text-white transition duration-300 sm:w-auto sm:px-8 sm:text-[13px]"
-                                    >
-                                        Start a Project Review
-                                    </Link>
-
-                                    <Link
-                                        href="/solutions"
-                                        className={`premium-ghost-cta inline-flex min-h-[56px] w-full items-center justify-center border px-6 text-[12px] font-bold uppercase tracking-[0.06em] transition duration-300 sm:w-auto sm:px-8 sm:text-[13px] ${isDark
-                                                ? "border-white/20 text-white hover:border-[#f97316] hover:text-[#f97316]"
-                                                : "border-[#f97316] text-[#f97316] hover:bg-[#f97316] hover:text-white"
-                                            }`}
-                                    >
-                                        Explore Our Solutions
-                                    </Link>
+                            <div className="absolute bottom-5 left-5 right-5 z-10 sm:bottom-8 sm:left-8 sm:right-8">
+                                <div className="flex items-center justify-between gap-4 rounded-full border border-white/10 bg-black/25 px-4 py-3 backdrop-blur-md">
+                                    <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/76 sm:text-[11px]">
+                                        Transformation Progress
+                                    </span>
+                                    <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#ffc98c] sm:text-[11px]">
+                                        {Math.round(progress * 100)}%
+                                    </span>
                                 </div>
-                            </Reveal>
-                        )}
 
-                        {index === sections.length - 1 && (
-                            <Reveal delay={300} y={18} scale={0.992}>
-                                <div className="mt-8 flex flex-col gap-4 sm:mt-10 sm:flex-row">
-                                    <Link
-                                        href="/contact"
-                                        className="premium-cta inline-flex min-h-[56px] w-full items-center justify-center bg-[#f97316] px-6 text-[12px] font-bold uppercase tracking-[0.06em] text-white transition duration-300 sm:w-auto sm:px-8 sm:text-[13px]"
-                                    >
-                                        Start Your Project
-                                    </Link>
-
-                                    <Link
-                                        href="/process"
-                                        className={`premium-ghost-cta inline-flex min-h-[56px] w-full items-center justify-center border px-6 text-[12px] font-bold uppercase tracking-[0.06em] transition duration-300 sm:w-auto sm:px-8 sm:text-[13px] ${isDark
-                                                ? "border-white/20 text-white hover:border-[#f97316] hover:text-[#f97316]"
-                                                : "border-[#f97316] text-[#f97316] hover:bg-[#f97316] hover:text-white"
-                                            }`}
-                                    >
-                                        View Delivery Model
-                                    </Link>
+                                <div className="mt-3 h-[3px] overflow-hidden rounded-full bg-white/12">
+                                    <div
+                                        className="h-full rounded-full bg-[#f97316] shadow-[0_0_18px_rgba(249,115,22,0.55)] transition-[width] duration-150"
+                                        style={{ width: `${Math.round(progress * 100)}%` }}
+                                    />
                                 </div>
-                            </Reveal>
-                        )}
-                    </div>
+                            </div>
+                        </div>
 
-                    <div
-                        className={`lg:col-span-7 ${reverse ? "lg:order-1" : "lg:order-2"}`}
-                    >
-                        <InteractiveImageCard section={section} index={index} />
+                        <div className="relative flex min-h-0 flex-1 items-center bg-[#060709]">
+                            <div className="mx-auto flex h-full w-full max-w-[1450px] items-center px-5 py-6 sm:px-8 md:px-10 lg:px-14">
+                                <div className="grid w-full gap-6 lg:grid-cols-[0.76fr_0.24fr] lg:gap-8">
+                                    <div className="rounded-[28px] border border-white/10 bg-white/[0.045] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur-xl md:p-8">
+                                        <div className="mb-5 flex items-center gap-4">
+                                            <span className="h-px w-10 bg-[#f97316]" />
+                                            <span className="text-[10px] font-semibold uppercase tracking-[0.26em] text-[#f97316] md:text-[11px]">
+                                                {activeStage.label}
+                                            </span>
+                                        </div>
+
+                                        <div className="min-h-[136px] md:min-h-[162px]">
+                                            <h1 className="max-w-[920px] text-[32px] font-black leading-[0.98] tracking-[-0.05em] text-white sm:text-[38px] md:text-[48px] lg:text-[58px]">
+                                                {activeStage.title}
+                                            </h1>
+
+                                            <p className="mt-5 max-w-[900px] text-[15px] leading-7 text-white/72 md:text-[18px] md:leading-8">
+                                                {activeStage.body}
+                                            </p>
+                                        </div>
+
+                                        <div className="mt-7 flex flex-col gap-4 sm:flex-row sm:items-center">
+                                            {isFinalStage ? (
+                                                <>
+                                                    <Link
+                                                        href="/contact"
+                                                        className="inline-flex min-h-[56px] items-center justify-center rounded-[16px] bg-[#f97316] px-8 text-[12px] font-bold uppercase tracking-[0.06em] text-white transition duration-300 hover:-translate-y-[2px] hover:bg-[#ea580c] hover:shadow-[0_14px_30px_rgba(249,115,22,0.28)] sm:text-[13px]"
+                                                    >
+                                                        Start a Project Review
+                                                    </Link>
+
+                                                    <Link
+                                                        href="/projects"
+                                                        className="inline-flex min-h-[56px] items-center justify-center rounded-[16px] border border-white/14 bg-white/[0.03] px-8 text-[12px] font-bold uppercase tracking-[0.06em] text-white transition duration-300 hover:-translate-y-[2px] hover:border-[#f97316] hover:text-[#f97316] sm:text-[13px]"
+                                                    >
+                                                        View Projects
+                                                    </Link>
+                                                </>
+                                            ) : (
+                                                <div className="rounded-[16px] border border-white/10 bg-black/20 px-5 py-4 text-[12px] uppercase tracking-[0.18em] text-white/58 md:text-[13px]">
+                                                    Keep scrolling to complete the transformation
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="grid gap-4 self-stretch md:grid-cols-3 lg:grid-cols-1">
+                                        {stages.map((stage) => {
+                                            const active = stage.id === activeStage.id;
+                                            return (
+                                                <div
+                                                    key={stage.id}
+                                                    className={`rounded-[22px] border px-4 py-4 transition-all duration-300 ${active
+                                                            ? "border-[#f97316]/35 bg-[#f97316]/10 shadow-[0_0_0_1px_rgba(249,115,22,0.10)]"
+                                                            : "border-white/8 bg-white/[0.03]"
+                                                        }`}
+                                                >
+                                                    <div
+                                                        className={`text-[10px] font-semibold uppercase tracking-[0.22em] ${active ? "text-[#ffc98c]" : "text-white/45"
+                                                            }`}
+                                                    >
+                                                        {stage.label}
+                                                    </div>
+                                                    <div
+                                                        className={`mt-3 text-[13px] leading-6 ${active ? "text-white/90" : "text-white/60"
+                                                            }`}
+                                                    >
+                                                        {stage.title}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
-    );
-}
-
-export default function HomePage() {
-    return (
-        <main className="bg-[#f6f4ef] text-[#111111]">
-            <section className="mx-auto max-w-[1450px] px-6 pb-14 pt-16 md:px-10 md:pb-16 md:pt-20 lg:px-14 lg:pb-20 lg:pt-24">
-                <Reveal delay={0} y={18} scale={0.992}>
-                    <div className="mb-6 flex items-center gap-4">
-                        <span className="h-px w-8 bg-[#f97316] md:w-10" />
-                        <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#f97316] md:text-[11px] md:tracking-[0.28em]">
-                            WHY SPACELIFT
-                        </span>
-                    </div>
-                </Reveal>
-
-                <Reveal delay={70} y={20} scale={0.992}>
-                    <div className="premium-intro-panel relative grid gap-5 overflow-hidden rounded-[24px] border border-black/5 bg-white/55 p-5 backdrop-blur-sm md:grid-cols-3 md:gap-6 md:p-7">
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-60" />
-                        <div className="relative">
-                            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#f97316]">
-                                ONE-STOP
-                            </div>
-                            <p className="mt-3 text-[14px] leading-6 text-[#4a515b] md:text-[15px] md:leading-7">
-                                One accountable partner across consultation, translation,
-                                production, logistics, and delivery readiness.
-                            </p>
-                        </div>
-
-                        <div className="relative">
-                            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#f97316]">
-                                QUALITY
-                            </div>
-                            <p className="mt-3 text-[14px] leading-6 text-[#4a515b] md:text-[15px] md:leading-7">
-                                Premium finish control, material discipline, and stronger visual
-                                consistency across demanding environments.
-                            </p>
-                        </div>
-
-                        <div className="relative">
-                            <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#f97316]">
-                                READINESS
-                            </div>
-                            <p className="mt-3 text-[14px] leading-6 text-[#4a515b] md:text-[15px] md:leading-7">
-                                Systems built for real deployment, with more structure across
-                                packaging, sequencing, rollout, and installation support.
-                            </p>
-                        </div>
-                    </div>
-                </Reveal>
             </section>
 
-            {sections.map((section, index) => (
-                <SectionBlock key={section.id} section={section} index={index} />
-            ))}
+            <section className="relative border-t border-white/6 bg-[#0b0d10]">
+                <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                    <div className="absolute left-[8%] top-14 h-40 w-40 rounded-full bg-[#f97316]/10 blur-3xl" />
+                    <div className="absolute bottom-10 right-[10%] h-px w-44 bg-gradient-to-r from-transparent via-[#f97316]/50 to-transparent" />
+                </div>
+
+                <div className="mx-auto max-w-[1450px] px-6 py-16 md:px-10 lg:px-14 lg:py-24">
+                    <Reveal>
+                        <div className="mb-6 flex items-center gap-4">
+                            <span className="h-px w-10 bg-[#f97316]" />
+                            <span className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#f97316]">
+                                WHY SPACELIFT
+                            </span>
+                        </div>
+                    </Reveal>
+
+                    <Reveal delay={80}>
+                        <h2 className="max-w-[980px] text-[36px] font-black leading-[0.98] tracking-[-0.05em] text-white md:text-[52px] lg:text-[66px]">
+                            We help environments move from good bones to unforgettable finish.
+                        </h2>
+                    </Reveal>
+
+                    <Reveal delay={150}>
+                        <p className="mt-8 max-w-[900px] text-[18px] leading-8 text-white/68 md:text-[20px]">
+                            SpaceLift Studio is built for projects that need more than a nice concept. We
+                            support the physical side of branded environments through material logic, surface
+                            systems, finish discipline, and a more coordinated path from idea to installed
+                            result.
+                        </p>
+                    </Reveal>
+
+                    <div className="mt-12 grid gap-5 md:grid-cols-3">
+                        {[
+                            {
+                                title: "One accountable path",
+                                body: "We reduce the fragmentation that usually happens when planning, surface execution, and rollout are separated.",
+                            },
+                            {
+                                title: "Surface-led transformation",
+                                body: "Our value shows up through walls, floors, focal treatments, lighting interplay, and the total feel of the final environment.",
+                            },
+                            {
+                                title: "Built for real delivery",
+                                body: "The work is approached with production, sequencing, and install-readiness in mind, not just visual presentation.",
+                            },
+                        ].map((item, index) => (
+                            <Reveal key={item.title} delay={220 + index * 60}>
+                                <div className="rounded-[24px] border border-white/10 bg-white/[0.04] p-6 backdrop-blur-sm transition duration-500 hover:-translate-y-[3px] hover:border-[#f97316]/25 hover:bg-white/[0.06]">
+                                    <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#f97316]">
+                                        0{index + 1}
+                                    </div>
+                                    <h3 className="mt-4 text-[24px] font-black leading-[1.02] tracking-[-0.03em] text-white">
+                                        {item.title}
+                                    </h3>
+                                    <p className="mt-4 text-[15px] leading-7 text-white/68">{item.body}</p>
+                                </div>
+                            </Reveal>
+                        ))}
+                    </div>
+                </div>
+            </section>
         </main>
     );
 }
