@@ -13,8 +13,8 @@ type Stage = {
 };
 
 const TOTAL_FRAMES = 160;
-const DESKTOP_SCROLL_VH = 380;
-const MOBILE_SCROLL_VH = 300;
+const DESKTOP_SCROLL_VH = 320;
+const MOBILE_SCROLL_VH = 240;
 
 const stages: Stage[] = [
     {
@@ -42,7 +42,7 @@ const stages: Stage[] = [
         body:
             "Integrated panel systems, embedded architectural graphics, and stronger material relationships begin to shape how the environment is perceived. The space starts to feel authored rather than merely completed.",
         progressStart: 0.4,
-        progressEnd: 0.65,
+        progressEnd: 0.64,
     },
     {
         id: "finish",
@@ -50,7 +50,7 @@ const stages: Stage[] = [
         title: "Premium impact comes from cohesion, not isolated moments.",
         body:
             "As surface systems, focal treatments, material contrast, and lighting depth lock together, the room gains authority. This is where structure becomes emotion and the environment starts to feel worth remembering.",
-        progressStart: 0.65,
+        progressStart: 0.64,
         progressEnd: 0.86,
     },
     {
@@ -74,6 +74,26 @@ function padFrameNumber(frame: number) {
 
 function getFrameSrc(frame: number) {
     return `/images/home-hero-sequence/ezgif-frame-${padFrameNumber(frame)}.jpg`;
+}
+
+function getNearestLoadedFrame(
+    targetFrame: number,
+    loaded: boolean[],
+    totalFrames: number
+) {
+    const targetIndex = targetFrame - 1;
+
+    if (loaded[targetIndex]) return targetFrame;
+
+    for (let offset = 1; offset < totalFrames; offset += 1) {
+        const lower = targetIndex - offset;
+        const upper = targetIndex + offset;
+
+        if (lower >= 0 && loaded[lower]) return lower + 1;
+        if (upper < totalFrames && loaded[upper]) return upper + 1;
+    }
+
+    return 1;
 }
 
 function drawImageCover(canvas: HTMLCanvasElement, image: HTMLImageElement) {
@@ -166,22 +186,26 @@ function Reveal({
 }
 
 function StageIcon({ index, active }: { index: number; active?: boolean }) {
-    const stroke = active ? "#ffc98c" : "rgba(255,255,255,0.55)";
-    const fill = active ? "rgba(249,115,22,0.18)" : "rgba(255,255,255,0.04)";
+    const stroke = active ? "#ffc98c" : "rgba(255,255,255,0.56)";
+    const fill = active ? "rgba(249,115,22,0.16)" : "rgba(255,255,255,0.04)";
+    const border = active ? "rgba(249,115,22,0.30)" : "rgba(255,255,255,0.10)";
 
     return (
         <div
             className="flex h-11 w-11 items-center justify-center rounded-full border"
-            style={{
-                borderColor: active ? "rgba(249,115,22,0.35)" : "rgba(255,255,255,0.12)",
-                background: fill,
-            }}
+            style={{ background: fill, borderColor: border }}
         >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 {index === 0 && (
                     <>
                         <path d="M4 19h16" stroke={stroke} strokeWidth="1.8" strokeLinecap="round" />
-                        <path d="M6 19V9l6-4 6 4v10" stroke={stroke} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                        <path
+                            d="M6 19V9l6-4 6 4v10"
+                            stroke={stroke}
+                            strokeWidth="1.8"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
                     </>
                 )}
                 {index === 1 && (
@@ -200,12 +224,23 @@ function StageIcon({ index, active }: { index: number; active?: boolean }) {
                 )}
                 {index === 3 && (
                     <>
-                        <path d="M12 4l2.3 4.7L20 9.5l-4 3.8.9 5.2L12 16l-4.9 2.5.9-5.2-4-3.8 5.7-.8L12 4z" stroke={stroke} strokeWidth="1.6" strokeLinejoin="round" />
+                        <path
+                            d="M12 4l2.3 4.7L20 9.5l-4 3.8.9 5.2L12 16l-4.9 2.5.9-5.2-4-3.8 5.7-.8L12 4z"
+                            stroke={stroke}
+                            strokeWidth="1.6"
+                            strokeLinejoin="round"
+                        />
                     </>
                 )}
                 {index === 4 && (
                     <>
-                        <path d="M5 12l4.5 4.5L19 7" stroke={stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        <path
+                            d="M5 12l4.5 4.5L19 7"
+                            stroke={stroke}
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
                     </>
                 )}
             </svg>
@@ -219,9 +254,11 @@ export default function HomePage() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const imagesRef = useRef<(HTMLImageElement | null)[]>([]);
     const loadedRef = useRef<boolean[]>([]);
-    const [currentFrame, setCurrentFrame] = useState(1);
-    const [loadedFrame, setLoadedFrame] = useState(1);
+    const targetFrameRef = useRef(1);
+    const smoothFrameRef = useRef(1);
+
     const [progress, setProgress] = useState(0);
+    const [displayedFrame, setDisplayedFrame] = useState(1);
 
     const scrollHeight = isMobile ? MOBILE_SCROLL_VH : DESKTOP_SCROLL_VH;
 
@@ -238,32 +275,16 @@ export default function HomePage() {
     const activeStageIndex = stages.findIndex((s) => s.id === activeStage.id);
     const isFinalStage = activeStageIndex === stages.length - 1;
 
-    const findNearestLoadedFrame = (targetFrame: number) => {
-        const targetIndex = targetFrame - 1;
-
-        if (loadedRef.current[targetIndex]) return targetFrame;
-
-        for (let offset = 1; offset < TOTAL_FRAMES; offset += 1) {
-            const lower = targetIndex - offset;
-            const upper = targetIndex + offset;
-
-            if (lower >= 0 && loadedRef.current[lower]) return lower + 1;
-            if (upper < TOTAL_FRAMES && loadedRef.current[upper]) return upper + 1;
-        }
-
-        return 1;
-    };
-
     const drawFrame = (frameNumber: number) => {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
-        const nearest = findNearestLoadedFrame(frameNumber);
+        const nearest = getNearestLoadedFrame(frameNumber, loadedRef.current, TOTAL_FRAMES);
         const image = imagesRef.current[nearest - 1];
         if (!image) return;
 
         drawImageCover(canvas, image);
-        setLoadedFrame(nearest);
+        setDisplayedFrame((prev) => (prev !== nearest ? nearest : prev));
     };
 
     useEffect(() => {
@@ -276,12 +297,14 @@ export default function HomePage() {
             const img = new window.Image();
             img.decoding = "async";
             img.src = getFrameSrc(frame);
+
             img.onload = () => {
                 if (cancelled) return;
                 imagesRef.current[frame - 1] = img;
                 loadedRef.current[frame - 1] = true;
                 if (frame === 1) drawFrame(1);
             };
+
             img.onerror = () => {
                 console.error(`Missing frame: ${getFrameSrc(frame)}`);
             };
@@ -297,11 +320,42 @@ export default function HomePage() {
     }, []);
 
     useEffect(() => {
-        const onResize = () => drawFrame(currentFrame);
+        let raf = 0;
+
+        const animate = () => {
+            const current = smoothFrameRef.current;
+            const target = targetFrameRef.current;
+            const diff = target - current;
+
+            if (Math.abs(diff) < 0.02) {
+                smoothFrameRef.current = target;
+            } else {
+                smoothFrameRef.current = current + diff * 0.16;
+            }
+
+            const frameToDraw = clamp(Math.round(smoothFrameRef.current), 1, TOTAL_FRAMES);
+            drawFrame(frameToDraw);
+
+            raf = window.requestAnimationFrame(animate);
+        };
+
+        raf = window.requestAnimationFrame(animate);
+
+        return () => {
+            window.cancelAnimationFrame(raf);
+        };
+    }, []);
+
+    useEffect(() => {
+        const onResize = () => {
+            const frameToDraw = clamp(Math.round(smoothFrameRef.current), 1, TOTAL_FRAMES);
+            drawFrame(frameToDraw);
+        };
+
         onResize();
         window.addEventListener("resize", onResize);
         return () => window.removeEventListener("resize", onResize);
-    }, [currentFrame]);
+    }, []);
 
     useEffect(() => {
         let ticking = false;
@@ -322,9 +376,8 @@ export default function HomePage() {
                 TOTAL_FRAMES
             );
 
-            setProgress(nextProgress);
-            setCurrentFrame((prev) => (prev !== nextFrame ? nextFrame : prev));
-            drawFrame(nextFrame);
+            setProgress((prev) => (prev !== nextProgress ? nextProgress : prev));
+            targetFrameRef.current = nextFrame;
         };
 
         const onScrollOrResize = () => {
@@ -360,19 +413,19 @@ export default function HomePage() {
 
                 <div className="pointer-events-none fixed inset-x-0 top-0 z-10 h-screen">
                     <div className="flex h-full flex-col">
-                        <div className="relative h-[56vh] overflow-hidden border-b border-white/8 bg-[#060709] sm:h-[58vh] lg:h-[60vh]">
+                        <div className="relative h-[58vh] shrink-0 overflow-hidden border-b border-white/8 bg-[#060709] lg:h-[60vh]">
                             <canvas
                                 ref={canvasRef}
                                 className="block h-full w-full"
                                 aria-label="Scroll-driven architectural transformation"
                             />
 
-                            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.10)_0%,rgba(0,0,0,0.03)_45%,rgba(0,0,0,0.30)_100%)]" />
+                            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08)_0%,rgba(0,0,0,0.02)_50%,rgba(0,0,0,0.22)_100%)]" />
                             <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#060709]/75 to-transparent" />
 
                             <div className="absolute left-4 top-4 rounded-full border border-white/12 bg-black/25 px-4 py-2 backdrop-blur-md sm:left-8 sm:top-8">
                                 <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/82 sm:text-[11px]">
-                                    Scroll Film · Frame {padFrameNumber(loadedFrame)} / {TOTAL_FRAMES}
+                                    Scroll Film · Frame {padFrameNumber(displayedFrame)} / {TOTAL_FRAMES}
                                 </span>
                             </div>
 
@@ -395,25 +448,26 @@ export default function HomePage() {
                             </div>
                         </div>
 
-                        <div className="flex min-h-0 flex-1 items-center border-t border-white/4 bg-[#060709]/92 backdrop-blur-md">
+                        <div className="flex min-h-0 flex-1 items-center border-t border-white/4 bg-[#060709]">
                             <div className="mx-auto w-full max-w-[1450px] px-4 py-5 sm:px-8 md:px-10 lg:px-14">
                                 <div className="grid gap-5 lg:grid-cols-[0.8fr_0.2fr] lg:gap-8">
-                                    <div className="rounded-[24px] border border-white/10 bg-white/[0.045] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur-xl sm:rounded-[28px] sm:p-6 md:p-8">
+                                    <div className="rounded-[24px] border border-white/10 bg-[#0b0d10] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.22)] sm:rounded-[28px] sm:p-6 md:p-8">
                                         <div className="mb-5 flex items-center gap-4">
                                             <StageIcon index={activeStageIndex} active />
-                                            <div>
-                                                <div className="text-[10px] font-semibold uppercase tracking-[0.26em] text-[#f97316] md:text-[11px]">
-                                                    {activeStage.label}
-                                                </div>
+                                            <div className="text-[10px] font-semibold uppercase tracking-[0.26em] text-[#f97316] md:text-[11px]">
+                                                {activeStage.label}
                                             </div>
                                         </div>
 
-                                        <div className="min-h-[150px] sm:min-h-[162px] md:min-h-[176px]">
-                                            <h1 className="max-w-[920px] text-[28px] font-black leading-[0.98] tracking-[-0.05em] text-white sm:text-[36px] md:text-[44px] lg:text-[56px]">
+                                        <div
+                                            key={activeStage.id}
+                                            className="homepage-stage-fade min-h-[150px] sm:min-h-[162px] md:min-h-[176px]"
+                                        >
+                                            <h1 className="max-w-[900px] text-[28px] font-black leading-[1.02] tracking-[-0.05em] text-white sm:text-[34px] md:text-[42px] lg:text-[52px] xl:text-[56px]">
                                                 {activeStage.title}
                                             </h1>
 
-                                            <p className="mt-5 max-w-[900px] text-[14px] leading-7 text-white/72 sm:text-[15px] md:text-[17px] md:leading-8">
+                                            <p className="mt-5 max-w-[860px] text-[14px] leading-7 text-white/72 sm:text-[15px] md:text-[17px] md:leading-8">
                                                 {activeStage.body}
                                             </p>
                                         </div>
@@ -545,6 +599,23 @@ export default function HomePage() {
                     </div>
                 </section>
             </div>
+
+            <style jsx global>{`
+        .homepage-stage-fade {
+          animation: homepageStageFade 420ms ease;
+        }
+
+        @keyframes homepageStageFade {
+          0% {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
         </main>
     );
 }
