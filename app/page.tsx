@@ -13,8 +13,9 @@ type Stage = {
 };
 
 const TOTAL_FRAMES = 160;
-const DESKTOP_SCROLL_VH = 320;
-const MOBILE_SCROLL_VH = 240;
+const HEADER_OFFSET = 74;
+const DESKTOP_SCROLL_VH = 340;
+const MOBILE_SCROLL_VH = 260;
 
 const stages: Stage[] = [
     {
@@ -74,26 +75,6 @@ function padFrameNumber(frame: number) {
 
 function getFrameSrc(frame: number) {
     return `/images/home-hero-sequence/ezgif-frame-${padFrameNumber(frame)}.jpg`;
-}
-
-function getNearestLoadedFrame(
-    targetFrame: number,
-    loaded: boolean[],
-    totalFrames: number
-) {
-    const targetIndex = targetFrame - 1;
-
-    if (loaded[targetIndex]) return targetFrame;
-
-    for (let offset = 1; offset < totalFrames; offset += 1) {
-        const lower = targetIndex - offset;
-        const upper = targetIndex + offset;
-
-        if (lower >= 0 && loaded[lower]) return lower + 1;
-        if (upper < totalFrames && loaded[upper]) return upper + 1;
-    }
-
-    return 1;
 }
 
 function drawImageCover(canvas: HTMLCanvasElement, image: HTMLImageElement) {
@@ -192,7 +173,7 @@ function StageIcon({ index, active }: { index: number; active?: boolean }) {
 
     return (
         <div
-            className="flex h-11 w-11 items-center justify-center rounded-full border"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border"
             style={{ background: fill, borderColor: border }}
         >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -261,11 +242,7 @@ export default function HomePage() {
     const [displayedFrame, setDisplayedFrame] = useState(1);
 
     const scrollHeight = isMobile ? MOBILE_SCROLL_VH : DESKTOP_SCROLL_VH;
-
-    const frameSources = useMemo(
-        () => Array.from({ length: TOTAL_FRAMES }, (_, i) => getFrameSrc(i + 1)),
-        []
-    );
+    const filmViewportHeight = `calc(100svh - ${HEADER_OFFSET}px)`;
 
     const activeStage =
         stages.find(
@@ -330,7 +307,7 @@ export default function HomePage() {
             if (Math.abs(diff) < 0.02) {
                 smoothFrameRef.current = target;
             } else {
-                smoothFrameRef.current = current + diff * 0.16;
+                smoothFrameRef.current = current + diff * 0.14;
             }
 
             const frameToDraw = clamp(Math.round(smoothFrameRef.current), 1, TOTAL_FRAMES);
@@ -411,9 +388,15 @@ export default function HomePage() {
                     <div className="absolute right-[-4%] top-[12%] h-44 w-44 rounded-full bg-white/[0.04] blur-3xl" />
                 </div>
 
-                <div className="pointer-events-none fixed inset-x-0 top-0 z-10 h-screen">
+                <div
+                    className="fixed inset-x-0 z-10"
+                    style={{ top: `${HEADER_OFFSET}px`, height: filmViewportHeight }}
+                >
                     <div className="flex h-full flex-col">
-                        <div className="relative h-[58vh] shrink-0 overflow-hidden border-b border-white/8 bg-[#060709] lg:h-[60vh]">
+                        <div
+                            className={`relative shrink-0 overflow-hidden border-b border-white/8 bg-[#060709] ${isMobile ? "h-[42%]" : "h-[60%]"
+                                }`}
+                        >
                             <canvas
                                 ref={canvasRef}
                                 className="block h-full w-full"
@@ -421,7 +404,6 @@ export default function HomePage() {
                             />
 
                             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08)_0%,rgba(0,0,0,0.02)_50%,rgba(0,0,0,0.22)_100%)]" />
-                            <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#060709]/75 to-transparent" />
 
                             <div className="absolute left-4 top-4 rounded-full border border-white/12 bg-black/25 px-4 py-2 backdrop-blur-md sm:left-8 sm:top-8">
                                 <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/82 sm:text-[11px]">
@@ -448,10 +430,16 @@ export default function HomePage() {
                             </div>
                         </div>
 
-                        <div className="flex min-h-0 flex-1 items-center border-t border-white/4 bg-[#060709]">
-                            <div className="mx-auto w-full max-w-[1450px] px-4 py-5 sm:px-8 md:px-10 lg:px-14">
-                                <div className="grid gap-5 lg:grid-cols-[0.8fr_0.2fr] lg:gap-8">
-                                    <div className="rounded-[24px] border border-white/10 bg-[#0b0d10] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.22)] sm:rounded-[28px] sm:p-6 md:p-8">
+                        <div
+                            className={`min-h-0 flex-1 border-t border-white/4 bg-[#060709] ${isMobile ? "overflow-y-hidden" : ""
+                                }`}
+                        >
+                            <div className="mx-auto h-full w-full max-w-[1450px] px-4 py-4 sm:px-8 md:px-10 lg:px-14 lg:py-5">
+                                <div
+                                    className={`grid h-full gap-4 lg:gap-8 ${isMobile ? "grid-cols-1" : "lg:grid-cols-[0.8fr_0.2fr]"
+                                        }`}
+                                >
+                                    <div className="min-h-0 rounded-[24px] border border-white/10 bg-[#0b0d10] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.22)] sm:rounded-[28px] sm:p-6 md:p-8">
                                         <div className="mb-5 flex items-center gap-4">
                                             <StageIcon index={activeStageIndex} active />
                                             <div className="text-[10px] font-semibold uppercase tracking-[0.26em] text-[#f97316] md:text-[11px]">
@@ -461,18 +449,18 @@ export default function HomePage() {
 
                                         <div
                                             key={activeStage.id}
-                                            className="homepage-stage-fade min-h-[150px] sm:min-h-[162px] md:min-h-[176px]"
+                                            className="homepage-stage-fade flex min-h-[0] flex-col justify-start"
                                         >
-                                            <h1 className="max-w-[900px] text-[28px] font-black leading-[1.02] tracking-[-0.05em] text-white sm:text-[34px] md:text-[42px] lg:text-[52px] xl:text-[56px]">
+                                            <h1 className="max-w-[900px] text-[24px] font-black leading-[1.02] tracking-[-0.05em] text-white sm:text-[32px] md:text-[40px] lg:text-[50px]">
                                                 {activeStage.title}
                                             </h1>
 
-                                            <p className="mt-5 max-w-[860px] text-[14px] leading-7 text-white/72 sm:text-[15px] md:text-[17px] md:leading-8">
+                                            <p className="mt-4 max-w-[860px] text-[14px] leading-7 text-white/72 sm:text-[15px] md:text-[17px] md:leading-8">
                                                 {activeStage.body}
                                             </p>
                                         </div>
 
-                                        <div className="mt-7">
+                                        <div className="mt-6">
                                             {isFinalStage ? (
                                                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                                                     <Link
@@ -497,38 +485,75 @@ export default function HomePage() {
                                         </div>
                                     </div>
 
-                                    <div className="grid gap-3 md:grid-cols-3 lg:grid-cols-1">
-                                        {stages.map((stage, index) => {
-                                            const active = index === activeStageIndex;
-                                            return (
-                                                <div
-                                                    key={stage.id}
-                                                    className={`rounded-[20px] border px-4 py-4 transition-all duration-300 ${active
-                                                            ? "border-[#f97316]/35 bg-[#f97316]/10 shadow-[0_0_0_1px_rgba(249,115,22,0.10)]"
-                                                            : "border-white/8 bg-white/[0.03]"
-                                                        }`}
-                                                >
-                                                    <div className="flex items-start gap-3">
-                                                        <StageIcon index={index} active={active} />
-                                                        <div className="min-w-0">
-                                                            <div
-                                                                className={`text-[10px] font-semibold uppercase tracking-[0.22em] ${active ? "text-[#ffc98c]" : "text-white/45"
-                                                                    }`}
-                                                            >
-                                                                {stage.label}
-                                                            </div>
-                                                            <div
-                                                                className={`mt-2 text-[13px] leading-6 ${active ? "text-white/90" : "text-white/60"
-                                                                    }`}
-                                                            >
-                                                                {stage.title}
+                                    {!isMobile && (
+                                        <div className="grid gap-3">
+                                            {stages.map((stage, index) => {
+                                                const active = index === activeStageIndex;
+                                                return (
+                                                    <div
+                                                        key={stage.id}
+                                                        className={`rounded-[20px] border px-4 py-4 transition-all duration-300 ${active
+                                                                ? "border-[#f97316]/35 bg-[#f97316]/10 shadow-[0_0_0_1px_rgba(249,115,22,0.10)]"
+                                                                : "border-white/8 bg-white/[0.03]"
+                                                            }`}
+                                                    >
+                                                        <div className="flex items-start gap-3">
+                                                            <StageIcon index={index} active={active} />
+                                                            <div className="min-w-0">
+                                                                <div
+                                                                    className={`text-[10px] font-semibold uppercase tracking-[0.22em] ${active ? "text-[#ffc98c]" : "text-white/45"
+                                                                        }`}
+                                                                >
+                                                                    {stage.label}
+                                                                </div>
+                                                                <div
+                                                                    className={`mt-2 text-[13px] leading-6 ${active ? "text-white/90" : "text-white/60"
+                                                                        }`}
+                                                                >
+                                                                    {stage.title}
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
+
+                                    {isMobile && (
+                                        <div className="grid gap-3">
+                                            {stages.map((stage, index) => {
+                                                const active = index === activeStageIndex;
+                                                return (
+                                                    <div
+                                                        key={stage.id}
+                                                        className={`rounded-[20px] border px-4 py-4 transition-all duration-300 ${active
+                                                                ? "border-[#f97316]/35 bg-[#f97316]/10 shadow-[0_0_0_1px_rgba(249,115,22,0.10)]"
+                                                                : "border-white/8 bg-white/[0.03]"
+                                                            }`}
+                                                    >
+                                                        <div className="flex items-start gap-3">
+                                                            <StageIcon index={index} active={active} />
+                                                            <div className="min-w-0">
+                                                                <div
+                                                                    className={`text-[10px] font-semibold uppercase tracking-[0.22em] ${active ? "text-[#ffc98c]" : "text-white/45"
+                                                                        }`}
+                                                                >
+                                                                    {stage.label}
+                                                                </div>
+                                                                <div
+                                                                    className={`mt-2 text-[13px] leading-6 ${active ? "text-white/90" : "text-white/60"
+                                                                        }`}
+                                                                >
+                                                                    {stage.title}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -536,69 +561,69 @@ export default function HomePage() {
                 </div>
             </section>
 
-            <div className="relative z-20 mt-[100vh]">
-                <section className="relative border-t border-white/6 bg-[#0b0d10]">
-                    <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                        <div className="absolute left-[8%] top-14 h-40 w-40 rounded-full bg-[#f97316]/10 blur-3xl" />
-                        <div className="absolute bottom-10 right-[10%] h-px w-44 bg-gradient-to-r from-transparent via-[#f97316]/50 to-transparent" />
-                    </div>
+            <div style={{ height: `calc(${scrollHeight}vh - 100svh + ${HEADER_OFFSET}px)` }} />
 
-                    <div className="mx-auto max-w-[1450px] px-6 py-16 md:px-10 lg:px-14 lg:py-24">
-                        <Reveal>
-                            <div className="mb-6 flex items-center gap-4">
-                                <span className="h-px w-10 bg-[#f97316]" />
-                                <span className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#f97316]">
-                                    WHY SPACELIFT
-                                </span>
-                            </div>
-                        </Reveal>
+            <section className="relative z-20 border-t border-white/6 bg-[#0b0d10]">
+                <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                    <div className="absolute left-[8%] top-14 h-40 w-40 rounded-full bg-[#f97316]/10 blur-3xl" />
+                    <div className="absolute bottom-10 right-[10%] h-px w-44 bg-gradient-to-r from-transparent via-[#f97316]/50 to-transparent" />
+                </div>
 
-                        <Reveal delay={80}>
-                            <h2 className="max-w-[980px] text-[36px] font-black leading-[0.98] tracking-[-0.05em] text-white md:text-[52px] lg:text-[66px]">
-                                We help environments move from good bones to unforgettable finish.
-                            </h2>
-                        </Reveal>
-
-                        <Reveal delay={150}>
-                            <p className="mt-8 max-w-[900px] text-[18px] leading-8 text-white/68 md:text-[20px]">
-                                SpaceLift Studio is built for projects that need more than a nice concept. We
-                                support the physical side of branded environments through material logic, surface
-                                systems, finish discipline, and a more coordinated path from idea to installed
-                                result.
-                            </p>
-                        </Reveal>
-
-                        <div className="mt-12 grid gap-5 md:grid-cols-3">
-                            {[
-                                {
-                                    title: "One accountable path",
-                                    body: "We reduce the fragmentation that usually happens when planning, surface execution, and rollout are separated.",
-                                },
-                                {
-                                    title: "Surface-led transformation",
-                                    body: "Our value shows up through walls, floors, focal treatments, lighting interplay, and the total feel of the final environment.",
-                                },
-                                {
-                                    title: "Built for real delivery",
-                                    body: "The work is approached with production, sequencing, and install-readiness in mind, not just visual presentation.",
-                                },
-                            ].map((item, index) => (
-                                <Reveal key={item.title} delay={220 + index * 60}>
-                                    <div className="rounded-[24px] border border-white/10 bg-white/[0.04] p-6 backdrop-blur-sm transition duration-500 hover:-translate-y-[3px] hover:border-[#f97316]/25 hover:bg-white/[0.06]">
-                                        <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#f97316]">
-                                            0{index + 1}
-                                        </div>
-                                        <h3 className="mt-4 text-[24px] font-black leading-[1.02] tracking-[-0.03em] text-white">
-                                            {item.title}
-                                        </h3>
-                                        <p className="mt-4 text-[15px] leading-7 text-white/68">{item.body}</p>
-                                    </div>
-                                </Reveal>
-                            ))}
+                <div className="mx-auto max-w-[1450px] px-6 py-16 md:px-10 lg:px-14 lg:py-24">
+                    <Reveal>
+                        <div className="mb-6 flex items-center gap-4">
+                            <span className="h-px w-10 bg-[#f97316]" />
+                            <span className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#f97316]">
+                                WHY SPACELIFT
+                            </span>
                         </div>
+                    </Reveal>
+
+                    <Reveal delay={80}>
+                        <h2 className="max-w-[980px] text-[36px] font-black leading-[0.98] tracking-[-0.05em] text-white md:text-[52px] lg:text-[66px]">
+                            We help environments move from good bones to unforgettable finish.
+                        </h2>
+                    </Reveal>
+
+                    <Reveal delay={150}>
+                        <p className="mt-8 max-w-[900px] text-[18px] leading-8 text-white/68 md:text-[20px]">
+                            SpaceLift Studio is built for projects that need more than a nice concept. We
+                            support the physical side of branded environments through material logic, surface
+                            systems, finish discipline, and a more coordinated path from idea to installed
+                            result.
+                        </p>
+                    </Reveal>
+
+                    <div className="mt-12 grid gap-5 md:grid-cols-3">
+                        {[
+                            {
+                                title: "One accountable path",
+                                body: "We reduce the fragmentation that usually happens when planning, surface execution, and rollout are separated.",
+                            },
+                            {
+                                title: "Surface-led transformation",
+                                body: "Our value shows up through walls, floors, focal treatments, lighting interplay, and the total feel of the final environment.",
+                            },
+                            {
+                                title: "Built for real delivery",
+                                body: "The work is approached with production, sequencing, and install-readiness in mind, not just visual presentation.",
+                            },
+                        ].map((item, index) => (
+                            <Reveal key={item.title} delay={220 + index * 60}>
+                                <div className="rounded-[24px] border border-white/10 bg-white/[0.04] p-6 backdrop-blur-sm transition duration-500 hover:-translate-y-[3px] hover:border-[#f97316]/25 hover:bg-white/[0.06]">
+                                    <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#f97316]">
+                                        0{index + 1}
+                                    </div>
+                                    <h3 className="mt-4 text-[24px] font-black leading-[1.02] tracking-[-0.03em] text-white">
+                                        {item.title}
+                                    </h3>
+                                    <p className="mt-4 text-[15px] leading-7 text-white/68">{item.body}</p>
+                                </div>
+                            </Reveal>
+                        ))}
                     </div>
-                </section>
-            </div>
+                </div>
+            </section>
 
             <style jsx global>{`
         .homepage-stage-fade {
@@ -618,4 +643,24 @@ export default function HomePage() {
       `}</style>
         </main>
     );
+}
+
+function getNearestLoadedFrame(
+    targetFrame: number,
+    loaded: boolean[],
+    totalFrames: number
+) {
+    const targetIndex = targetFrame - 1;
+
+    if (loaded[targetIndex]) return targetFrame;
+
+    for (let offset = 1; offset < totalFrames; offset += 1) {
+        const lower = targetIndex - offset;
+        const upper = targetIndex + offset;
+
+        if (lower >= 0 && loaded[lower]) return lower + 1;
+        if (upper < totalFrames && loaded[upper]) return upper + 1;
+    }
+
+    return 1;
 }
