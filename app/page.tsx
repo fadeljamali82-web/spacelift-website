@@ -502,8 +502,8 @@ export default function HomePage() {
                                                 <div
                                                     key={stage.id}
                                                     className={`rounded-[20px] border px-4 py-4 transition-all duration-300 ${active
-                                                            ? "border-[#f97316]/35 bg-[#f97316]/10 shadow-[0_0_0_1px_rgba(249,115,22,0.10)]"
-                                                            : "border-white/8 bg-white/[0.03]"
+                                                        ? "border-[#f97316]/35 bg-[#f97316]/10 shadow-[0_0_0_1px_rgba(249,115,22,0.10)]"
+                                                        : "border-white/8 bg-white/[0.03]"
                                                         }`}
                                                 >
                                                     <div className="flex items-start gap-3">
