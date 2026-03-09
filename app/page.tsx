@@ -255,7 +255,6 @@ export default function HomePage() {
     const smoothFrameRef = useRef(1);
 
     const [progress, setProgress] = useState(0);
-    const [displayedFrame, setDisplayedFrame] = useState(1);
 
     const scrollHeight = isMobile ? MOBILE_SCROLL_VH : DESKTOP_SCROLL_VH;
     const filmViewportHeight = `calc(100svh - ${HEADER_OFFSET}px)`;
@@ -277,7 +276,6 @@ export default function HomePage() {
         if (!image) return;
 
         drawImageCover(canvas, image);
-        setDisplayedFrame((prev) => (prev !== nearest ? nearest : prev));
     };
 
     useEffect(() => {
@@ -421,12 +419,6 @@ export default function HomePage() {
 
                             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08)_0%,rgba(0,0,0,0.02)_50%,rgba(0,0,0,0.22)_100%)]" />
 
-                            <div className="absolute left-4 top-4 rounded-full border border-white/12 bg-black/25 px-4 py-2 backdrop-blur-md sm:left-8 sm:top-8">
-                                <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/82 sm:text-[11px]">
-                                    Scroll Film · Frame {padFrameNumber(displayedFrame)} / {TOTAL_FRAMES}
-                                </span>
-                            </div>
-
                             <div className="absolute bottom-4 left-4 right-4 sm:bottom-8 sm:left-8 sm:right-8">
                                 <div className="flex items-center justify-between gap-4 rounded-full border border-white/10 bg-black/25 px-4 py-3 backdrop-blur-md">
                                     <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/76 sm:text-[11px]">
@@ -502,8 +494,8 @@ export default function HomePage() {
                                                 <div
                                                     key={stage.id}
                                                     className={`rounded-[20px] border px-4 py-4 transition-all duration-300 ${active
-                                                        ? "border-[#f97316]/35 bg-[#f97316]/10 shadow-[0_0_0_1px_rgba(249,115,22,0.10)]"
-                                                        : "border-white/8 bg-white/[0.03]"
+                                                            ? "border-[#f97316]/35 bg-[#f97316]/10 shadow-[0_0_0_1px_rgba(249,115,22,0.10)]"
+                                                            : "border-white/8 bg-white/[0.03]"
                                                         }`}
                                                 >
                                                     <div className="flex items-start gap-3">
