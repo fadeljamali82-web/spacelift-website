@@ -21,7 +21,7 @@ const stages: Stage[] = [
         label: "STAGE 01 · BASE CONDITION",
         title: "A beautiful architectural shell can still feel unresolved.",
         body:
-            "This is where many environments begin: premium volume, strong proportions, and good bones, but without the surface language, finish hierarchy, and spatial identity needed to make the space unforgettable.",
+            "This is where many environments begin: strong proportions, premium volume, and architectural quality, but without the surface language, finish hierarchy, and spatial identity needed to make the space unforgettable.",
         progressStart: 0,
         progressEnd: 0.22,
     },
@@ -30,7 +30,7 @@ const stages: Stage[] = [
         label: "STAGE 02 · SURFACE ACTIVATION",
         title: "The transformation begins at the surface level, not with clutter.",
         body:
-            "Floor treatment starts to define movement, visual rhythm, and atmosphere. The goal is not to add noise. It is to introduce control, contrast, and a more intentional spatial experience.",
+            "Floor treatment starts to define movement, atmosphere, and control. The goal is not to add noise. It is to introduce rhythm, contrast, and a more intentional spatial experience.",
         progressStart: 0.22,
         progressEnd: 0.44,
     },
@@ -72,7 +72,7 @@ function padFrameNumber(frame: number) {
 }
 
 function getFrameSrc(frame: number) {
-    return `/images/home-hero-sequence/v1/ezgif-frame-${padFrameNumber(frame)}.jpg`;
+    return `/images/home-hero-sequence/ezgif-frame-${padFrameNumber(frame)}.jpg`;
 }
 
 function getActiveStage(progress: number) {
@@ -135,6 +135,7 @@ export default function HomePage() {
     const scrollSectionRef = useRef<HTMLElement | null>(null);
     const [progress, setProgress] = useState(0);
     const [frame, setFrame] = useState(1);
+    const [loadedFrame, setLoadedFrame] = useState(1);
 
     const frameSources = useMemo(
         () => Array.from({ length: TOTAL_FRAMES }, (_, i) => getFrameSrc(i + 1)),
@@ -145,8 +146,8 @@ export default function HomePage() {
     const isFinalStage = activeStage.id === "stage-5";
 
     useEffect(() => {
-        const preloadCriticalFrames = [1, 2, 3, 4, 5, 12, 24, 36, 48, 60, 80, 100, 120, 140, 160];
-        preloadCriticalFrames.forEach((n) => {
+        const criticalFrames = [1, 2, 3, 4, 5, 12, 24, 36, 48, 60, 80, 100, 120, 140, 160];
+        criticalFrames.forEach((n) => {
             const img = new window.Image();
             img.src = getFrameSrc(n);
         });
@@ -170,9 +171,11 @@ export default function HomePage() {
         };
 
         if ("requestIdleCallback" in window) {
-            (window as Window & {
-                requestIdleCallback: (cb: () => void) => number;
-            }).requestIdleCallback(preloadBatch);
+            (
+                window as Window & {
+                    requestIdleCallback: (cb: () => void) => number;
+                }
+            ).requestIdleCallback(preloadBatch);
         } else {
             window.setTimeout(preloadBatch, 300);
         }
@@ -239,24 +242,24 @@ export default function HomePage() {
                     </div>
 
                     <div className="relative flex h-full flex-col">
-                        <div className="relative h-[60vh] shrink-0 overflow-hidden border-b border-white/8">
+                        <div className="relative h-[60vh] shrink-0 overflow-hidden border-b border-white/8 bg-[#060709]">
                             <img
-                                key={frame}
                                 src={getFrameSrc(frame)}
                                 alt="Space transformation sequence"
                                 className="h-full w-full object-cover"
                                 loading="eager"
                                 decoding="async"
                                 fetchPriority="high"
+                                onLoad={() => setLoadedFrame(frame)}
+                                onError={() => console.error(`Missing frame: ${getFrameSrc(frame)}`)}
                             />
 
                             <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.16)_0%,rgba(0,0,0,0.06)_45%,rgba(0,0,0,0.38)_100%)]" />
-
                             <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[#060709]/70 to-transparent" />
 
                             <div className="absolute left-5 top-5 z-10 rounded-full border border-white/12 bg-black/25 px-4 py-2 backdrop-blur-md sm:left-8 sm:top-8">
                                 <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/82 sm:text-[11px]">
-                                    Scroll Film · Frame {padFrameNumber(frame)} / {TOTAL_FRAMES}
+                                    Scroll Film · Frame {padFrameNumber(loadedFrame)} / {TOTAL_FRAMES}
                                 </span>
                             </div>
 
