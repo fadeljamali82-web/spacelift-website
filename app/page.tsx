@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Stage = {
     id: string;
@@ -75,6 +75,26 @@ function padFrameNumber(frame: number) {
 
 function getFrameSrc(frame: number) {
     return `/images/home-hero-sequence/ezgif-frame-${padFrameNumber(frame)}.jpg`;
+}
+
+function getNearestLoadedFrame(
+    targetFrame: number,
+    loaded: boolean[],
+    totalFrames: number
+) {
+    const targetIndex = targetFrame - 1;
+
+    if (loaded[targetIndex]) return targetFrame;
+
+    for (let offset = 1; offset < totalFrames; offset += 1) {
+        const lower = targetIndex - offset;
+        const upper = targetIndex + offset;
+
+        if (lower >= 0 && loaded[lower]) return lower + 1;
+        if (upper < totalFrames && loaded[upper]) return upper + 1;
+    }
+
+    return 1;
 }
 
 function drawImageCover(canvas: HTMLCanvasElement, image: HTMLImageElement) {
@@ -204,25 +224,21 @@ function StageIcon({ index, active }: { index: number; active?: boolean }) {
                     </>
                 )}
                 {index === 3 && (
-                    <>
-                        <path
-                            d="M12 4l2.3 4.7L20 9.5l-4 3.8.9 5.2L12 16l-4.9 2.5.9-5.2-4-3.8 5.7-.8L12 4z"
-                            stroke={stroke}
-                            strokeWidth="1.6"
-                            strokeLinejoin="round"
-                        />
-                    </>
+                    <path
+                        d="M12 4l2.3 4.7L20 9.5l-4 3.8.9 5.2L12 16l-4.9 2.5.9-5.2-4-3.8 5.7-.8L12 4z"
+                        stroke={stroke}
+                        strokeWidth="1.6"
+                        strokeLinejoin="round"
+                    />
                 )}
                 {index === 4 && (
-                    <>
-                        <path
-                            d="M5 12l4.5 4.5L19 7"
-                            stroke={stroke}
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        />
-                    </>
+                    <path
+                        d="M5 12l4.5 4.5L19 7"
+                        stroke={stroke}
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    />
                 )}
             </svg>
         </div>
@@ -394,7 +410,7 @@ export default function HomePage() {
                 >
                     <div className="flex h-full flex-col">
                         <div
-                            className={`relative shrink-0 overflow-hidden border-b border-white/8 bg-[#060709] ${isMobile ? "h-[42%]" : "h-[60%]"
+                            className={`relative shrink-0 overflow-hidden border-b border-white/8 bg-[#060709] ${isMobile ? "h-[38%]" : "h-[60%]"
                                 }`}
                         >
                             <canvas
@@ -430,13 +446,10 @@ export default function HomePage() {
                             </div>
                         </div>
 
-                        <div
-                            className={`min-h-0 flex-1 border-t border-white/4 bg-[#060709] ${isMobile ? "overflow-y-hidden" : ""
-                                }`}
-                        >
+                        <div className="min-h-0 flex-1 border-t border-white/4 bg-[#060709]">
                             <div className="mx-auto h-full w-full max-w-[1450px] px-4 py-4 sm:px-8 md:px-10 lg:px-14 lg:py-5">
                                 <div
-                                    className={`grid h-full gap-4 lg:gap-8 ${isMobile ? "grid-cols-1" : "lg:grid-cols-[0.8fr_0.2fr]"
+                                    className={`grid h-full gap-4 lg:gap-8 ${isMobile ? "grid-cols-1 auto-rows-min" : "lg:grid-cols-[0.8fr_0.2fr]"
                                         }`}
                                 >
                                     <div className="min-h-0 rounded-[24px] border border-white/10 bg-[#0b0d10] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.22)] sm:rounded-[28px] sm:p-6 md:p-8">
@@ -447,15 +460,12 @@ export default function HomePage() {
                                             </div>
                                         </div>
 
-                                        <div
-                                            key={activeStage.id}
-                                            className="homepage-stage-fade flex min-h-[0] flex-col justify-start"
-                                        >
-                                            <h1 className="max-w-[900px] text-[24px] font-black leading-[1.02] tracking-[-0.05em] text-white sm:text-[32px] md:text-[40px] lg:text-[50px]">
+                                        <div key={activeStage.id} className="homepage-stage-fade">
+                                            <h1 className="max-w-[900px] text-[18px] font-black leading-[1.05] tracking-[-0.04em] text-white sm:text-[30px] md:text-[40px] lg:text-[50px]">
                                                 {activeStage.title}
                                             </h1>
 
-                                            <p className="mt-4 max-w-[860px] text-[14px] leading-7 text-white/72 sm:text-[15px] md:text-[17px] md:leading-8">
+                                            <p className="mt-4 max-w-[860px] text-[13px] leading-6 text-white/72 sm:text-[15px] md:text-[17px] md:leading-8">
                                                 {activeStage.body}
                                             </p>
                                         </div>
@@ -485,75 +495,38 @@ export default function HomePage() {
                                         </div>
                                     </div>
 
-                                    {!isMobile && (
-                                        <div className="grid gap-3">
-                                            {stages.map((stage, index) => {
-                                                const active = index === activeStageIndex;
-                                                return (
-                                                    <div
-                                                        key={stage.id}
-                                                        className={`rounded-[20px] border px-4 py-4 transition-all duration-300 ${active
-                                                                ? "border-[#f97316]/35 bg-[#f97316]/10 shadow-[0_0_0_1px_rgba(249,115,22,0.10)]"
-                                                                : "border-white/8 bg-white/[0.03]"
-                                                            }`}
-                                                    >
-                                                        <div className="flex items-start gap-3">
-                                                            <StageIcon index={index} active={active} />
-                                                            <div className="min-w-0">
-                                                                <div
-                                                                    className={`text-[10px] font-semibold uppercase tracking-[0.22em] ${active ? "text-[#ffc98c]" : "text-white/45"
-                                                                        }`}
-                                                                >
-                                                                    {stage.label}
-                                                                </div>
-                                                                <div
-                                                                    className={`mt-2 text-[13px] leading-6 ${active ? "text-white/90" : "text-white/60"
-                                                                        }`}
-                                                                >
-                                                                    {stage.title}
-                                                                </div>
+                                    <div className="grid gap-3">
+                                        {stages.map((stage, index) => {
+                                            const active = index === activeStageIndex;
+                                            return (
+                                                <div
+                                                    key={stage.id}
+                                                    className={`rounded-[20px] border px-4 py-4 transition-all duration-300 ${active
+                                                            ? "border-[#f97316]/35 bg-[#f97316]/10 shadow-[0_0_0_1px_rgba(249,115,22,0.10)]"
+                                                            : "border-white/8 bg-white/[0.03]"
+                                                        }`}
+                                                >
+                                                    <div className="flex items-start gap-3">
+                                                        <StageIcon index={index} active={active} />
+                                                        <div className="min-w-0">
+                                                            <div
+                                                                className={`text-[10px] font-semibold uppercase tracking-[0.22em] ${active ? "text-[#ffc98c]" : "text-white/45"
+                                                                    }`}
+                                                            >
+                                                                {stage.label}
+                                                            </div>
+                                                            <div
+                                                                className={`mt-2 text-[13px] leading-6 ${active ? "text-white/90" : "text-white/60"
+                                                                    }`}
+                                                            >
+                                                                {stage.title}
                                                             </div>
                                                         </div>
                                                     </div>
-                                                );
-                                            })}
-                                        </div>
-                                    )}
-
-                                    {isMobile && (
-                                        <div className="grid gap-3">
-                                            {stages.map((stage, index) => {
-                                                const active = index === activeStageIndex;
-                                                return (
-                                                    <div
-                                                        key={stage.id}
-                                                        className={`rounded-[20px] border px-4 py-4 transition-all duration-300 ${active
-                                                                ? "border-[#f97316]/35 bg-[#f97316]/10 shadow-[0_0_0_1px_rgba(249,115,22,0.10)]"
-                                                                : "border-white/8 bg-white/[0.03]"
-                                                            }`}
-                                                    >
-                                                        <div className="flex items-start gap-3">
-                                                            <StageIcon index={index} active={active} />
-                                                            <div className="min-w-0">
-                                                                <div
-                                                                    className={`text-[10px] font-semibold uppercase tracking-[0.22em] ${active ? "text-[#ffc98c]" : "text-white/45"
-                                                                        }`}
-                                                                >
-                                                                    {stage.label}
-                                                                </div>
-                                                                <div
-                                                                    className={`mt-2 text-[13px] leading-6 ${active ? "text-white/90" : "text-white/60"
-                                                                        }`}
-                                                                >
-                                                                    {stage.title}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -643,24 +616,4 @@ export default function HomePage() {
       `}</style>
         </main>
     );
-}
-
-function getNearestLoadedFrame(
-    targetFrame: number,
-    loaded: boolean[],
-    totalFrames: number
-) {
-    const targetIndex = targetFrame - 1;
-
-    if (loaded[targetIndex]) return targetFrame;
-
-    for (let offset = 1; offset < totalFrames; offset += 1) {
-        const lower = targetIndex - offset;
-        const upper = targetIndex + offset;
-
-        if (lower >= 0 && loaded[lower]) return lower + 1;
-        if (upper < totalFrames && loaded[upper]) return upper + 1;
-    }
-
-    return 1;
 }
