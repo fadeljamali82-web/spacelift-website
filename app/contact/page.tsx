@@ -21,8 +21,8 @@ import {
     Store,
 } from "lucide-react";
 
-// --- CRM CONFIGURATION ---
-const CRM_URL = "https://script.google.com/macros/s/AKfycbwWvk83gwyo0cKQYDV_qy161fTmzlFCGzyDgc3FehkcpZ1IeaBDI8aD_Te4AHmoH3gqhQ/exec";
+// --- YOUR VERIFIED CRM URL ---
+const CRM_URL = "https://script.google.com/macros/s/AKfycbwxd8V82TRv76MI8dnBlIbjbNJnCOO4faPueYJEGIlz0k-_v5TrCJfyO_mMGKABs3KcsA/exec";
 
 type TabKey = "report" | "contact";
 type IndustryKey =
@@ -112,7 +112,6 @@ const COLORS = {
     orange: "#FF6A17",
     orangeDark: "#D9540F",
     orangeSoft: "rgba(255,106,23,0.08)",
-    darkPanel: "#15171B",
 };
 
 const INDUSTRY_LABELS: Record<IndustryKey, string> = {
@@ -137,20 +136,20 @@ const INDUSTRY_ICONS: Record<IndustryKey, React.ComponentType<{ className?: stri
 
 const REPORT_TEXT: Record<IndustryKey, any> = {
     hospitality: {
-        executive: "Hospitality environments are increasingly judged through atmosphere and perceived quality. Properties that feel visually current often outperform older competitors.",
-        dynamics: "The category is shaped by rising guest expectations and tighter capital discipline.",
+        executive: "Hospitality environments are increasingly judged through atmosphere, consistency, and perceived quality. The real issue is often whether the space works while signaling the standard associated with the brand.",
+        dynamics: "The category is shaped by rising guest expectations and operators who treat environment as part of the guest experience layer.",
         gaps: ["Arrival zones underperform", "Public spaces lose distinctiveness"],
-        recommendations: ["Rank by perception impact", "Use phased refresh logic"],
-        leaders: "Stronger operators maintain an active lifecycle strategy.",
-        relevance: "SpaceLift improves perception faster than traditional routes.",
-        nextPath: "Isolate guest-facing zones that shape first impressions.",
+        recommendations: ["Rank by perception impact", "Phased refresh logic"],
+        leaders: "Stronger hospitality operators maintain an active lifecycle strategy.",
+        relevance: "SpaceLift improves perception faster than traditional renovation routes.",
+        nextPath: "Isolate guest-facing zones that shape first impression most strongly.",
     },
-    corporate: { executive: "Workplaces support culture and identity. Spaces must justify physical presence.", dynamics: "Hybrid work and utilization pressure drive office intentionality.", gaps: ["Generic feel", "Pre-hybrid assumptions"], recommendations: ["Reassess impact spaces", "Translate brand language"], leaders: "Stronger operators use the office as a culture tool.", relevance: "SpaceLift adds identity without full redesign.", nextPath: "Determine if the issue is brand or collaboration." },
-    retail: { executive: "Retail must be a brand experience system. Atmosphere justifies the physical store.", dynamics: "Balancing experience and network consistency.", gaps: ["Lack of experiential hierarchy", "Dated visual backdrops"], recommendations: ["Identify key dwell moments", "Refresh visible layers first"], leaders: "Stronger operators treat the store as a dynamic platform.", relevance: "Stronger physical presence and scalable logic.", nextPath: "Prioritize flagship impact vs consistency." },
-    healthcare: { executive: "Environments are judged by clarity, calm, and trust.", dynamics: "Pressure from aging infrastructure and cost discipline.", gaps: ["Waiting zones lack reassurance", "Care outperforms environment"], recommendations: ["Start with reception", "Prioritize surface systems"], leaders: "Patient experience is shaped by the environment.", relevance: "Modernization without structural intervention.", nextPath: "Isolate environments where perception matters most." },
-    venue: { executive: "Venues are chosen for visual flexibility and distinction.", dynamics: "Category rewards impact without production burden.", gaps: ["Interchangeable spaces", "Static finishes"], recommendations: ["Identify perception zones", "Refresh as competitive strategy"], leaders: "Stronger venues use adaptable visual systems.", relevance: "Strong appeal and low operational downtime.", nextPath: "Assess planner-facing perception points." },
-    mixeduse: { executive: "Developments compete on atmosphere and prestige.", dynamics: "Shared spaces age faster than structural systems.", gaps: ["Arrival areas lack prestige", "Incoherent common zones"], recommendations: ["Focus on everyday impressions", "Recurring refresh logic"], leaders: "Stronger operators preserve asset perception.", relevance: "Protect prestige and leasing appeal.", nextPath: "Identify common areas shaping perception." },
-    other: { executive: "Environments are strategic assets, not passive containers.", dynamics: "Rising stakeholder expectations despite budget pressure.", gaps: ["Generic environment", "Weak brand expression"], recommendations: ["Identify high-impact surfaces", "Phased transformation"], leaders: "Stronger operators use selective transformation.", relevance: "High visibility and coordinated delivery.", nextPath: "Define zones carrying strategic pressure." },
+    corporate: { executive: "Workplaces are judged by supporting culture and collaboration. Many remain functional but fail to justify physical presence.", dynamics: "Organizations now use the office as a business tool rather than a default container.", gaps: ["Generic feel", "Space quality lags ambition"], recommendations: ["Assess employee perception", "Translate brand materials"], leaders: "Stronger operators align environment around purpose.", relevance: "SpaceLift adds identity without default redesign cycles.", nextPath: "Determine if the core issue is brand or collaboration." },
+    retail: { executive: "Retail needs to function as a brand experience system. Store atmosphere justifies itself through memorability.", dynamics: "Strongest stores translate brand identity into physical space layers.", gaps: ["Lack of experiential hierarchy", "Dated visual backdrops"], recommendations: ["Identify dwell moments", "Refresh visible layers first"], leaders: "Stronger operators treat the store as a dynamic platform.", relevance: "Stronger physical brand presence and scalable transformation.", nextPath: "Prioritize flagship impact vs network consistency." },
+    healthcare: { executive: "Healthcare environments are judged by trust, calm, and clarity. First impressions form before clinical interaction.", dynamics: "Providers face pressure to improve perception without reconstruction.", gaps: ["Waiting zones lack reassurance", "Care outperforms environment"], recommendations: ["Start with reception", "Prioritize surface systems"], leaders: "Patient experience is shaped by the environment layer.", relevance: "Modernization without structural intervention.", nextPath: "Isolate high-perception environments." },
+    venue: { executive: "Venues are chosen on visual flexibility. Event planners judge spaces by how they support memorable experiences.", dynamics: "Category rewards venues that create impact without production burden.", gaps: ["Interchangeable spaces", "Static finishes"], recommendations: ["Identify planner-facing zones", "Refresh as competitive strategy"], leaders: "Stronger venues use adaptable visual systems.", relevance: "Strong visual appeal and low operational downtime.", nextPath: "Assess planner-facing perception points." },
+    mixeduse: { executive: "Developments compete on atmosphere and lifestyle promise. Prestige is maintained in social spaces.", dynamics: "Shared spaces age faster than structural systems.", gaps: ["Arrival points lack prestige", "Incoherent common zones"], recommendations: ["Focus on resident impressions", "Recurring refresh cadence"], leaders: "Stronger operators preserve asset perception via surface updates.", relevance: "Protect prestige and leasing appeal.", nextPath: "Identify areas shaping resident impression." },
+    other: { executive: "Physical environments are strategic assets. Spaces must communicate quality and intentionality.", dynamics: "Stakeholder expectations rise despite budget and timeline pressures.", gaps: ["Generic environment", "Weak first impression"], recommendations: ["Identify high-impact surfaces", "Phased transformation"], leaders: "Stronger operators use selective transformation logic.", relevance: "High visibility and coordinated delivery.", nextPath: "Define zones carrying the most strategic pressure." },
 };
 
 function buildReport(form: ReportForm): BuiltReport {
@@ -158,7 +157,7 @@ function buildReport(form: ReportForm): BuiltReport {
     const pack = REPORT_TEXT[industry];
     const label = INDUSTRY_LABELS[industry];
     const company = form.company || "The organization";
-    const intro = `For ${company}, the opportunity involves ${(form.scope || "the stated scope").toLowerCase()} across ${(form.locations || "the footprint").toLowerCase()}. The primary challenge is ${(form.primaryChallenge || "an undefined challenge").toLowerCase()}.`;
+    const intro = `For ${company}, the opportunity involves ${(form.scope || "the stated scope").toLowerCase()} across ${(form.locations || "the footprint").toLowerCase()} with a timeline of ${(form.timeline || "current window").toLowerCase()}. Primary challenge: ${(form.primaryChallenge || "undefined").toLowerCase()}.`;
 
     const sections: ReportSection[] = [
         { id: "executive", icon: Sparkles, label: "Section 1", title: "Executive Snapshot", body: `${pack.executive}\n\n${intro}` },
@@ -166,7 +165,7 @@ function buildReport(form: ReportForm): BuiltReport {
         { id: "gaps", icon: ClipboardList, label: "Section 3", title: "Key Gaps", body: `${pack.gaps.map((g: string) => `• ${g}`).join("\n")}\n\nChallenge: ${form.primaryChallenge}` },
         { id: "recommendations", icon: ShieldCheck, label: "Section 4", title: "Strategic Path", body: `${pack.recommendations.map((r: string) => `• ${r}`).join("\n")}\n\nGoals: ${form.goals}` },
         { id: "leaders", icon: LayoutGrid, label: "Section 5", title: "Leader Insights", body: pack.leaders },
-        { id: "relevance", icon: CheckCircle2, label: "Section 6", title: "SpaceLift Relevance", body: `${pack.relevance}\n\nConstraints: ${form.constraints || "None provided."}` },
+        { id: "relevance", icon: CheckCircle2, label: "Section 6", title: "SpaceLift Relevance", body: `${pack.relevance}\n\nBudget approach: ${form.budgetApproach}\nConstraints: ${form.constraints || "None."}` },
         { id: "next", icon: MessageSquareText, label: "Section 7", title: "Next Steps", body: pack.nextPath },
     ];
 
@@ -182,22 +181,15 @@ function buildReport(form: ReportForm): BuiltReport {
 export default function ContactPage() {
     const [tab, setTab] = useState<TabKey>("report");
     const [showReport, setShowReport] = useState(false);
-    const [copied, setCopied] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [copied, setCopied] = useState(false);
     const [reportForm, setReportForm] = useState<ReportForm>(reportInitial);
     const [contactForm, setContactForm] = useState<ContactForm>(contactInitial);
 
     const built = useMemo(() => buildReport(reportForm), [reportForm]);
 
-    const reportReady = useMemo(() => {
-        return !!reportForm.fullName && !!reportForm.company && !!reportForm.industry && !!reportForm.locations && !!reportForm.timeline && !!reportForm.scope && !!reportForm.environmentType && !!reportForm.primaryChallenge && !!reportForm.budgetApproach && !!reportForm.goals;
-    }, [reportForm]);
-
+    const reportReady = !!reportForm.fullName && !!reportForm.company && !!reportForm.industry && !!reportForm.locations && !!reportForm.timeline && !!reportForm.scope && !!reportForm.environmentType && !!reportForm.primaryChallenge && !!reportForm.budgetApproach && !!reportForm.goals;
     const contactReady = !!contactForm.fullName && !!contactForm.company && !!contactForm.email && !!contactForm.projectType && !!contactForm.projectDescription;
-
-    useEffect(() => {
-        if (showReport) window.scrollTo({ top: 0, behavior: "smooth" });
-    }, [showReport]);
 
     async function syncToCRM(data: any, source: string) {
         setLoading(true);
@@ -216,143 +208,93 @@ export default function ContactPage() {
     }
 
     async function handleGenerateReport() {
-        await syncToCRM(reportForm, "Strategic Report");
+        await syncToCRM(reportForm, "Report Generated");
         setShowReport(true);
     }
 
-    async function submitDirectContact() {
-        await syncToCRM(contactForm, "Direct Contact");
-
+    async function handleDirectContact() {
+        await syncToCRM(contactForm, "Direct Inquiry");
         const subject = encodeURIComponent(`SpaceLift Inquiry — ${contactForm.company}`);
         const body = encodeURIComponent(`Name: ${contactForm.fullName}\nEmail: ${contactForm.email}\nProject: ${contactForm.projectDescription}`);
         window.location.href = `mailto:hello@spacelift-studio.com?subject=${subject}&body=${body}`;
     }
 
-    const handleCopy = async () => {
-        await navigator.clipboard.writeText(built.plainText);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-    };
-
-    const ActiveIndustryIcon = reportForm.industry ? INDUSTRY_ICONS[reportForm.industry] : ClipboardList;
-
     return (
         <div className="min-h-screen" style={{ background: COLORS.bg, color: COLORS.text }}>
             <AnimatePresence mode="wait">
                 {!showReport ? (
-                    <motion.section key="form-view" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -14 }} transition={{ duration: 0.35 }} className="mx-auto max-w-[1440px] px-5 py-10 md:px-8 lg:px-12 lg:py-16">
-                        <div className="grid gap-10 lg:grid-cols-[0.92fr_1.08fr] xl:gap-16">
-                            <div className="pt-2 lg:pt-6">
-                                <div className="mb-8 flex items-center gap-3 text-[13px] font-semibold uppercase tracking-[0.26em]" style={{ color: COLORS.orange }}>
-                                    <span className="inline-block h-px w-10" style={{ background: COLORS.orange }} />
-                                    Strategic report & direct contact
+                    <motion.section key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mx-auto max-w-[1440px] px-6 py-12 lg:py-20">
+                        <div className="grid gap-16 lg:grid-cols-[1fr_1.1fr]">
+                            <div className="pt-4">
+                                <div className="mb-8 flex items-center gap-3 text-[13px] font-bold uppercase tracking-[0.26em]" style={{ color: COLORS.orange }}>
+                                    <span className="h-px w-10 bg-current" /> Strategic Assessment
                                 </div>
-                                <h1 className="max-w-[760px] text-[52px] font-bold leading-[0.92] tracking-[-0.04em] sm:text-[64px] lg:text-[82px] xl:text-[96px]">Start with the path that fits the opportunity.</h1>
-                                <p className="mt-8 max-w-[740px] text-[22px] leading-[1.65]" style={{ color: COLORS.muted }}>Generate a premium industry-specific strategic report or contact SpaceLift directly if you already have a live opportunity in mind.</p>
-                                <div className="mt-10 grid gap-4 sm:grid-cols-3">
-                                    <FeatureCard title="Industry intelligence" body="Built around sector pressures, environment gaps, and perception signals." />
-                                    <FeatureCard title="Personalized output" body="Locations, timeline, scope, and goals shape the final report." />
-                                    <FeatureCard title="Immediate value" body="The report appears instantly in a premium format and can be copied." />
+                                <h1 className="text-[52px] font-bold leading-[0.92] tracking-[-0.04em] lg:text-[96px]">The path that fits the opportunity.</h1>
+                                <p className="mt-8 text-2xl text-neutral-500 leading-relaxed">Generate a custom environment report or reach out for direct collaboration.</p>
+                                <div className="mt-12 grid gap-6 sm:grid-cols-3">
+                                    <FeatureCard title="Industry Intel" body="Built on sector pressures and gaps." />
+                                    <FeatureCard title="Personalized" body="Output tailored to your goals." />
+                                    <FeatureCard title="Instant" body="Ready for your internal decks." />
                                 </div>
                             </div>
 
-                            <div>
-                                <div className="rounded-[34px] p-5 shadow-[0_24px_80px_rgba(17,17,17,0.08)] md:p-7 lg:p-8" style={{ background: COLORS.panel, border: "1px solid rgba(17,17,17,0.04)" }}>
-                                    <h2 className="text-[40px] font-bold leading-[1.02] tracking-[-0.04em] sm:text-[48px] lg:text-[56px]">Choose how you’d like to begin.</h2>
-                                    <p className="mt-4 text-[19px] leading-[1.6]" style={{ color: COLORS.muted }}>Use the strategic report if you want immediate insight. Use direct contact if you already know you want to speak with us.</p>
-
-                                    <div className="mt-8 overflow-hidden rounded-[24px] border" style={{ borderColor: COLORS.border, background: "rgba(255,255,255,0.55)" }}>
-                                        <div className="grid grid-cols-2 border-b" style={{ borderColor: COLORS.border }}>
-                                            <TabButton active={tab === "report"} onClick={() => setTab("report")} label="Strategic Report" />
-                                            <TabButton active={tab === "contact"} onClick={() => setTab("contact")} label="Direct Contact" />
+                            <div className="rounded-[40px] bg-[#F3EDE8] p-2 shadow-2xl border border-black/5">
+                                <div className="flex bg-white/50 rounded-[32px] p-1 overflow-hidden">
+                                    <button onClick={() => setTab("report")} className={`flex-1 py-4 text-sm font-bold uppercase tracking-widest transition ${tab === "report" ? "bg-white shadow-sm" : "opacity-50"}`}>Strategic Report</button>
+                                    <button onClick={() => setTab("contact")} className={`flex-1 py-4 text-sm font-bold uppercase tracking-widest transition ${tab === "contact" ? "bg-white shadow-sm" : "opacity-50"}`}>Direct Contact</button>
+                                </div>
+                                <div className="bg-white p-8 rounded-b-[38px] mt-1">
+                                    {tab === "report" ? (
+                                        <div className="space-y-6">
+                                            <div className="grid gap-4 md:grid-cols-2">
+                                                <TextInput label="Full Name" value={reportForm.fullName} onChange={e => setReportForm({ ...reportForm, fullName: e.target.value })} placeholder="Your name" />
+                                                <TextInput label="Company" value={reportForm.company} onChange={e => setReportForm({ ...reportForm, company: e.target.value })} placeholder="Company name" />
+                                            </div>
+                                            <div className="grid gap-4 md:grid-cols-2">
+                                                <Select label="Industry" value={reportForm.industry} onChange={e => setReportForm({ ...reportForm, industry: e.target.value as IndustryKey })}>
+                                                    <option value="">Select industry</option>
+                                                    {Object.entries(INDUSTRY_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                                                </Select>
+                                                <Select label="Timeline" value={reportForm.timeline} onChange={e => setReportForm({ ...reportForm, timeline: e.target.value })}>
+                                                    <option value="">Select timeline</option>
+                                                    <option value="Immediate">Immediate</option>
+                                                    <option value="3-6 Months">3-6 Months</option>
+                                                </Select>
+                                            </div>
+                                            <Textarea label="Environment Description" value={reportForm.environment} onChange={e => setReportForm({ ...reportForm, environment: e.target.value })} placeholder="Describe the space..." rows={3} />
+                                            <Textarea label="Strategic Goals" value={reportForm.goals} onChange={e => setReportForm({ ...reportForm, goals: e.target.value })} placeholder="What needs to improve?" rows={3} />
+                                            <PrimaryButton disabled={!reportReady || loading} onClick={handleGenerateReport}>{loading ? "Syncing to CRM..." : "Generate Strategic Report"}</PrimaryButton>
                                         </div>
-
-                                        <div className="bg-white p-5 md:p-7 lg:p-8">
-                                            <AnimatePresence mode="wait">
-                                                {tab === "report" ? (
-                                                    <motion.div key="report-tab" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-                                                        <div className="mb-6 text-[14px] font-semibold uppercase tracking-[0.24em]" style={{ color: COLORS.orange }}>Strategic report intake</div>
-                                                        <h3 className="max-w-[720px] text-[34px] font-bold leading-[1.08] tracking-[-0.03em] sm:text-[40px]">Tell us about the environment.</h3>
-                                                        <div className="mt-8 grid gap-5 md:grid-cols-2">
-                                                            <div><FieldLabel>Full name</FieldLabel><TextInput value={reportForm.fullName} onChange={(e) => setReportForm({ ...reportForm, fullName: e.target.value })} /></div>
-                                                            <div><FieldLabel>Company</FieldLabel><TextInput value={reportForm.company} onChange={(e) => setReportForm({ ...reportForm, company: e.target.value })} /></div>
-                                                            <div><FieldLabel>Industry</FieldLabel>
-                                                                <Select value={reportForm.industry} onChange={(e) => setReportForm({ ...reportForm, industry: e.target.value as IndustryKey })}>
-                                                                    <option value="">Select industry</option>
-                                                                    {Object.entries(INDUSTRY_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
-                                                                </Select>
-                                                            </div>
-                                                            <div><FieldLabel>Timeline</FieldLabel>
-                                                                <Select value={reportForm.timeline} onChange={(e) => setReportForm({ ...reportForm, timeline: e.target.value })}>
-                                                                    <option value="">Select timeline</option>
-                                                                    <option value="Immediate">Immediate</option>
-                                                                    <option value="Within 3 months">Within 3 months</option>
-                                                                    <option value="3–6 months">3–6 months</option>
-                                                                </Select>
-                                                            </div>
-                                                            <div className="md:col-span-2"><FieldLabel>Environment description</FieldLabel><Textarea rows={3} value={reportForm.environment} onChange={(e) => setReportForm({ ...reportForm, environment: e.target.value })} /></div>
-                                                            <div className="md:col-span-2"><FieldLabel>Main goals</FieldLabel><Textarea rows={3} value={reportForm.goals} onChange={(e) => setReportForm({ ...reportForm, goals: e.target.value })} /></div>
-                                                        </div>
-                                                        <div className="mt-10">
-                                                            <PrimaryButton disabled={!reportReady || loading} onClick={handleGenerateReport}>
-                                                                {loading ? "Syncing..." : "Generate Strategic Report"}
-                                                            </PrimaryButton>
-                                                        </div>
-                                                    </motion.div>
-                                                ) : (
-                                                    <motion.div key="contact-tab" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-                                                        <div className="mb-6 text-[14px] font-semibold uppercase tracking-[0.24em]" style={{ color: COLORS.orange }}>Direct contact</div>
-                                                        <h3 className="text-[34px] font-bold leading-[1.08]">Tell us what the environment needs.</h3>
-                                                        <div className="mt-8 grid gap-5 md:grid-cols-2">
-                                                            <div><FieldLabel>Full name</FieldLabel><TextInput value={contactForm.fullName} onChange={(e) => setContactForm({ ...contactForm, fullName: e.target.value })} /></div>
-                                                            <div><FieldLabel>Company</FieldLabel><TextInput value={contactForm.company} onChange={(e) => setContactForm({ ...contactForm, company: e.target.value })} /></div>
-                                                            <div className="md:col-span-2"><FieldLabel>Email</FieldLabel><TextInput value={contactForm.email} onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })} /></div>
-                                                            <div className="md:col-span-2"><FieldLabel>Project description</FieldLabel><Textarea rows={4} value={contactForm.projectDescription} onChange={(e) => setContactForm({ ...contactForm, projectDescription: e.target.value })} /></div>
-                                                        </div>
-                                                        <div className="mt-10">
-                                                            <PrimaryButton disabled={!contactReady || loading} onClick={submitDirectContact}>
-                                                                <Send className="h-4 w-4" /> {loading ? "Syncing..." : "Submit Inquiry"}
-                                                            </PrimaryButton>
-                                                        </div>
-                                                    </motion.div>
-                                                )}
-                                            </AnimatePresence>
+                                    ) : (
+                                        <div className="space-y-6">
+                                            <TextInput label="Name" value={contactForm.fullName} onChange={e => setContactForm({ ...contactForm, fullName: e.target.value })} placeholder="Full name" />
+                                            <TextInput label="Company" value={contactForm.company} onChange={e => setContactForm({ ...contactForm, company: e.target.value })} placeholder="Org name" />
+                                            <Textarea label="Project Inquiry" value={contactForm.projectDescription} onChange={e => setContactForm({ ...contactForm, projectDescription: e.target.value })} placeholder="How can we help?" rows={5} />
+                                            <PrimaryButton disabled={!contactReady || loading} onClick={handleDirectContact}>{loading ? "Syncing..." : "Submit Inquiry"}</PrimaryButton>
                                         </div>
-                                    </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
                     </motion.section>
                 ) : (
-                    <motion.section key="report-view" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className="mx-auto max-w-[1440px] px-5 py-10 md:px-8 lg:px-12 lg:py-14">
-                        <div className="mb-8 flex items-center justify-between gap-4">
-                            <SecondaryButton onClick={() => setShowReport(false)}><ArrowLeft className="h-4 w-4" /> Back to Form</SecondaryButton>
-                            <SecondaryButton onClick={handleCopy}><Copy className="h-4 w-4" /> {copied ? "Copied" : "Copy Report"}</SecondaryButton>
+                    <motion.section key="report-view" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mx-auto max-w-5xl px-6 py-16">
+                        <div className="mb-12 flex justify-between">
+                            <button onClick={() => setShowReport(false)} className="flex items-center gap-2 font-bold text-sm uppercase tracking-widest"><ArrowLeft className="w-4 h-4" /> Back</button>
+                            <button onClick={async () => { await navigator.clipboard.writeText(built.plainText); setCopied(true); setTimeout(() => setCopied(false), 2000); }} className="bg-black text-white px-6 py-3 rounded-full font-bold text-sm tracking-widest uppercase">{copied ? "Copied!" : "Copy Full Report"}</button>
                         </div>
-                        <div className="grid gap-8 lg:grid-cols-[320px_minmax(0,1fr)]">
-                            <aside className="lg:sticky lg:top-8 lg:self-start">
-                                <div className="overflow-hidden rounded-[30px] border bg-[#F3EDE8] p-6" style={{ borderColor: COLORS.border }}>
-                                    <ActiveIndustryIcon className="h-8 w-8 text-[#FF6A17] mb-4" />
-                                    <h2 className="text-[28px] font-bold leading-tight">{built.title}</h2>
-                                    <div className="mt-6 space-y-3">
-                                        <SummaryRow icon={Mail} label="Name" value={reportForm.fullName} />
-                                        <SummaryRow icon={Building2} label="Company" value={reportForm.company} />
-                                        <SummaryRow icon={Sparkles} label="Timeline" value={reportForm.timeline} />
-                                    </div>
+                        <div className="space-y-12">
+                            <header className="border-b border-black/10 pb-8">
+                                <div className="flex items-center gap-4 text-orange-600 font-bold uppercase tracking-widest text-xs"><Sparkles className="w-4 h-4" /> Strategic Assessment</div>
+                                <h2 className="mt-4 text-5xl font-bold tracking-tight">{built.title}</h2>
+                            </header>
+                            {built.sections.map((s, i) => (
+                                <div key={s.id} className="relative pl-12">
+                                    <div className="absolute left-0 top-0 text-3xl font-black text-orange-500/20">{i + 1}</div>
+                                    <h3 className="text-2xl font-bold mb-4">{s.title}</h3>
+                                    <p className="text-lg leading-relaxed text-neutral-600 whitespace-pre-wrap">{s.body}</p>
                                 </div>
-                            </aside>
-                            <main className="space-y-6">
-                                <div className="rounded-[30px] border bg-white p-8" style={{ borderColor: COLORS.border }}>
-                                    <h1 className="text-4xl font-bold mb-4">{built.title}</h1>
-                                    <p className="text-lg text-neutral-500 leading-relaxed">{built.summary}</p>
-                                </div>
-                                {built.sections.map((s) => (
-                                    <div key={s.id} className="rounded-[30px] border bg-white p-8" style={{ borderColor: COLORS.border }}>
-                                        <h3 className="text-xl font-bold mb-4 flex items-center gap-3"><s.icon className="w-5 h-5 text-orange-500" /> {s.title}</h3>
-                                        <p className="text-neutral-600 leading-relaxed whitespace-pre-wrap">{s.body}</p>
-                                    </div>
-                                ))}
-                            </main>
+                            ))}
                         </div>
                     </motion.section>
                 )}
@@ -361,64 +303,47 @@ export default function ContactPage() {
     );
 }
 
-// Sub-components
+// Helpers
 function FeatureCard({ title, body }: any) {
     return (
-        <div className="rounded-[22px] p-6 border bg-[#1A1B1F] text-white border-white/5">
-            <div className="text-[15px] font-bold text-[#FFB184] mb-2">{title}</div>
-            <div className="text-[14px] text-white/60 leading-relaxed">{body}</div>
+        <div className="rounded-3xl bg-[#1A1B1F] p-8 text-white border border-white/5 shadow-xl">
+            <h4 className="text-[#FFB184] font-bold mb-2">{title}</h4>
+            <p className="text-white/60 text-sm leading-relaxed">{body}</p>
         </div>
     );
 }
 
-function TabButton({ active, onClick, label }: any) {
+function TextInput({ label, ...props }: any) {
     return (
-        <button onClick={onClick} className={`px-4 py-5 text-center text-[16px] font-bold transition-all ${active ? "bg-white text-[#111] shadow-inner" : "text-neutral-400"}`} style={{ boxShadow: active ? `inset 0 -3px 0 ${COLORS.orange}` : "none" }}>
-            {label}
-        </button>
+        <div className="space-y-1 w-full">
+            <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400">{label}</label>
+            <input {...props} className="w-full px-5 py-4 rounded-xl border border-neutral-200 focus:border-[#FF6A17] outline-none transition" />
+        </div>
+    );
+}
+
+function Select({ label, children, ...props }: any) {
+    return (
+        <div className="space-y-1 w-full">
+            <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400">{label}</label>
+            <select {...props} className="w-full px-5 py-4 rounded-xl border border-neutral-200 focus:border-[#FF6A17] outline-none transition">{children}</select>
+        </div>
+    );
+}
+
+function Textarea({ label, ...props }: any) {
+    return (
+        <div className="space-y-1 w-full">
+            <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400">{label}</label>
+            <textarea {...props} className="w-full px-5 py-4 rounded-xl border border-neutral-200 focus:border-[#FF6A17] outline-none transition" />
+        </div>
     );
 }
 
 function PrimaryButton({ children, onClick, disabled }: any) {
     return (
-        <button onClick={onClick} disabled={disabled} className="inline-flex h-14 w-full items-center justify-center gap-2 rounded-[18px] px-6 text-[17px] font-bold text-white transition-all bg-[#FF6A17] disabled:opacity-30 hover:shadow-lg">
+        <button disabled={disabled} onClick={onClick} className="w-full bg-[#FF6A17] hover:bg-[#D9540F] text-white font-bold py-5 rounded-2xl transition disabled:opacity-40 shadow-lg shadow-orange-500/20 flex items-center justify-center gap-3">
             {children}
         </button>
     );
-}
-
-function SecondaryButton({ children, onClick }: any) {
-    return (
-        <button onClick={onClick} className="inline-flex items-center gap-2 rounded-[16px] border px-4 py-3 text-[14px] font-bold transition-all bg-white/40 border-neutral-200 hover:bg-white">
-            {children}
-        </button>
-    );
-}
-
-function SummaryRow({ icon: Icon, label, value }: any) {
-    return (
-        <div className="flex items-start gap-3 rounded-xl p-3 bg-white/50 border border-neutral-200">
-            <Icon className="h-4 w-4 text-[#FF6A17] mt-1" />
-            <div>
-                <div className="text-[10px] font-black uppercase text-neutral-400">{label}</div>
-                <div className="text-sm font-bold">{value || "Not specified"}</div>
-            </div>
-        </div>
-    );
-}
-
-function FieldLabel({ children }: any) {
-    return <div className="mb-1 text-[11px] font-black uppercase tracking-widest text-neutral-400">{children}</div>;
-}
-
-function TextInput(props: any) {
-    return <input {...props} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-4 text-sm outline-none focus:border-[#FF6A17] transition-colors" />;
-}
-
-function Textarea(props: any) {
-    return <textarea {...props} className="w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#FF6A17] transition-colors" />;
-}
-
-function Select(props: any) {
-    return <select {...props} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-4 text-sm outline-none focus:border-[#FF6A17] transition-colors" />;
 }
