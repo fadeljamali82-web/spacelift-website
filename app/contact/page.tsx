@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import {
     ArrowLeft, Briefcase, Building2, Hotel, LayoutGrid, Store,
-    TrendingUp, Zap, ChevronRight, Download, MousePointer2, Layers, Clock
+    TrendingUp, Zap, Target, Check, ChevronRight, Download, MousePointer2, Layers, Clock
 } from "lucide-react";
 
 // --- CRM CONFIGURATION ---
@@ -13,20 +13,20 @@ const CRM_URL = "https://script.google.com/macros/s/AKfycbyljLTF-I0feIJdqvB24lLV
 
 const COLORS = { bg: "#F7F6F3", white: "#FFFFFF", text: "#111111", orange: "#FF6A17" };
 
-// Option constants
 const BUDGET_OPTIONS = ["Value-driven / Phased", "Standard CapEx", "Premium Rebranding", "Serious Asset Upgrade"];
 const TIMELINE_OPTIONS = ["Immediate", "Within 3 months", "3-6 months", "Evaluating / TBC"];
 const ENVIRONMENT_OPTIONS = ["Lobby/Entrance", "Corridors", "Guest Rooms", "Executive Suites", "Common Areas", "Exterior Facade"];
 const SCOPE_OPTIONS = ["Architectural Resurfacing", "Elevator Modernization", "Lobby Logic", "Furniture Upcycling", "Wayfinding", "Lighting"];
 const INDUSTRY_LABELS: Record<string, string> = { hospitality: "Hospitality", corporate: "Corporate", retail: "Retail", healthcare: "Healthcare", venue: "Event / Venue", mixeduse: "Mixed-Use" };
 
-// --- MCKINSEY-LEVEL STRATEGIC DATA (Approved Text) ---
+// --- APPROVED MCKINSEY-LEVEL STRATEGIC DATA ---
 const STRATEGIES: Record<string, any> = {
     hospitality: {
         theme: "RevPAR Arbitrage",
         p1: "In the 2026 luxury market, guests decide your value within 7 seconds of entry. Your property, {company}, is likely suffering from an invisible Perception Tax. Architecture is not a background; it is a financial driver.",
-        p2: "We target the &apos;7-Second Anchor.&apos; By resurfacing elevator and lobby touchpoints with elite textures, {company} resets the guest&apos;s value anchor, naturally justifying a 12-18% ADR lift.",
+        p2: "We target the &apos;7-Second Anchor.&apos; By resurfacing elevator and lobby touchpoints with elite textures, {company} resets the guest&apos;s value anchor, naturally justifying a 12-18% ADR lift without operational friction.",
         p3: "Traditional renovation leaks 30%+ of revenue due to closures. SpaceLift transformations happen in 72-hour &apos;Ninja Sprints.&apos; Speed is the new luxury.",
+        p4: "SpaceLift Studio is your partner in Asset Repositioning. Our roadmap begins with a Visual Heat-Map Audit, identifying exactly where your guest&apos;s eyes linger to maximize visual ROI.",
         stats: [25, 95]
     },
     corporate: {
@@ -34,6 +34,7 @@ const STRATEGIES: Record<string, any> = {
         p1: "The office is no longer a utility; it is a Cultural Destination. For {company}, the challenge is commute justification. If the space looks like a utility container, employees will stay remote.",
         p2: "We engineer Dwell-Time. Deeply textured background surfaces and matte gallery finishes turn transactional floors into experiential stages where employees naturally want to be.",
         p3: "Structural rebuilds are 20-year liabilities. SpaceLift is a Strategic Pivot. We spend 100% of your budget on the &apos;Perception Layer,&apos; maximizing recruitment alpha.",
+        p4: "Our roadmap moves from Utility to Gallery. We identify high-traffic collaboration zones and apply high-performance layers that reduce visual noise and promote focus.",
         stats: [40, 88]
     },
     retail: {
@@ -41,6 +42,7 @@ const STRATEGIES: Record<string, any> = {
         p1: "If a store isn&apos;t worth a photo, it&apos;s barely worth the visit. Walls are the frame, and product is the art. For {company}, a dated frame devalues your brand authority and inventory value.",
         p2: "We engineer Dwell-Time. By resurfacing transactional check-out nodes into concierge desks, we remove Price Friction and improve atmospheric quality. Social currency becomes revenue.",
         p3: "Traditional fit-outs are slow and produce tons of waste. SpaceLift is Sustainable Luxury. We refresh your entire aesthetic in 4 days with 75% less waste.",
+        p4: "Experiential Retail starts with identifying &apos;Money Zones.&apos; We apply elite surfaces that pop on digital platforms, turning every customer into a brand ambassador.",
         stats: [15, 92]
     },
     healthcare: {
@@ -48,6 +50,7 @@ const STRATEGIES: Record<string, any> = {
         p1: "In healthcare, the environment is the first interaction of care. For {company}, unaddressed atmospheric anxiety in patients directly devalues your standards of medicine.",
         p2: "We engineer Dwell-Time. Replacing cold, clinical surfaces with warm, self-healing natural textures signaling safety and elite care the moment a patient enters.",
         p3: "Surgical Transformation: SpaceLift works in low-traffic windows with zero dust, zero noise, and zero care disruption. Aesthetic hygiene is clinical excellence.",
+        p4: "The Roadmap prioritizes arrival nodes and circulation zones. We deploy anti-microbial premium layers that signal elite care and trust.",
         stats: [45, 90]
     },
     venue: {
@@ -55,6 +58,7 @@ const STRATEGIES: Record<string, any> = {
         p1: "Event planners don&apos;t just book space; they book Possibility. For {company}, a static, un-adaptive aesthetic means losing high-value tiers to venues with visual agility.",
         p2: "We target the &apos;7-Second Anchor.&apos; Resurfacing key stages, focal bars, and entryways overnight with elite architectural films makes the space look custom-built every booking.",
         p3: "Traditional reconstruction kills an entire season. SpaceLift refreshes between bookings. Speed is your competitive moat.",
+        p4: "We turn your venue from a static room into an adaptive destination. We identify the zones planners look at first to ensure your space sells itself.",
         stats: [30, 96]
     },
     mixeduse: {
@@ -62,6 +66,7 @@ const STRATEGIES: Record<string, any> = {
         p1: "Developments compete on &apos;Lifestyle Promise.&apos; When common areas drift visually behind guest expectations, {company}&apos;s asset perception falls—and rent roll follows.",
         p2: "We engineer Dwell-Time. Every surface from the arrival lobby to the social common rooms must permanently signal Grade-A prestige to protect asset valuation.",
         p3: "A premium asset can feel dated in just 5 years. SpaceLift maintains visual relevance by focusing spend solely on the visible and high-impact nodes.",
+        p4: "The Roadmap protects your prestige for the long term. We identify where resident impressions are formed and apply durable, elite architectural surfaces.",
         stats: [50, 92]
     }
 };
@@ -84,12 +89,12 @@ export default function StrategicPortal() {
     const strategy = useMemo(() => {
         const s = STRATEGIES[form.industry] || STRATEGIES.hospitality;
         const rep = (t: string) => t.replace(/{company}/g, form.company || "Your Org");
-        return { ...s, p1: rep(s.p1), p2: rep(s.p2), p3: rep(s.p3) };
+        return { ...s, p1: rep(s.p1), p2: rep(s.p2), p3: rep(s.p3), p4: rep(s.p4) };
     }, [form.industry, form.company]);
 
     async function handleSync() {
         setLoading(true);
-        // Keys match your Google Sheet Headers exactly
+        // KEYS MATCH GOOGLE SHEET HEADERS EXACTLY
         const payload = {
             Source: "Strategic Report",
             Name: form.fullName,
@@ -116,64 +121,64 @@ export default function StrategicPortal() {
         <div className="min-h-screen bg-[#F7F6F3] text-[#111111] font-sans">
             <AnimatePresence mode="wait">
                 {!showReport ? (
-                    <motion.section key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mx-auto max-w-[1440px] px-6 py-12 lg:py-20 print:hidden">
+                    <motion.section key="form" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mx-auto max-w-[1440px] px-6 py-12 lg:py-20 print:hidden">
                         <div className="grid gap-16 lg:grid-cols-[1fr_1.1fr]">
                             <div className="pt-4">
                                 <div className="mb-8 flex items-center gap-3 text-[13px] font-black uppercase tracking-[0.3em] text-[#FF6A17]"><span className="h-px w-10 bg-current" /> Strategic Audit</div>
                                 <h1 className="text-[54px] lg:text-[92px] font-bold leading-[0.92] tracking-[-0.05em] mb-10 text-black">Don&apos;t Rebuild.<br />Reposition.</h1>
-                                <p className="text-2xl text-neutral-500 leading-relaxed mb-12 max-w-xl">Get a strategic roadmap designed to maximize visual ROI and asset value.</p>
+                                <p className="text-2xl text-neutral-500 leading-relaxed mb-12 max-w-xl">Get a bespoke strategic roadmap designed to maximize visual ROI and asset value.</p>
                                 <div className="grid gap-6">
                                     <div className="flex items-center gap-6 p-8 rounded-[30px] bg-white border border-neutral-200 shadow-sm"><Zap className="w-8 h-8 text-orange-500" /><div><h4 className="font-bold text-lg text-black">Rapid Deployment</h4><p className="text-sm opacity-50">Results in days, not months.</p></div></div>
-                                    <div className="flex items-center gap-6 p-8 rounded-[30px] bg-white border border-neutral-200 shadow-sm"><TrendingUp className="w-8 h-8 text-orange-500" /><div><h4 className="font-bold text-lg text-black">Revenue Alignment</h4><p className="text-sm opacity-50">Built to increase market authority.</p></div></div>
+                                    <div className="flex items-center gap-6 p-8 rounded-[30px] bg-white border border-neutral-200 shadow-sm"><TrendingUp className="w-8 h-8 text-orange-500" /><div><h4 className="font-bold text-lg text-black">Revenue Alignment</h4><p className="text-sm opacity-50">Built to increase ADR and market authority.</p></div></div>
                                 </div>
                             </div>
 
                             <div className="rounded-[40px] bg-[#F3EDE8] p-2 shadow-2xl border border-black/5">
                                 <div className="bg-white p-8 lg:p-12 rounded-[38px] space-y-8">
-                                    <div className="grid gap-6 md:grid-cols-2">
+                                    <div className="grid gap-5 md:grid-cols-2">
                                         <TextInput label="Full Name" value={form.fullName} onChange={(v: string) => setForm({ ...form, fullName: v })} placeholder="Name" />
                                         <TextInput label="Company Name" value={form.company} onChange={(v: string) => setForm({ ...form, company: v })} placeholder="Company" />
                                     </div>
-                                    <div className="grid gap-6 md:grid-cols-2">
+                                    <div className="grid gap-5 md:grid-cols-2">
                                         <Select label="Industry Focus" value={form.industry} onChange={(v: string) => setForm({ ...form, industry: v })}>
-                                            <option value="">Select Industry</option>
+                                            <option value="">Select industry</option>
                                             {Object.entries(INDUSTRY_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
                                         </Select>
-                                        <TextInput label="Email (Optional)" value={form.email} onChange={(v: string) => setForm({ ...form, email: v })} placeholder="Email" />
+                                        <TextInput label="Email (Optional)" value={form.email} onChange={(v: string) => setForm({ ...form, email: v })} placeholder="your@email.com" />
                                     </div>
 
-                                    <div className="space-y-4">
+                                    <div className="space-y-3">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 flex items-center gap-2"><Layers className="w-3 h-3" /> Target Environments (Multi-Select)</label>
                                         <div className="flex flex-wrap gap-2">
                                             {ENVIRONMENT_OPTIONS.map(e => (
-                                                <button key={e} type="button" onClick={() => toggleItem(selectedEnvs, setSelectedEnvs, e)} className={`px-4 py-2.5 rounded-full text-[10px] font-bold border transition-all ${selectedEnvs.includes(e) ? 'bg-black border-black text-white shadow-lg' : 'bg-white border-neutral-200 text-neutral-400'}`}>{e}</button>
+                                                <button key={e} type="button" onClick={() => toggleItem(selectedEnvs, setSelectedEnvs, e)} className={`px-4 py-2.5 rounded-full text-[10px] font-bold border transition-all ${selectedEnvs.includes(e) ? 'bg-black border-black text-white shadow-lg scale-[1.02]' : 'bg-white border-neutral-200 text-neutral-400 hover:border-neutral-300'}`}>{e}</button>
                                             ))}
                                         </div>
                                     </div>
 
-                                    <div className="space-y-4">
+                                    <div className="space-y-3">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 flex items-center gap-2"><MousePointer2 className="w-3 h-3" /> Desired Scope (Multi-Select)</label>
                                         <div className="grid grid-cols-2 gap-2">
                                             {SCOPE_OPTIONS.map(s => (
-                                                <button key={s} type="button" onClick={() => toggleItem(selectedServices, setSelectedServices, s)} className={`px-4 py-3 rounded-xl text-[10px] font-bold text-left border transition-all ${selectedServices.includes(s) ? 'bg-[#FF6A17] border-[#FF6A17] text-white shadow-lg' : 'bg-white border-neutral-200 text-neutral-400'}`}>{s}</button>
+                                                <button key={s} type="button" onClick={() => toggleItem(selectedServices, setSelectedServices, s)} className={`px-4 py-3 rounded-xl text-[10px] font-bold text-left border transition-all ${selectedServices.includes(s) ? 'bg-[#FF6A17] border-[#FF6A17] text-white shadow-lg scale-[1.02]' : 'bg-white border-neutral-200 text-neutral-400 hover:border-neutral-300'}`}>{s}</button>
                                             ))}
                                         </div>
                                     </div>
 
-                                    <div className="grid gap-6 md:grid-cols-2">
+                                    <div className="grid gap-5 md:grid-cols-2">
                                         <Select label="Timeline" value={form.timeline} onChange={(v: string) => setForm({ ...form, timeline: v })}>
                                             <option value="">Select Timeline</option>
                                             {TIMELINE_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
                                         </Select>
-                                        <Select label="Budget Approach" value={form.budget} onChange={(v: string) => setForm({ ...form, budget: v })}>
+                                        <Select label="Rough Budget Approach" value={form.budget} onChange={(v: string) => setForm({ ...form, budget: v })}>
                                             <option value="">Select Budget</option>
                                             {BUDGET_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
                                         </Select>
                                     </div>
 
-                                    <Textarea label="Main Goals" value={form.goals} onChange={(v: string) => setForm({ ...form, goals: v })} placeholder="Visual or commercial objectives?" />
+                                    <Textarea label="Main Goals" value={form.goals} onChange={(v: string) => setForm({ ...form, goals: v })} placeholder="What needs to improve visually or commercially?" />
                                     <PrimaryButton disabled={loading || !form.fullName || !form.industry} onClick={handleSync}>
-                                        {loading ? <span className="flex items-center gap-2"><Clock className="w-5 h-5 animate-spin" /> Syncing...</span> : "Generate Bespoke Strategy"}
+                                        {loading ? <span className="flex items-center gap-2"><Clock className="w-5 h-5 animate-spin" /> Syncing Data...</span> : "Generate Bespoke Strategy"}
                                     </PrimaryButton>
                                 </div>
                             </div>
@@ -186,11 +191,13 @@ export default function StrategicPortal() {
                             <button onClick={() => window.print()} className="flex items-center gap-2 font-bold text-xs uppercase tracking-widest text-neutral-500 hover:text-[#FF6A17] transition border-b border-transparent hover:border-[#FF6A17] pb-1"><Download className="w-4 h-4" /> Download PDF</button>
                         </div>
                         <div className="space-y-32 print:space-y-20">
-                            <StrategyPage num="01" title={strategy.theme} subtitle="Thesis" text={strategy.p1} stats={strategy.stats} />
-                            <div className="print:break-before-page" />
-                            <StrategyPage num="02" title="Tactical Playbook" subtitle="Atmosphere" text={strategy.p2} />
+                            <StrategyPage num="01" title={strategy.theme} subtitle="Executive Thesis" text={strategy.p1} stats={strategy.stats} />
                             <div className="print:break-after-page" />
-                            <StrategyPage num="03" title="Economic ROI" subtitle="Alignment" text={strategy.p3} isLast onAction={() => router.push('/')} />
+                            <StrategyPage num="02" title="Tactical Playbook" subtitle="Atmospheric Strategy" text={strategy.p2} />
+                            <div className="print:break-after-page" />
+                            <StrategyPage num="03" title="Economic Alignment" subtitle="Visual ROI" text={strategy.p3} />
+                            <div className="print:break-after-page" />
+                            <StrategyPage num="04" title="Transformation Roadmap" subtitle="Execution Plan" text={strategy.p4} isLast onAction={() => router.push('/')} />
                         </div>
                     </motion.section>
                 )}
@@ -199,6 +206,7 @@ export default function StrategicPortal() {
     );
 }
 
+// --- UI COMPONENTS ---
 function StrategyPage({ num, title, subtitle, text, isLast, stats, onAction }: any) {
     return (
         <section className="border-t-4 border-black pt-12">
@@ -208,7 +216,7 @@ function StrategyPage({ num, title, subtitle, text, isLast, stats, onAction }: a
                 <p className="text-3xl font-medium leading-[1.4] text-neutral-800">{text}</p>
                 {stats && (
                     <div className="p-10 rounded-[50px] bg-neutral-100 border border-neutral-200 flex flex-col justify-center gap-10 print:border-none print:p-0">
-                        <StatLine label="Current Perception Index" val={stats[0]} />
+                        <StatLine label="Current Asset Perception" val={stats[0]} />
                         <StatLine label="SpaceLift Potential" val={stats[1]} color="#FF6A17" />
                     </div>
                 )}
@@ -232,4 +240,4 @@ function StatLine({ label, val, color = "#DDD6CE" }: any) {
 function TextInput({ label, ...props }: any) { return (<div className="w-full space-y-1.5"><label className="text-[10px] font-black uppercase tracking-widest text-neutral-400">{label}</label><input {...props} onChange={(e) => props.onChange(e.target.value)} className="w-full h-14 px-5 rounded-2xl border border-neutral-200 outline-none focus:border-[#FF6A17] transition-all bg-white text-black" /></div>); }
 function Select({ label, children, ...props }: any) { return (<div className="w-full space-y-1.5"><label className="text-[10px] font-black uppercase tracking-widest text-neutral-400">{label}</label><select {...props} onChange={(e) => props.onChange(e.target.value)} className="w-full h-14 px-5 rounded-2xl border border-neutral-200 outline-none appearance-none focus:border-[#FF6A17] transition-all bg-white text-black">{children}</select></div>); }
 function Textarea({ label, ...props }: any) { return (<div className="w-full space-y-1.5"><label className="text-[10px] font-black uppercase tracking-widest text-neutral-400">{label}</label><textarea {...props} onChange={(e) => props.onChange(e.target.value)} className="w-full min-h-[140px] p-5 rounded-2xl border border-neutral-200 outline-none focus:border-[#FF6A17] transition-all bg-white text-black" /></div>); }
-function PrimaryButton({ children, onClick, disabled }: any) { return (<button disabled={disabled} onClick={onClick} className="w-full h-16 bg-[#FF6A17] text-white font-bold text-lg rounded-2xl transition-all disabled:opacity-30 hover:shadow-[0_15px_35px_rgba(255,106,23,0.3)] flex items-center justify-center py-5 active:scale-[0.98]">{children}</button>); }
+function PrimaryButton({ children, onClick, disabled }: any) { return (<button disabled={disabled} onClick={onClick} className="w-full h-16 bg-[#FF6A17] text-white font-bold text-lg rounded-2xl transition-all disabled:opacity-30 hover:shadow-xl flex items-center justify-center py-5 active:scale-[0.98]">{children}</button>); }}
