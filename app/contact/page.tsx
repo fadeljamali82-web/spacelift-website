@@ -13,11 +13,9 @@ import {
     Clock,
 } from "lucide-react";
 
-// --- CRM CONFIGURATION ---
 const CRM_URL =
-    "https://script.google.com/macros/s/AKfycbzc-150KvOIJRP9q9mBvWJ-8O-u5g8y-ds5lRr1ZAlY84XXJmYl3hmnwJeaphza0M77hw/exec";
+    "https://script.google.com/macros/s/AKfycbyWwK2u5jD7hyYSWCN_OkvQEfF5TLzcxvlBYu5arbASOMunIlGPBSJnXXbHDiyobBCUmA/exec";
 
-// --- FORM OPTIONS ---
 const BUDGET_OPTIONS = [
     "Value-driven / Phased",
     "Standard CapEx",
@@ -130,7 +128,6 @@ type FormState = {
 
 export default function SpaceLiftPortal() {
     const router = useRouter();
-
     const [showReport, setShowReport] = useState(false);
     const [loading, setLoading] = useState(false);
     const [submitError, setSubmitError] = useState("");
@@ -208,16 +205,28 @@ export default function SpaceLiftPortal() {
                 body: JSON.stringify(payload),
             });
 
-            if (!response.ok) {
-                throw new Error(`Sync failed with status ${response.status}`);
+            const text = await response.text();
+            let result: any = null;
+
+            try {
+                result = text ? JSON.parse(text) : null;
+            } catch {
+                result = null;
+            }
+
+            if (!response.ok || (result && result.success === false)) {
+                throw new Error(
+                    result?.error || `Sync failed with status ${response.status}`
+                );
             }
 
             setShowReport(true);
             window.scrollTo({ top: 0, behavior: "smooth" });
-        } catch (error) {
+        } catch (error: any) {
             console.error("CRM sync error:", error);
             setSubmitError(
-                "The strategic report generated, but the Google Sheet sync failed. Please check the Apps Script deployment."
+                error?.message ||
+                "The strategic report generated, but the Google Sheet sync failed."
             );
         } finally {
             setLoading(false);
