@@ -72,12 +72,11 @@ const contactInitial: ContactState = {
 };
 
 const ORANGE = "#FF6A17";
-const ORANGE_DARK = "#DD530C";
-const SOFT_BG = "#F7F6F3";
 const PANEL = "#F3EDE8";
 const TEXT = "#111111";
 const MUTED = "#6B6B6B";
 const BORDER = "#DDD6CE";
+const SOFT_BG = "#F7F6F3";
 
 const assessmentQuestions = [
     {
@@ -267,6 +266,8 @@ export default function ContactPage() {
     const [contact, setContact] = useState<ContactState>(contactInitial);
     const [assessmentSubmitted, setAssessmentSubmitted] = useState(false);
     const [contactSubmitted, setContactSubmitted] = useState(false);
+    const [loadingAssessment, setLoadingAssessment] = useState(false);
+    const [loadingContact, setLoadingContact] = useState(false);
 
     const isUnlockStep = assessmentStep === 5;
     const result = useMemo(() => scoreAssessment(assessment), [assessment]);
@@ -290,6 +291,67 @@ export default function ContactPage() {
         setAssessment(assessmentInitial);
         setAssessmentStep(0);
         setAssessmentSubmitted(false);
+    };
+
+    const handleAssessmentSubmit = async () => {
+        setLoadingAssessment(true);
+
+        try {
+            await fetch("/api/generate-report", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    type: "assessment",
+                    name: assessment.fullName,
+                    email: assessment.email,
+                    company: assessment.company,
+                    industry: assessment.industry,
+                    environment: `Environment size: ${assessment.size}
+Current condition: ${assessment.condition}
+Goal: ${assessment.goal}
+Rollout: ${assessment.rollout}
+Perspective: ${assessment.perspective}`,
+                    goals: assessment.goal,
+                }),
+            });
+
+            setAssessmentSubmitted(true);
+        } catch (error) {
+            alert("Something went wrong while preparing the report.");
+        } finally {
+            setLoadingAssessment(false);
+        }
+    };
+
+    const handleContactSubmit = async () => {
+        setLoadingContact(true);
+
+        try {
+            await fetch("/api/generate-report", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    type: "contact",
+                    name: contact.fullName,
+                    email: contact.email,
+                    company: contact.company,
+                    industry: contact.projectType,
+                    environment: contact.projectDescription,
+                    goals: contact.projectDescription,
+                    phone: contact.phone,
+                }),
+            });
+
+            setContactSubmitted(true);
+        } catch (error) {
+            alert("Something went wrong while sending the request.");
+        } finally {
+            setLoadingContact(false);
+        }
     };
 
     return (
@@ -438,7 +500,11 @@ export default function ContactPage() {
                                                                             assessment[
                                                                             currentQuestion.key as keyof AssessmentState
                                                                             ] === option.value;
-                                                                        const Icon = (option as { icon?: React.ComponentType<{ className?: string; style?: React.CSSProperties }> }).icon;
+                                                                        const Icon =
+                                                                            option.icon as React.ComponentType<{
+                                                                                className?: string;
+                                                                                style?: React.CSSProperties;
+                                                                            }>;
 
                                                                         return (
                                                                             <button
@@ -609,12 +675,14 @@ export default function ContactPage() {
                                                                     </button>
 
                                                                     <button
-                                                                        onClick={() => setAssessmentSubmitted(true)}
-                                                                        disabled={!canContinueAssessment}
+                                                                        onClick={handleAssessmentSubmit}
+                                                                        disabled={!canContinueAssessment || loadingAssessment}
                                                                         className="inline-flex h-14 items-center gap-2 rounded-[18px] px-6 text-[17px] font-semibold text-white transition disabled:opacity-40"
                                                                         style={{ background: ORANGE }}
                                                                     >
-                                                                        Unlock Perspective
+                                                                        {loadingAssessment
+                                                                            ? "Preparing..."
+                                                                            : "Unlock Perspective"}
                                                                     </button>
                                                                 </div>
                                                             </>
@@ -635,8 +703,8 @@ export default function ContactPage() {
                                                             className="mt-4 text-[20px] leading-[1.55]"
                                                             style={{ color: MUTED }}
                                                         >
-                                                            Here is the immediate summary state for the demo
-                                                            version.
+                                                            Your short premium memo is being prepared and will
+                                                            arrive by email shortly.
                                                         </p>
 
                                                         <div className="mt-8 grid gap-4 md:grid-cols-2">
@@ -848,18 +916,21 @@ export default function ContactPage() {
 
                                                         <div className="mt-10">
                                                             <button
-                                                                onClick={() => setContactSubmitted(true)}
+                                                                onClick={handleContactSubmit}
                                                                 disabled={
                                                                     !contact.fullName ||
                                                                     !contact.company ||
                                                                     !contact.email ||
                                                                     !contact.projectType ||
-                                                                    !contact.projectDescription
+                                                                    !contact.projectDescription ||
+                                                                    loadingContact
                                                                 }
                                                                 className="inline-flex h-14 w-full items-center justify-center rounded-[18px] px-6 text-[17px] font-semibold text-white transition disabled:opacity-40"
                                                                 style={{ background: ORANGE }}
                                                             >
-                                                                Request a Conversation
+                                                                {loadingContact
+                                                                    ? "Sending..."
+                                                                    : "Request a Conversation"}
                                                             </button>
                                                         </div>
                                                     </>
@@ -878,9 +949,8 @@ export default function ContactPage() {
                                                             className="mt-4 text-[20px] leading-[1.55]"
                                                             style={{ color: MUTED }}
                                                         >
-                                                            This demo version does not store data yet, but the
-                                                            interaction is fully ready for Antigravity and
-                                                            Vercel deployment.
+                                                            Your request has been sent. We’ll review the
+                                                            details and follow up by email.
                                                         </p>
 
                                                         <div className="mt-8 flex flex-wrap gap-3">
