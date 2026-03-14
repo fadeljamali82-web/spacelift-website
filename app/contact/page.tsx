@@ -9,8 +9,8 @@ import {
     CheckCircle2,
     ClipboardList,
     Copy,
-    Hospital,
     Hotel,
+    Hospital,
     LayoutGrid,
     Mail,
     MapPinned,
@@ -38,9 +38,12 @@ type ReportForm = {
     locations: string;
     timeline: string;
     scope: string;
-    environment: string;
+    environmentType: string;
+    primaryChallenge: string;
+    budgetApproach: string;
     goals: string;
     constraints: string;
+    notes: string;
 };
 
 type ContactForm = {
@@ -60,9 +63,12 @@ const reportInitial: ReportForm = {
     locations: "",
     timeline: "",
     scope: "",
-    environment: "",
+    environmentType: "",
+    primaryChallenge: "",
+    budgetApproach: "",
     goals: "",
     constraints: "",
+    notes: "",
 };
 
 const contactInitial: ContactForm = {
@@ -83,6 +89,7 @@ const COLORS = {
     border: "#DDD6CE",
     orange: "#FF6A17",
     orangeDark: "#DD530C",
+    softOrange: "rgba(255,106,23,0.08)",
 };
 
 const INDUSTRY_LABELS: Record<IndustryKey, string> = {
@@ -306,15 +313,68 @@ function buildReport(form: ReportForm) {
     const pack = REPORT_TEXT[industry];
     const company = form.company || "The organization";
     const industryLabel = INDUSTRY_LABELS[industry];
-    const locations = form.locations || "Not specified";
-    const timeline = form.timeline || "Not specified";
-    const scope = form.scope || "Not specified";
-    const goals = form.goals || "Not specified";
-    const constraints = form.constraints || "No additional constraints were shared.";
-    const environment = form.environment || "No environment description was shared.";
 
     return {
         title: `${industryLabel} Strategic Environment Report`,
+        plainText: `SPACE LIFT STUDIO
+${industryLabel.toUpperCase()} STRATEGIC ENVIRONMENT REPORT
+
+Prepared for: ${form.fullName || "Not specified"}
+Company: ${company}
+Industry: ${industryLabel}
+Locations: ${form.locations || "Not specified"}
+Timeline: ${form.timeline || "Not specified"}
+Scope of Work: ${form.scope || "Not specified"}
+Environment Type: ${form.environmentType || "Not specified"}
+Primary Challenge: ${form.primaryChallenge || "Not specified"}
+Budget Approach: ${form.budgetApproach || "Not specified"}
+
+1. Executive Snapshot
+${pack.executive}
+
+For ${company}, the current opportunity appears to involve ${(
+                form.scope || "the stated scope"
+            ).toLowerCase()} across ${(
+                form.locations || "the stated footprint"
+            ).toLowerCase()} with a working timeline of ${(
+                form.timeline || "the current timing window"
+            ).toLowerCase()}. Based on the information shared, the issue is not purely aesthetic. It is strategic: how the environment is currently performing versus how it needs to perform to support perception, confidence, and business ambition.
+
+2. Industry & Market Dynamics
+${pack.dynamics}
+
+The environment is currently being described as:
+${form.environment || "No environment description provided."}
+
+3. Key Environment Gaps
+${pack.gaps.map((item) => `- ${item}`).join("\n")}
+
+Primary challenge identified:
+${form.primaryChallenge || "Not specified"}
+
+4. Strategic Recommendations
+${pack.recommendations.map((item) => `- ${item}`).join("\n")}
+
+Current goals:
+${form.goals || "Not specified"}
+
+5. What Stronger Operators Usually Do
+${pack.leaders}
+
+6. SpaceLift Relevance
+${pack.relevance}
+
+Constraints / considerations:
+${form.constraints || "No additional constraints were provided."}
+
+Budget approach:
+${form.budgetApproach || "Not specified"}
+
+7. Recommended Next Path
+${pack.nextPath}
+
+Additional notes:
+${form.notes || "None provided."}`,
         sections: [
             {
                 id: "executive",
@@ -322,7 +382,13 @@ function buildReport(form: ReportForm) {
                 heading: "Executive Snapshot",
                 body: `${pack.executive}
 
-For ${company}, the opportunity appears to involve ${scope.toLowerCase()} across ${locations.toLowerCase()} with a working timeline of ${timeline.toLowerCase()}. Based on the information shared, the environment challenge is not simply visual. It is strategic: how the physical environment is currently performing versus how it needs to perform in order to support perception, confidence, and the next stage of business intent.`,
+For ${company}, the current opportunity appears to involve ${(
+                        form.scope || "the stated scope"
+                    ).toLowerCase()} across ${(
+                        form.locations || "the stated footprint"
+                    ).toLowerCase()} with a working timeline of ${(
+                        form.timeline || "the current timing window"
+                    ).toLowerCase()}. Based on the information shared, the issue is not purely aesthetic. It is strategic: how the environment is currently performing versus how it needs to perform to support perception, confidence, and business ambition.`,
             },
             {
                 id: "dynamics",
@@ -330,13 +396,17 @@ For ${company}, the opportunity appears to involve ${scope.toLowerCase()} across
                 heading: "Industry & Market Dynamics",
                 body: `${pack.dynamics}
 
-In this case, the current situation is being framed around the following environment context: ${environment}`,
+The environment is currently being described as:
+${form.environment || "No environment description provided."}`,
             },
             {
                 id: "gaps",
                 icon: ClipboardList,
                 heading: "Key Environment Gaps",
-                body: pack.gaps.map((item) => `• ${item}`).join("\n"),
+                body: `${pack.gaps.map((item) => `• ${item}`).join("\n")}
+
+Primary challenge identified:
+${form.primaryChallenge || "Not specified"}`,
             },
             {
                 id: "recommendations",
@@ -344,9 +414,8 @@ In this case, the current situation is being framed around the following environ
                 heading: "Strategic Recommendations",
                 body: `${pack.recommendations.map((item) => `• ${item}`).join("\n")}
 
-The stated objective is: ${goals}
-
-Any strategic path should therefore be measured against that goal rather than against generic upgrade assumptions.`,
+Current goals:
+${form.goals || "Not specified"}`,
             },
             {
                 id: "leaders",
@@ -360,53 +429,22 @@ Any strategic path should therefore be measured against that goal rather than ag
                 heading: "SpaceLift Relevance",
                 body: `${pack.relevance}
 
-The practical constraint set currently appears to include: ${constraints}`,
+Constraints / considerations:
+${form.constraints || "No additional constraints were provided."}
+
+Budget approach:
+${form.budgetApproach || "Not specified"}`,
             },
             {
                 id: "next",
                 icon: MessageSquareText,
                 heading: "Recommended Next Path",
-                body: pack.nextPath,
+                body: `${pack.nextPath}
+
+Additional notes:
+${form.notes || "None provided."}`,
             },
         ],
-        plainText: `SPACE LIFT STUDIO
-${industryLabel.toUpperCase()} STRATEGIC ENVIRONMENT REPORT
-
-Prepared for: ${form.fullName || "Not specified"}
-Company: ${company}
-Industry: ${industryLabel}
-Locations: ${locations}
-Timeline: ${timeline}
-Scope of Work: ${scope}
-
-1. Executive Snapshot
-${pack.executive}
-
-For ${company}, the opportunity appears to involve ${scope.toLowerCase()} across ${locations.toLowerCase()} with a working timeline of ${timeline.toLowerCase()}. Based on the information shared, the environment challenge is not simply visual. It is strategic: how the physical environment is currently performing versus how it needs to perform in order to support perception, confidence, and the next stage of business intent.
-
-2. Industry & Market Dynamics
-${pack.dynamics}
-
-In this case, the current situation is being framed around the following environment context: ${environment}
-
-3. Key Environment Gaps
-${pack.gaps.map((item) => `- ${item}`).join("\n")}
-
-4. Strategic Recommendations
-${pack.recommendations.map((item) => `- ${item}`).join("\n")}
-
-The stated objective is: ${goals}
-
-5. What Stronger Operators Usually Do
-${pack.leaders}
-
-6. SpaceLift Relevance
-${pack.relevance}
-
-The practical constraint set currently appears to include: ${constraints}
-
-7. Recommended Next Path
-${pack.nextPath}`,
     };
 }
 
@@ -416,6 +454,7 @@ export default function ContactPage() {
     const [contactForm, setContactForm] = useState<ContactForm>(contactInitial);
     const [showReport, setShowReport] = useState(false);
     const [copied, setCopied] = useState(false);
+
     const built = useMemo(() => buildReport(reportForm), [reportForm]);
 
     const reportReady =
@@ -425,7 +464,9 @@ export default function ContactPage() {
         reportForm.locations &&
         reportForm.timeline &&
         reportForm.scope &&
-        reportForm.environment &&
+        reportForm.environmentType &&
+        reportForm.primaryChallenge &&
+        reportForm.budgetApproach &&
         reportForm.goals;
 
     const contactReady =
@@ -453,9 +494,12 @@ export default function ContactPage() {
                         transition={{ duration: 0.35 }}
                         className="mx-auto max-w-[1440px] px-5 py-10 md:px-8 lg:px-12 lg:py-16"
                     >
-                        <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:gap-12 xl:gap-16">
+                        <div className="grid gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:gap-12 xl:gap-16">
                             <div className="pt-2 lg:pt-6">
-                                <div
+                                <motion.div
+                                    initial={{ opacity: 0, x: -12 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.4 }}
                                     className="mb-8 flex items-center gap-3 text-[13px] font-semibold uppercase tracking-[0.26em]"
                                     style={{ color: COLORS.orange }}
                                 >
@@ -464,45 +508,56 @@ export default function ContactPage() {
                                         style={{ background: COLORS.orange }}
                                     />
                                     Strategic report & direct contact
-                                </div>
+                                </motion.div>
 
-                                <h1 className="max-w-[720px] text-[52px] font-bold leading-[0.92] tracking-[-0.04em] sm:text-[64px] lg:text-[82px] xl:text-[92px]">
+                                <motion.h1
+                                    initial={{ opacity: 0, y: 14 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.45 }}
+                                    className="max-w-[760px] text-[52px] font-bold leading-[0.92] tracking-[-0.04em] sm:text-[64px] lg:text-[82px] xl:text-[96px]"
+                                >
                                     Start with the path that fits the opportunity.
-                                </h1>
+                                </motion.h1>
 
-                                <p
-                                    className="mt-8 max-w-[720px] text-[22px] leading-[1.65]"
+                                <motion.p
+                                    initial={{ opacity: 0, y: 14 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.5, delay: 0.04 }}
+                                    className="mt-8 max-w-[740px] text-[22px] leading-[1.65]"
                                     style={{ color: COLORS.muted }}
                                 >
                                     Generate a premium industry-specific strategic report or contact
                                     SpaceLift directly if you already have a live opportunity in mind.
-                                </p>
+                                </motion.p>
 
                                 <div className="mt-10 grid gap-4 sm:grid-cols-3">
                                     <InfoCard
                                         title="Industry intelligence"
-                                        body="Each report is built around real sector pressures and recurring environment gaps."
+                                        body="Built around real sector pressures, recurring gaps, and visible environment signals."
                                     />
                                     <InfoCard
                                         title="Personalized output"
-                                        body="Locations, timeline, scope, goals, and constraints shape the final report."
+                                        body="Locations, timeline, scope, constraints, and goals shape the final report."
                                     />
                                     <InfoCard
                                         title="Immediate value"
-                                        body="The final report appears instantly in a premium scrollable format and can be copied."
+                                        body="The report appears instantly in a premium scrollable format and can be copied."
                                     />
                                 </div>
                             </div>
 
                             <div>
-                                <div
+                                <motion.div
+                                    initial={{ opacity: 0, y: 14 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.45, delay: 0.06 }}
                                     className="rounded-[34px] p-5 shadow-[0_24px_80px_rgba(17,17,17,0.08)] md:p-7 lg:p-8"
                                     style={{
                                         background: COLORS.panel,
                                         border: "1px solid rgba(17,17,17,0.04)",
                                     }}
                                 >
-                                    <h2 className="text-[38px] font-bold leading-[1.02] tracking-[-0.04em] sm:text-[46px] lg:text-[54px]">
+                                    <h2 className="text-[40px] font-bold leading-[1.02] tracking-[-0.04em] sm:text-[48px] lg:text-[56px]">
                                         Choose how you’d like to begin.
                                     </h2>
 
@@ -510,8 +565,8 @@ export default function ContactPage() {
                                         className="mt-4 text-[19px] leading-[1.6]"
                                         style={{ color: COLORS.muted }}
                                     >
-                                        Use the strategic report if you want immediate insight. Use direct
-                                        contact if you already know you want to speak with us.
+                                        Use the strategic report if you want immediate insight. Use
+                                        direct contact if you already know you want to speak with us.
                                     </p>
 
                                     <div
@@ -581,8 +636,8 @@ export default function ContactPage() {
                                                             className="mt-3 text-[20px] leading-[1.55]"
                                                             style={{ color: COLORS.muted }}
                                                         >
-                                                            This uses prebuilt SpaceLift industry intelligence and
-                                                            personalizes the result based on the details you enter.
+                                                            This version uses SpaceLift industry intelligence already
+                                                            built into the page.
                                                         </p>
 
                                                         <div className="mt-8 grid gap-5 md:grid-cols-2">
@@ -652,8 +707,7 @@ export default function ContactPage() {
 
                                                             <div>
                                                                 <FieldLabel>Number of locations</FieldLabel>
-                                                                <TextInput
-                                                                    placeholder="e.g. 1, 4, 12, 40+"
+                                                                <Select
                                                                     value={reportForm.locations}
                                                                     onChange={(e) =>
                                                                         setReportForm((p) => ({
@@ -661,13 +715,19 @@ export default function ContactPage() {
                                                                             locations: e.target.value,
                                                                         }))
                                                                     }
-                                                                />
+                                                                >
+                                                                    <option value="">Select range</option>
+                                                                    <option value="1 location">1 location</option>
+                                                                    <option value="2–5 locations">2–5 locations</option>
+                                                                    <option value="6–20 locations">6–20 locations</option>
+                                                                    <option value="20+ locations">20+ locations</option>
+                                                                    <option value="Still being defined">Still being defined</option>
+                                                                </Select>
                                                             </div>
 
                                                             <div>
                                                                 <FieldLabel>Timeline</FieldLabel>
-                                                                <TextInput
-                                                                    placeholder="e.g. Q3 2026, phased, 6 months"
+                                                                <Select
                                                                     value={reportForm.timeline}
                                                                     onChange={(e) =>
                                                                         setReportForm((p) => ({
@@ -675,13 +735,19 @@ export default function ContactPage() {
                                                                             timeline: e.target.value,
                                                                         }))
                                                                     }
-                                                                />
+                                                                >
+                                                                    <option value="">Select timeline</option>
+                                                                    <option value="Immediate / active need">Immediate / active need</option>
+                                                                    <option value="Within 3 months">Within 3 months</option>
+                                                                    <option value="3–6 months">3–6 months</option>
+                                                                    <option value="6–12 months">6–12 months</option>
+                                                                    <option value="Phased / ongoing">Phased / ongoing</option>
+                                                                </Select>
                                                             </div>
 
-                                                            <div className="md:col-span-2">
+                                                            <div>
                                                                 <FieldLabel>Scope of work</FieldLabel>
-                                                                <TextInput
-                                                                    placeholder="e.g. lobby refresh, workplace rebrand, multi-site corridor upgrade"
+                                                                <Select
                                                                     value={reportForm.scope}
                                                                     onChange={(e) =>
                                                                         setReportForm((p) => ({
@@ -689,7 +755,85 @@ export default function ContactPage() {
                                                                             scope: e.target.value,
                                                                         }))
                                                                     }
-                                                                />
+                                                                >
+                                                                    <option value="">Select scope</option>
+                                                                    <option value="Single priority zone">Single priority zone</option>
+                                                                    <option value="Multiple visible zones">Multiple visible zones</option>
+                                                                    <option value="Full environment refresh">Full environment refresh</option>
+                                                                    <option value="Multi-site rollout">Multi-site rollout</option>
+                                                                    <option value="Still defining the scope">Still defining the scope</option>
+                                                                </Select>
+                                                            </div>
+
+                                                            <div>
+                                                                <FieldLabel>Environment type</FieldLabel>
+                                                                <Select
+                                                                    value={reportForm.environmentType}
+                                                                    onChange={(e) =>
+                                                                        setReportForm((p) => ({
+                                                                            ...p,
+                                                                            environmentType: e.target.value,
+                                                                        }))
+                                                                    }
+                                                                >
+                                                                    <option value="">Select type</option>
+                                                                    <option value="Arrival / lobby">Arrival / lobby</option>
+                                                                    <option value="Corridors / circulation">Corridors / circulation</option>
+                                                                    <option value="Guest / customer-facing areas">Guest / customer-facing areas</option>
+                                                                    <option value="Workplace / collaboration zones">Workplace / collaboration zones</option>
+                                                                    <option value="Ballroom / event space">Ballroom / event space</option>
+                                                                    <option value="Shared amenities">Shared amenities</option>
+                                                                </Select>
+                                                            </div>
+
+                                                            <div className="md:col-span-2">
+                                                                <FieldLabel>Primary challenge</FieldLabel>
+                                                                <Select
+                                                                    value={reportForm.primaryChallenge}
+                                                                    onChange={(e) =>
+                                                                        setReportForm((p) => ({
+                                                                            ...p,
+                                                                            primaryChallenge: e.target.value,
+                                                                        }))
+                                                                    }
+                                                                >
+                                                                    <option value="">Select challenge</option>
+                                                                    <option value="Environment feels outdated">Environment feels outdated</option>
+                                                                    <option value="Brand presence is weak">Brand presence is weak</option>
+                                                                    <option value="Experience feels generic">Experience feels generic</option>
+                                                                    <option value="Visual consistency is weak">Visual consistency is weak</option>
+                                                                    <option value="Space no longer matches business ambition">
+                                                                        Space no longer matches business ambition
+                                                                    </option>
+                                                                    <option value="Need a scalable transformation approach">
+                                                                        Need a scalable transformation approach
+                                                                    </option>
+                                                                </Select>
+                                                            </div>
+
+                                                            <div className="md:col-span-2">
+                                                                <FieldLabel>Budget approach</FieldLabel>
+                                                                <Select
+                                                                    value={reportForm.budgetApproach}
+                                                                    onChange={(e) =>
+                                                                        setReportForm((p) => ({
+                                                                            ...p,
+                                                                            budgetApproach: e.target.value,
+                                                                        }))
+                                                                    }
+                                                                >
+                                                                    <option value="">Select budget approach</option>
+                                                                    <option value="Looking for a phased approach">Looking for a phased approach</option>
+                                                                    <option value="Prepared for a serious premium upgrade">
+                                                                        Prepared for a serious premium upgrade
+                                                                    </option>
+                                                                    <option value="Need value without full reconstruction">
+                                                                        Need value without full reconstruction
+                                                                    </option>
+                                                                    <option value="Still being evaluated internally">
+                                                                        Still being evaluated internally
+                                                                    </option>
+                                                                </Select>
                                                             </div>
 
                                                             <div className="md:col-span-2">
@@ -736,13 +880,28 @@ export default function ContactPage() {
                                                                     }
                                                                 />
                                                             </div>
+
+                                                            <div className="md:col-span-2">
+                                                                <FieldLabel>Additional notes</FieldLabel>
+                                                                <Textarea
+                                                                    rows={3}
+                                                                    placeholder="Anything else worth factoring into the report."
+                                                                    value={reportForm.notes}
+                                                                    onChange={(e) =>
+                                                                        setReportForm((p) => ({
+                                                                            ...p,
+                                                                            notes: e.target.value,
+                                                                        }))
+                                                                    }
+                                                                />
+                                                            </div>
                                                         </div>
 
                                                         <div className="mt-10">
                                                             <button
                                                                 onClick={() => setShowReport(true)}
                                                                 disabled={!reportReady}
-                                                                className="inline-flex h-14 w-full items-center justify-center rounded-[18px] px-6 text-[17px] font-semibold text-white transition disabled:opacity-40"
+                                                                className="inline-flex h-14 w-full items-center justify-center rounded-[18px] px-6 text-[17px] font-semibold text-white transition disabled:opacity-40 hover:shadow-[0_14px_30px_rgba(255,106,23,0.22)]"
                                                                 style={{ background: COLORS.orange }}
                                                             >
                                                                 Generate Strategic Report
@@ -834,8 +993,7 @@ export default function ContactPage() {
 
                                                             <div className="md:col-span-2">
                                                                 <FieldLabel>Project type</FieldLabel>
-                                                                <TextInput
-                                                                    placeholder="e.g. hospitality refresh, workplace upgrade, venue branding"
+                                                                <Select
                                                                     value={contactForm.projectType}
                                                                     onChange={(e) =>
                                                                         setContactForm((p) => ({
@@ -843,7 +1001,16 @@ export default function ContactPage() {
                                                                             projectType: e.target.value,
                                                                         }))
                                                                     }
-                                                                />
+                                                                >
+                                                                    <option value="">Select type</option>
+                                                                    <option value="Hospitality environment">Hospitality environment</option>
+                                                                    <option value="Corporate / workplace">Corporate / workplace</option>
+                                                                    <option value="Retail environment">Retail environment</option>
+                                                                    <option value="Healthcare environment">Healthcare environment</option>
+                                                                    <option value="Venue / event environment">Venue / event environment</option>
+                                                                    <option value="Mixed-use / residential">Mixed-use / residential</option>
+                                                                    <option value="Other">Other</option>
+                                                                </Select>
                                                             </div>
 
                                                             <div className="md:col-span-2">
@@ -865,7 +1032,7 @@ export default function ContactPage() {
                                                         <div className="mt-10">
                                                             <button
                                                                 disabled={!contactReady}
-                                                                className="inline-flex h-14 w-full items-center justify-center rounded-[18px] px-6 text-[17px] font-semibold text-white transition disabled:opacity-40"
+                                                                className="inline-flex h-14 w-full items-center justify-center rounded-[18px] px-6 text-[17px] font-semibold text-white transition disabled:opacity-40 hover:shadow-[0_14px_30px_rgba(255,106,23,0.22)]"
                                                                 style={{ background: COLORS.orange }}
                                                             >
                                                                 Submit Inquiry
@@ -876,7 +1043,7 @@ export default function ContactPage() {
                                             </AnimatePresence>
                                         </div>
                                     </div>
-                                </div>
+                                </motion.div>
                             </div>
                         </div>
                     </motion.section>
@@ -903,20 +1070,18 @@ export default function ContactPage() {
                                 Back to Form
                             </button>
 
-                            <div className="flex items-center gap-3">
-                                <button
-                                    onClick={copyReport}
-                                    className="inline-flex items-center gap-2 rounded-[16px] border px-4 py-3 text-[15px] font-medium transition hover:bg-white"
-                                    style={{
-                                        borderColor: COLORS.border,
-                                        color: COLORS.text,
-                                        background: "rgba(255,255,255,0.45)",
-                                    }}
-                                >
-                                    <Copy className="h-4 w-4" />
-                                    {copied ? "Copied" : "Copy Report"}
-                                </button>
-                            </div>
+                            <button
+                                onClick={copyReport}
+                                className="inline-flex items-center gap-2 rounded-[16px] border px-4 py-3 text-[15px] font-medium transition hover:bg-white"
+                                style={{
+                                    borderColor: COLORS.border,
+                                    color: COLORS.text,
+                                    background: "rgba(255,255,255,0.45)",
+                                }}
+                            >
+                                <Copy className="h-4 w-4" />
+                                {copied ? "Copied" : "Copy Report"}
+                            </button>
                         </div>
 
                         <div className="grid gap-8 lg:grid-cols-[320px_minmax(0,1fr)] xl:grid-cols-[340px_minmax(0,1fr)]">
@@ -953,11 +1118,7 @@ export default function ContactPage() {
                                         <SummaryRow
                                             icon={ClipboardList}
                                             label="Industry"
-                                            value={titleCase(
-                                                INDUSTRY_LABELS[
-                                                (reportForm.industry || "other") as IndustryKey
-                                                ]
-                                            )}
+                                            value={INDUSTRY_LABELS[(reportForm.industry || "other") as IndustryKey]}
                                         />
                                         <SummaryRow
                                             icon={MapPinned}
@@ -984,9 +1145,10 @@ export default function ContactPage() {
                                     return (
                                         <motion.section
                                             key={section.id}
-                                            initial={{ opacity: 0, y: 20 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ duration: 0.35, delay: index * 0.06 }}
+                                            initial={{ opacity: 0, y: 24 }}
+                                            whileInView={{ opacity: 1, y: 0 }}
+                                            viewport={{ once: true, amount: 0.2 }}
+                                            transition={{ duration: 0.35, delay: index * 0.05 }}
                                             className="rounded-[28px] bg-white p-6 shadow-[0_20px_60px_rgba(17,17,17,0.06)] md:p-8"
                                             style={{ border: `1px solid ${COLORS.border}` }}
                                         >
@@ -994,7 +1156,7 @@ export default function ContactPage() {
                                                 <div
                                                     className="rounded-[16px] p-3"
                                                     style={{
-                                                        background: "rgba(255,106,23,0.08)",
+                                                        background: COLORS.softOrange,
                                                         color: COLORS.orange,
                                                     }}
                                                 >
@@ -1024,9 +1186,10 @@ export default function ContactPage() {
                                 })}
 
                                 <motion.div
-                                    initial={{ opacity: 0, y: 16 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.35, delay: 0.45 }}
+                                    initial={{ opacity: 0, y: 18 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, amount: 0.2 }}
+                                    transition={{ duration: 0.35 }}
                                     className="rounded-[28px] p-6 md:p-8"
                                     style={{
                                         background:
@@ -1042,9 +1205,9 @@ export default function ContactPage() {
                                         Keep the report or continue the conversation.
                                     </h3>
                                     <p className="mt-4 max-w-[860px] text-[17px] leading-[1.85] text-white/80">
-                                        This report is designed to provide immediate value, even before any
-                                        conversation happens. If helpful, you can copy it and move it into
-                                        your own documents. If the opportunity is live, the next step is a
+                                        This report is designed to provide immediate value before any
+                                        conversation happens. You can copy the content directly into your
+                                        own documents. If the opportunity is live, the next step is a
                                         direct conversation around scope, priorities, and the most useful
                                         transformation path.
                                     </p>
@@ -1052,7 +1215,7 @@ export default function ContactPage() {
                                     <div className="mt-6 flex flex-wrap gap-3">
                                         <button
                                             onClick={copyReport}
-                                            className="inline-flex h-14 items-center rounded-[18px] bg-white px-6 text-[16px] font-semibold transition"
+                                            className="inline-flex h-14 items-center rounded-[18px] bg-white px-6 text-[16px] font-semibold transition hover:opacity-95"
                                             style={{ color: COLORS.text }}
                                         >
                                             {copied ? "Copied" : "Copy Report"}
@@ -1060,7 +1223,7 @@ export default function ContactPage() {
 
                                         <button
                                             onClick={() => setShowReport(false)}
-                                            className="inline-flex h-14 items-center rounded-[18px] border px-6 text-[16px] font-semibold text-white transition"
+                                            className="inline-flex h-14 items-center rounded-[18px] border px-6 text-[16px] font-semibold text-white transition hover:bg-white/5"
                                             style={{ borderColor: "rgba(255,255,255,0.18)" }}
                                         >
                                             Start New Assessment
@@ -1078,7 +1241,9 @@ export default function ContactPage() {
 
 function InfoCard({ title, body }: { title: string; body: string }) {
     return (
-        <div
+        <motion.div
+            whileHover={{ y: -4 }}
+            transition={{ duration: 0.2 }}
             className="rounded-[22px] p-6 shadow-sm"
             style={{
                 background:
@@ -1091,7 +1256,7 @@ function InfoCard({ title, body }: { title: string; body: string }) {
                 {title}
             </div>
             <div className="mt-3 text-[15px] leading-7 text-white/80">{body}</div>
-        </div>
+        </motion.div>
     );
 }
 
@@ -1118,7 +1283,10 @@ function SummaryRow({
     return (
         <div
             className="flex items-start gap-3 rounded-[18px] p-4"
-            style={{ background: "rgba(255,255,255,0.55)", border: `1px solid ${COLORS.border}` }}
+            style={{
+                background: "rgba(255,255,255,0.55)",
+                border: `1px solid ${COLORS.border}`,
+            }}
         >
             <div style={{ color: COLORS.orange }} className="mt-0.5">
                 <Icon className="h-4 w-4" />
@@ -1140,7 +1308,7 @@ function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
     return (
         <input
             {...props}
-            className={`h-14 w-full rounded-[18px] border bg-white px-5 text-[18px] outline-none transition placeholder:text-[#9A9A9A] ${props.className || ""}`}
+            className={`h-14 w-full rounded-[18px] border bg-white px-5 text-[18px] outline-none transition placeholder:text-[#9A9A9A] focus:shadow-[0_0_0_3px_rgba(255,106,23,0.10)] ${props.className || ""}`}
             style={{ borderColor: COLORS.border, color: COLORS.text }}
         />
     );
@@ -1150,7 +1318,7 @@ function Textarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
     return (
         <textarea
             {...props}
-            className={`w-full rounded-[18px] border bg-white px-5 py-4 text-[18px] outline-none transition placeholder:text-[#9A9A9A] ${props.className || ""}`}
+            className={`w-full rounded-[18px] border bg-white px-5 py-4 text-[18px] outline-none transition placeholder:text-[#9A9A9A] focus:shadow-[0_0_0_3px_rgba(255,106,23,0.10)] ${props.className || ""}`}
             style={{ borderColor: COLORS.border, color: COLORS.text }}
         />
     );
@@ -1160,7 +1328,7 @@ function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
     return (
         <select
             {...props}
-            className={`h-14 w-full rounded-[18px] border bg-white px-5 text-[18px] outline-none transition ${props.className || ""}`}
+            className={`h-14 w-full rounded-[18px] border bg-white px-5 text-[18px] outline-none transition focus:shadow-[0_0_0_3px_rgba(255,106,23,0.10)] ${props.className || ""}`}
             style={{ borderColor: COLORS.border, color: COLORS.text }}
         />
     );
