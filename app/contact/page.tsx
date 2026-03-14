@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import {
     ArrowLeft, Briefcase, Building2, Hotel, LayoutGrid, Store,
-    TrendingUp, Zap, Target, Check, ChevronRight, Download, MousePointer2, Layers, Clock
+    TrendingUp, Zap, ChevronRight, Download, MousePointer2, Layers, Clock
 } from "lucide-react";
 
 // --- CRM CONFIGURATION ---
@@ -13,6 +13,7 @@ const CRM_URL = "https://script.google.com/macros/s/AKfycbyljLTF-I0feIJdqvB24lLV
 
 const COLORS = { bg: "#F7F6F3", white: "#FFFFFF", text: "#111111", orange: "#FF6A17" };
 
+// Form Options
 const BUDGET_OPTIONS = ["Value-driven / Phased", "Standard CapEx", "Premium Rebranding", "Serious Asset Upgrade"];
 const TIMELINE_OPTIONS = ["Immediate", "Within 3 months", "3-6 months", "Evaluating / TBC"];
 const ENVIRONMENT_OPTIONS = ["Lobby/Entrance", "Corridors", "Guest Rooms", "Executive Suites", "Common Areas", "Exterior Facade"];
@@ -23,55 +24,55 @@ const INDUSTRY_LABELS: Record<string, string> = { hospitality: "Hospitality", co
 const STRATEGIES: Record<string, any> = {
     hospitality: {
         theme: "RevPAR Arbitrage",
-        p1: "In the 2026 luxury market, guests decide your value within 7 seconds of entry. Your property, {company}, is likely suffering from an invisible Perception Tax. Architecture is not a background; it is a financial driver.",
-        p2: "We target the &apos;7-Second Anchor.&apos; By resurfacing elevator and lobby touchpoints with elite textures, {company} resets the guest&apos;s value anchor, naturally justifying a 12-18% ADR lift without operational friction.",
-        p3: "Traditional renovation leaks 30%+ of revenue due to closures. SpaceLift transformations happen in 72-hour &apos;Ninja Sprints.&apos; Speed is the new luxury.",
-        p4: "SpaceLift Studio is your partner in Asset Repositioning. Our roadmap begins with a Visual Heat-Map Audit, identifying exactly where your guest&apos;s eyes linger to maximize visual ROI.",
+        p1: "In the 2026 luxury market, guests decide your value within 7 seconds of entry. Your property, {company}, is likely suffering from an invisible Perception Tax. Architecture is not a background; it is a financial driver. To lead in your sector, the environment must signal the premium before the guest even checks in.",
+        p2: "We focus on the &apos;7-Second Anchor.&apos; 82% of travelers judge hotel quality within seconds of entry. Our move is surgical: we target the High-Perception Zones (HPZ)—check-in nodes, elevator cabs, and corridor envelopes. By deploying high-tactility textures—Rare Stone and Exotic Metals—we reset the guest&apos;s internal value meter.",
+        p3: "The Math is unassailable. Traditional renovation kills 30% of annual revenue through closures. SpaceLift utilizes an &apos;Invis-Mode&apos; transformation model. Our crews operate in 72-hour sprints during low-occupancy windows. While your competitors are losing months to dust, {company} remains open for business.",
+        p4: "SpaceLift Studio is your partner in Asset Repositioning. Our roadmap begins with a Visual Heat-Map Audit, identifying exactly where your guest&apos;s eyes linger. We then curate a surface palette from our elite library that matches your brand DNA and aligns your physical space with your financial ambition.",
         stats: [25, 95]
     },
     corporate: {
         theme: "Workplace Magnetism",
-        p1: "The office is no longer a utility; it is a Cultural Destination. For {company}, the challenge is commute justification. If the space looks like a utility container, employees will stay remote.",
-        p2: "We engineer Dwell-Time. Deeply textured background surfaces and matte gallery finishes turn transactional floors into experiential stages where employees naturally want to be.",
-        p3: "Structural rebuilds are 20-year liabilities. SpaceLift is a Strategic Pivot. We spend 100% of your budget on the &apos;Perception Layer,&apos; maximizing recruitment alpha.",
-        p4: "Our roadmap moves from Utility to Gallery. We identify high-traffic collaboration zones and apply high-performance layers that reduce visual noise and promote focus.",
+        p1: "The office is no longer a utility; it is a Cultural Destination. For {company}, the challenge is &apos;Commute Justification.&apos; If your workplace feels like a clinical container, your workforce will treat work as a transaction. To win the war for talent, your environment must feel more intentional than the employee&apos;s home.",
+        p2: "We kill the &apos;Stagnation Loop.&apos; Corporate Beige is a productivity killer. Generic surfaces drive visual fatigue. Our playbook involves physicalizing your brand identity through high-performance matte finishes and biophilic textures in collaboration nodes. We solve the Commitment Conflict: structural rebuilds are 20-year liabilities.",
+        p3: "Consider the 5X Visual ROI. Traditional construction wastes 80% of the budget on pipes and infrastructure the team never sees. SpaceLift flips the script. We spend your entire budget on the Visible Layer. Our data shows that assets investing in &apos;Tactile Modernity&apos; see a 40% increase in employee engagement scores.",
+        p4: "Our roadmap moves from Utility to Gallery. We identify high-traffic zones and apply high-performance architectural layers that reduce visual noise. Our rapid deployment means zero downtime for your operations. We don&apos;t just decorate; we engineer a space that pulls people back together.",
         stats: [40, 88]
     },
     retail: {
         theme: "Social Currency",
-        p1: "If a store isn&apos;t worth a photo, it&apos;s barely worth the visit. Walls are the frame, and product is the art. For {company}, a dated frame devalues your brand authority and inventory value.",
-        p2: "We engineer Dwell-Time. By resurfacing transactional check-out nodes into concierge desks, we remove Price Friction and improve atmospheric quality. Social currency becomes revenue.",
-        p3: "Traditional fit-outs are slow and produce tons of waste. SpaceLift is Sustainable Luxury. We refresh your entire aesthetic in 4 days with 75% less waste.",
-        p4: "Experiential Retail starts with identifying &apos;Money Zones.&apos; We apply elite surfaces that pop on digital platforms, turning every customer into a brand ambassador.",
+        p1: "If a store isn&apos;t worth a photo, it&apos;s barely worth the visit. In 2026, physical retail has shifted to an Experience-Center. Your walls are the frame, and your product is the art. A dated frame devalues your inventory and weakens your brand&apos;s authority. SpaceLift bridges the gap between your digital perfection and your physical reality.",
+        p2: "We engineer Dwell-Time. If a store feels interchangeable, the customer defaults to e-commerce. We use high-contrast surface logic—deeply textured backgrounds and architectural metals—to create a sense of exclusivity. By transforming transactional nodes into concierge desks, we remove friction and increase atmospheric quality.",
+        p3: "Speed is your competitive moat. Traditional retail fit-outs are slow and produce tons of waste. SpaceLift is Sustainable Luxury. We refresh your entire aesthetic in 4 days with 75% less waste and zero operational downtime. By remaining 100% operational, {company} captures the revenue that competitors lose during closures.",
+        p4: "The path to Experiential Retail starts with identifying your high-impact &apos;Money Zones.&apos; We apply elite surfaces that pop on digital platforms, turning every customer into a brand ambassador. We don&apos;t just sell products; we sell the environment they live in. SpaceLift turns a transactional floor into a high-performance stage.",
         stats: [15, 92]
     },
     healthcare: {
         theme: "Trust Protocol",
-        p1: "In healthcare, the environment is the first interaction of care. For {company}, unaddressed atmospheric anxiety in patients directly devalues your standards of medicine.",
-        p2: "We engineer Dwell-Time. Replacing cold, clinical surfaces with warm, self-healing natural textures signaling safety and elite care the moment a patient enters.",
-        p3: "Surgical Transformation: SpaceLift works in low-traffic windows with zero dust, zero noise, and zero care disruption. Aesthetic hygiene is clinical excellence.",
-        p4: "The Roadmap prioritizes arrival nodes and circulation zones. We deploy anti-microbial premium layers that signal elite care and trust.",
+        p1: "In healthcare, the environment is the first interaction of care. Patients form impressions of clinical quality based on visual clarity before they ever speak to a doctor. If {company} looks dated, the Trust Gap widens, increasing patient anxiety and devaluing your care standards. SpaceLift closes that gap by signaling elite care.",
+        p2: "We specialize in Atmospheric Calm. High-stress environments require Visual Decompression. Our playbook replaces clinical surfaces with warm, self-healing natural textures. By signaling safety and modernity, we solve for &apos;Atmospheric Anxiety&apos; and improve patient satisfaction scores. Our materials are medical-grade and anti-microbial.",
+        p3: "Construction in healthcare is usually a nightmare of hygiene disruption. SpaceLift works in low-traffic windows with zero dust and zero noise, ensuring your care continuity remains 100% operational. Modernizing via resurfacing costs 70% less per square foot than traditional renovation, allowing for a faster network upgrade.",
+        p4: "The Roadmap prioritizes your arrival nodes. We deploy anti-microbial premium architectural layers that signal elite care and safety the moment a patient walks through your door. SpaceLift ensures your facility is as advanced as the medicine you practice, providing total reassurance to every visitor.",
         stats: [45, 90]
     },
     venue: {
         theme: "Visual Agility",
-        p1: "Event planners don&apos;t just book space; they book Possibility. For {company}, a static, un-adaptive aesthetic means losing high-value tiers to venues with visual agility.",
-        p2: "We target the &apos;7-Second Anchor.&apos; Resurfacing key stages, focal bars, and entryways overnight with elite architectural films makes the space look custom-built every booking.",
-        p3: "Traditional reconstruction kills an entire season. SpaceLift refreshes between bookings. Speed is your competitive moat.",
-        p4: "We turn your venue from a static room into an adaptive destination. We identify the zones planners look at first to ensure your space sells itself.",
+        p1: "Event planners don&apos;t just book space; they book Possibility. If your venue at {company} feels locked into an old design language, you lose high-value bookings. In a market where &apos;New&apos; is the only currency, SpaceLift provides the visual agility needed to stay relevant without going dark for months. We ensure you are always the default choice.",
+        p2: "We focus on &apos;Photographability.&apos; By resurfacing focal bars and stages with high-depth architectural films, we make your space look like a multi-million dollar custom build. We solve the &apos;Season Gap&apos; by transforming your aesthetic between event bookings—overnight—so you never miss a lead. Your venue stays Instagram-ready 365 days a year.",
+        p3: "The ROI is found in Revenue Gap Protection. A 3-month renovation closure equals a 100% loss of seasonal revenue. SpaceLift is a Rapid Refresh. We transform while you sell, protecting your bottom line. You get 4x the perceived value increase relative to the capital spent, giving you a massive competitive edge.",
+        p4: "We turn your venue from a static room into an adaptive destination. We identify the zones planners look at first, apply elite textures that catch light perfectly for photography, and ensure your space sells itself. SpaceLift is your tactical partner in seasonal relevance.",
         stats: [30, 96]
     },
     mixeduse: {
         theme: "Prestige Life-Cycle",
-        p1: "Developments compete on &apos;Lifestyle Promise.&apos; When common areas drift visually behind guest expectations, {company}&apos;s asset perception falls—and rent roll follows.",
-        p2: "We engineer Dwell-Time. Every surface from the arrival lobby to the social common rooms must permanently signal Grade-A prestige to protect asset valuation.",
-        p3: "A premium asset can feel dated in just 5 years. SpaceLift maintains visual relevance by focusing spend solely on the visible and high-impact nodes.",
-        p4: "The Roadmap protects your prestige for the long term. We identify where resident impressions are formed and apply durable, elite architectural surfaces.",
+        p1: "Developments compete on &apos;Lifestyle Promise.&apos; When common areas drift visually behind guest expectations, {company}&apos;s asset perception falls—and rent roll follows. SpaceLift protects your asset&apos;s valuation by maintaining a Visual Moat around your property, ensuring it remains the most desirable address in the zip code.",
+        p2: "We focus on the Resident Journey. Shared spaces age 5x faster than structural systems. Our playbook targets entry lobbies and social commons. Every surface must signal prestige and coherence. We solve &apos;Asset Drift&apos; by maintaining Grade-A status without the staggering cost of a full rebuild.",
+        p3: "Our Math is built for Capital Efficiency. Refreshing common area surfaces with SpaceLift costs 90% less than a full reconstruction. We turn your CapEx from a structural burden into a visual asset, preserving your budget for structural needs while keeping the asset visually &apos;Grade-A.&apos;",
+        p4: "The Roadmap protects your prestige for the long term. We identify where resident impressions are formed, apply durable, elite architectural surfaces that can be updated as trends evolve, and ensure your property never feels its age. SpaceLift is your partner in premium lifecycle management.",
         stats: [50, 92]
     }
 };
 
-export default function StrategicPortal() {
+export default function SpaceLiftPortal() {
     const router = useRouter();
     const [showReport, setShowReport] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -83,8 +84,9 @@ export default function StrategicPortal() {
         timeline: "", budget: "", goals: ""
     });
 
-    const toggleItem = (list: string[], setList: Function, item: string) =>
-        setList(list.includes(item) ? list.filter(i => i !== item) : [...list, item]);
+    const toggleItem = (list: string[], setList: React.Dispatch<React.SetStateAction<string[]>>, item: string) => {
+        setList(prev => prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]);
+    };
 
     const strategy = useMemo(() => {
         const s = STRATEGIES[form.industry] || STRATEGIES.hospitality;
@@ -94,7 +96,6 @@ export default function StrategicPortal() {
 
     async function handleSync() {
         setLoading(true);
-        // KEYS MATCH GOOGLE SHEET HEADERS EXACTLY
         const payload = {
             Source: "Strategic Report",
             Name: form.fullName,
@@ -126,32 +127,32 @@ export default function StrategicPortal() {
                             <div className="pt-4">
                                 <div className="mb-8 flex items-center gap-3 text-[13px] font-black uppercase tracking-[0.3em] text-[#FF6A17]"><span className="h-px w-10 bg-current" /> Strategic Audit</div>
                                 <h1 className="text-[54px] lg:text-[92px] font-bold leading-[0.92] tracking-[-0.05em] mb-10 text-black">Don&apos;t Rebuild.<br />Reposition.</h1>
-                                <p className="text-2xl text-neutral-500 leading-relaxed mb-12 max-w-xl">Get a bespoke strategic roadmap designed to maximize visual ROI and asset value.</p>
+                                <p className="text-2xl text-neutral-500 leading-relaxed mb-12 max-w-xl">Get a strategic roadmap designed to maximize visual ROI and asset value.</p>
                                 <div className="grid gap-6">
                                     <div className="flex items-center gap-6 p-8 rounded-[30px] bg-white border border-neutral-200 shadow-sm"><Zap className="w-8 h-8 text-orange-500" /><div><h4 className="font-bold text-lg text-black">Rapid Deployment</h4><p className="text-sm opacity-50">Results in days, not months.</p></div></div>
-                                    <div className="flex items-center gap-6 p-8 rounded-[30px] bg-white border border-neutral-200 shadow-sm"><TrendingUp className="w-8 h-8 text-orange-500" /><div><h4 className="font-bold text-lg text-black">Revenue Alignment</h4><p className="text-sm opacity-50">Built to increase ADR and market authority.</p></div></div>
+                                    <div className="flex items-center gap-6 p-8 rounded-[30px] bg-white border border-neutral-200 shadow-sm"><TrendingUp className="w-8 h-8 text-orange-500" /><div><h4 className="font-bold text-lg text-black">Revenue Alignment</h4><p className="text-sm opacity-50">Built to increase market authority.</p></div></div>
                                 </div>
                             </div>
 
                             <div className="rounded-[40px] bg-[#F3EDE8] p-2 shadow-2xl border border-black/5">
                                 <div className="bg-white p-8 lg:p-12 rounded-[38px] space-y-8">
-                                    <div className="grid gap-5 md:grid-cols-2">
-                                        <TextInput label="Full Name" value={form.fullName} onChange={(v: string) => setForm({ ...form, fullName: v })} placeholder="Name" />
-                                        <TextInput label="Company Name" value={form.company} onChange={(v: string) => setForm({ ...form, company: v })} placeholder="Company" />
+                                    <div className="grid gap-6 md:grid-cols-2">
+                                        <TextInputSuave label="Full Name" value={form.fullName} onChange={(v) => setForm(f => ({ ...f, fullName: v }))} placeholder="Name" />
+                                        <TextInputSuave label="Company Name" value={form.company} onChange={(v) => setForm(f => ({ ...f, company: v }))} placeholder="Company" />
                                     </div>
-                                    <div className="grid gap-5 md:grid-cols-2">
-                                        <Select label="Industry Focus" value={form.industry} onChange={(v: string) => setForm({ ...form, industry: v })}>
-                                            <option value="">Select industry</option>
+                                    <div className="grid gap-6 md:grid-cols-2">
+                                        <SelectSuave label="Industry Focus" value={form.industry} onChange={(v) => setForm(f => ({ ...f, industry: v }))}>
+                                            <option value="">Select Industry</option>
                                             {Object.entries(INDUSTRY_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
-                                        </Select>
-                                        <TextInput label="Email (Optional)" value={form.email} onChange={(v: string) => setForm({ ...form, email: v })} placeholder="your@email.com" />
+                                        </SelectSuave>
+                                        <TextInputSuave label="Email (Optional)" value={form.email} onChange={(v) => setForm(f => ({ ...f, email: v }))} placeholder="Email" />
                                     </div>
 
-                                    <div className="space-y-3">
+                                    <div className="space-y-4">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 flex items-center gap-2"><Layers className="w-3 h-3" /> Target Environments (Multi-Select)</label>
                                         <div className="flex flex-wrap gap-2">
                                             {ENVIRONMENT_OPTIONS.map(e => (
-                                                <button key={e} type="button" onClick={() => toggleItem(selectedEnvs, setSelectedEnvs, e)} className={`px-4 py-2.5 rounded-full text-[10px] font-bold border transition-all ${selectedEnvs.includes(e) ? 'bg-black border-black text-white shadow-lg scale-[1.02]' : 'bg-white border-neutral-200 text-neutral-400 hover:border-neutral-300'}`}>{e}</button>
+                                                <button key={e} type="button" onClick={() => toggleItem(selectedEnvs, setSelectedEnvs, e)} className={`px-4 py-2.5 rounded-full text-[10px] font-bold border transition-all ${selectedEnvs.includes(e) ? 'bg-black border-black text-white shadow-lg' : 'bg-white border-neutral-200 text-neutral-400'}`}>{e}</button>
                                             ))}
                                         </div>
                                     </div>
@@ -160,26 +161,31 @@ export default function StrategicPortal() {
                                         <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 flex items-center gap-2"><MousePointer2 className="w-3 h-3" /> Desired Scope (Multi-Select)</label>
                                         <div className="grid grid-cols-2 gap-2">
                                             {SCOPE_OPTIONS.map(s => (
-                                                <button key={s} type="button" onClick={() => toggleItem(selectedServices, setSelectedServices, s)} className={`px-4 py-3 rounded-xl text-[10px] font-bold text-left border transition-all ${selectedServices.includes(s) ? 'bg-[#FF6A17] border-[#FF6A17] text-white shadow-lg scale-[1.02]' : 'bg-white border-neutral-200 text-neutral-400 hover:border-neutral-300'}`}>{s}</button>
+                                                <button key={s} type="button" onClick={() => toggleItem(selectedServices, setSelectedServices, s)} className={`px-4 py-3 rounded-xl text-[10px] font-bold text-left border transition-all ${selectedServices.includes(s) ? 'bg-[#FF6A17] border-[#FF6A17] text-white shadow-lg' : 'bg-white border-neutral-200 text-neutral-400'}`}>{s}</button>
                                             ))}
                                         </div>
                                     </div>
 
                                     <div className="grid gap-5 md:grid-cols-2">
-                                        <Select label="Timeline" value={form.timeline} onChange={(v: string) => setForm({ ...form, timeline: v })}>
+                                        <SelectSuave label="Timeline" value={form.timeline} onChange={(v) => setForm(f => ({ ...f, timeline: v }))}>
                                             <option value="">Select Timeline</option>
                                             {TIMELINE_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
-                                        </Select>
-                                        <Select label="Rough Budget Approach" value={form.budget} onChange={(v: string) => setForm({ ...form, budget: v })}>
+                                        </SelectSuave>
+                                        <SelectSuave label="Rough Budget Approach" value={form.budget} onChange={(v) => setForm(f => ({ ...f, budget: v }))}>
                                             <option value="">Select Budget</option>
                                             {BUDGET_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
-                                        </Select>
+                                        </SelectSuave>
                                     </div>
 
-                                    <Textarea label="Main Goals" value={form.goals} onChange={(v: string) => setForm({ ...form, goals: v })} placeholder="What needs to improve visually or commercially?" />
-                                    <PrimaryButton disabled={loading || !form.fullName || !form.industry} onClick={handleSync}>
+                                    <TextareaSuave label="Main Goals" value={form.goals} onChange={(v) => setForm(f => ({ ...f, goals: v }))} placeholder="Visual or commercial objectives?" />
+
+                                    <button
+                                        disabled={loading || !form.fullName || !form.industry}
+                                        onClick={handleSync}
+                                        className="w-full h-16 bg-[#FF6A17] text-white font-bold text-lg rounded-2xl transition-all disabled:opacity-30 hover:shadow-[0_15px_35px_rgba(255,106,23,0.3)] flex items-center justify-center py-5 active:scale-[0.98]"
+                                    >
                                         {loading ? <span className="flex items-center gap-2"><Clock className="w-5 h-5 animate-spin" /> Syncing Data...</span> : "Generate Bespoke Strategy"}
-                                    </PrimaryButton>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -195,9 +201,9 @@ export default function StrategicPortal() {
                             <div className="print:break-after-page" />
                             <StrategyPage num="02" title="Tactical Playbook" subtitle="Atmospheric Strategy" text={strategy.p2} />
                             <div className="print:break-after-page" />
-                            <StrategyPage num="03" title="Economic Alignment" subtitle="Visual ROI" text={strategy.p3} />
+                            <StrategyPage num="03" title="Economic ROI" subtitle="Visual Alignment" text={strategy.p3} />
                             <div className="print:break-after-page" />
-                            <StrategyPage num="04" title="Transformation Roadmap" subtitle="Execution Plan" text={strategy.p4} isLast onAction={() => router.push('/')} />
+                            <StrategyPage num="04" title="The Roadmap" subtitle="Execution Plan" text={strategy.p4} isLast onAction={() => router.push('/')} />
                         </div>
                     </motion.section>
                 )}
@@ -206,7 +212,7 @@ export default function StrategicPortal() {
     );
 }
 
-// --- UI COMPONENTS ---
+// --- SUB-COMPONENTS (FIXED SYNTAX) ---
 function StrategyPage({ num, title, subtitle, text, isLast, stats, onAction }: any) {
     return (
         <section className="border-t-4 border-black pt-12">
@@ -216,8 +222,14 @@ function StrategyPage({ num, title, subtitle, text, isLast, stats, onAction }: a
                 <p className="text-3xl font-medium leading-[1.4] text-neutral-800">{text}</p>
                 {stats && (
                     <div className="p-10 rounded-[50px] bg-neutral-100 border border-neutral-200 flex flex-col justify-center gap-10 print:border-none print:p-0">
-                        <StatLine label="Current Asset Perception" val={stats[0]} />
-                        <StatLine label="SpaceLift Potential" val={stats[1]} color="#FF6A17" />
+                        <div className="w-full">
+                            <div className="flex justify-between text-[10px] font-black uppercase mb-3 text-black"><span>Current Perception Index</span><span>{stats[0]}%</span></div>
+                            <div className="w-full h-3 bg-white rounded-full overflow-hidden border border-neutral-200"><motion.div initial={{ width: 0 }} animate={{ width: `${stats[0]}%` }} transition={{ duration: 1.2 }} className="h-full bg-neutral-300" /></div>
+                        </div>
+                        <div className="w-full">
+                            <div className="flex justify-between text-[10px] font-black uppercase mb-3 text-black"><span>SpaceLift Potential</span><span>{stats[1]}%</span></div>
+                            <div className="w-full h-3 bg-white rounded-full overflow-hidden border border-neutral-200"><motion.div initial={{ width: 0 }} animate={{ width: `${stats[1]}%` }} transition={{ duration: 1.2, delay: 0.5 }} className="h-full bg-[#FF6A17]" /></div>
+                        </div>
                     </div>
                 )}
             </div>
@@ -226,18 +238,45 @@ function StrategyPage({ num, title, subtitle, text, isLast, stats, onAction }: a
     );
 }
 
-function StatLine({ label, val, color = "#DDD6CE" }: any) {
+function TextInputSuave({ label, value, onChange, placeholder }: { label: string, value: string, onChange: (v: string) => void, placeholder?: string }) {
     return (
-        <div className="w-full">
-            <div className="flex justify-between text-[10px] font-black uppercase mb-3 text-black"><span>{label}</span><span>{val}%</span></div>
-            <div className="w-full h-3 bg-white rounded-full overflow-hidden border border-neutral-200">
-                <motion.div initial={{ width: 0 }} animate={{ width: `${val}%` }} transition={{ duration: 1.2, delay: 0.5 }} className="h-full" style={{ background: color }} />
-            </div>
+        <div className="w-full space-y-1.5">
+            <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400">{label}</label>
+            <input
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                placeholder={placeholder}
+                className="w-full h-14 px-5 rounded-2xl border border-neutral-200 outline-none focus:border-[#FF6A17] transition-all bg-white text-black"
+            />
         </div>
     );
 }
 
-function TextInput({ label, ...props }: any) { return (<div className="w-full space-y-1.5"><label className="text-[10px] font-black uppercase tracking-widest text-neutral-400">{label}</label><input {...props} onChange={(e) => props.onChange(e.target.value)} className="w-full h-14 px-5 rounded-2xl border border-neutral-200 outline-none focus:border-[#FF6A17] transition-all bg-white text-black" /></div>); }
-function Select({ label, children, ...props }: any) { return (<div className="w-full space-y-1.5"><label className="text-[10px] font-black uppercase tracking-widest text-neutral-400">{label}</label><select {...props} onChange={(e) => props.onChange(e.target.value)} className="w-full h-14 px-5 rounded-2xl border border-neutral-200 outline-none appearance-none focus:border-[#FF6A17] transition-all bg-white text-black">{children}</select></div>); }
-function Textarea({ label, ...props }: any) { return (<div className="w-full space-y-1.5"><label className="text-[10px] font-black uppercase tracking-widest text-neutral-400">{label}</label><textarea {...props} onChange={(e) => props.onChange(e.target.value)} className="w-full min-h-[140px] p-5 rounded-2xl border border-neutral-200 outline-none focus:border-[#FF6A17] transition-all bg-white text-black" /></div>); }
-function PrimaryButton({ children, onClick, disabled }: any) { return (<button disabled={disabled} onClick={onClick} className="w-full h-16 bg-[#FF6A17] text-white font-bold text-lg rounded-2xl transition-all disabled:opacity-30 hover:shadow-xl flex items-center justify-center py-5 active:scale-[0.98]">{children}</button>); }}
+function SelectSuave({ label, value, onChange, children }: { label: string, value: string, onChange: (v: string) => void, children: React.ReactNode }) {
+    return (
+        <div className="w-full space-y-1.5">
+            <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400">{label}</label>
+            <select
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                className="w-full h-14 px-5 rounded-2xl border border-neutral-200 outline-none appearance-none focus:border-[#FF6A17] transition-all bg-white text-black"
+            >
+                {children}
+            </select>
+        </div>
+    );
+}
+
+function TextareaSuave({ label, value, onChange, placeholder }: { label: string, value: string, onChange: (v: string) => void, placeholder?: string }) {
+    return (
+        <div className="w-full space-y-1.5">
+            <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400">{label}</label>
+            <textarea
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                placeholder={placeholder}
+                className="w-full min-h-[140px] p-5 rounded-2xl border border-neutral-200 outline-none focus:border-[#FF6A17] transition-all bg-white text-black"
+            />
+        </div>
+    );
+}
