@@ -4,64 +4,61 @@ import React, { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
     ArrowLeft, Briefcase, Building2, CheckCircle2, ClipboardList, Copy, Hotel,
-    LayoutGrid, Mail, MapPinned, MessageSquareText, Phone, Send, ShieldCheck, Sparkles, Store,
-    TrendingUp, Zap, Target, Check, ChevronRight, Download, MousePointer2, Layers
+    LayoutGrid, Mail, MapPinned, MessageSquareText, Send, ShieldCheck, Sparkles, Store,
+    TrendingUp, Zap, Target, Check, ChevronRight, Download, MousePointer2, Layers, Clock
 } from "lucide-react";
 
 // --- CRM CONFIGURATION ---
 const CRM_URL = "https://script.google.com/macros/s/AKfycbyljLTF-I0feIJdqvB24lLV31wWqZ9xxIbw-fp7aMIO6DdxCoyH-IGLf4OC3oXKA1bDPQ/exec";
 
-const COLORS = {
-    bg: "#F7F6F3", panel: "#F3EDE8", white: "#FFFFFF", text: "#111111",
-    muted: "#6B6B6B", border: "#DDD6CE", orange: "#FF6A17"
-};
+const COLORS = { bg: "#F7F6F3", panel: "#F3EDE8", white: "#FFFFFF", text: "#111111", border: "#DDD6CE", orange: "#FF6A17" };
 
 const SCOPE_OPTIONS = ["Architectural Resurfacing", "Elevator Modernization", "Lobby & Arrival Logic", "Furniture Upcycling", "Wayfinding & Brand ID", "Atmospheric Lighting"];
 const ENVIRONMENT_OPTIONS = ["Main Entrance/Lobby", "Corridors & Circulation", "Guest/Client Rooms", "Collaboration Zones", "Social/Common Areas", "Executive Suites", "Exterior Facade"];
 const INDUSTRY_LABELS: Record<string, string> = { hospitality: "Hospitality", corporate: "Corporate", retail: "Retail", healthcare: "Healthcare", venue: "Event / Venue", mixeduse: "Mixed-Use" };
 
-// --- MCKINSEY-LEVEL STRATEGIC DATA ---
+// --- STRATEGIC DATA (Apostrophes escaped for Vercel) ---
 const STRATEGIES: Record<string, any> = {
     hospitality: {
         theme: "RevPAR Arbitrage",
         p1: "In the 2026 luxury market, guests aren&apos;t just booking a room; they are acquiring &apos;Atmospheric Status.&apos; Your property, {company}, is likely suffering from an invisible Perception Tax. This occurs when elite service standards are overshadowed by a visual environment that signals a previous design era. SpaceLift stops this revenue leakage by aligning your physical architecture with your intended market position. Architecture is not a background; it is a financial driver.",
-        p2: "We focus on the &apos;7-Second Anchor.&apos; 82% of travelers judge hotel quality within seconds of entry. Our move is surgical: we target the High-Perception Zones (HPZ)—check-in nodes, elevator cabs, and corridor envelopes. By deploying high-tactility textures, we reset the guest&apos;s internal value meter. Because our process requires zero structural demolition, you achieve a $10M look for a fraction of the cost.",
-        p3: "Traditional renovation kills 30% of annual revenue through closures. SpaceLift&apos;s &apos;Invis-Mode&apos; transformation happens in 72-hour sprints. While your competitors are losing months to dust and permits, {company} remains open for business. We spend your budget exclusively on the &apos;Revenue Layer&apos;—what the guest sees and touches—yielding a 12-18% ADR lift.",
+        p2: "We focus on the &apos;7-Second Anchor.&apos; 82% of travelers judge hotel quality within seconds of entry. Our move is surgical: we target the High-Perception Zones (HPZ)—check-in nodes, elevator cabs, and corridor envelopes. By deploying high-tactility textures—Rare Italian Stone, Exotic Brushed Metals, and Architectural Silks—we reset the guest&apos;s internal value meter.",
+        p3: "The Math is unassailable. Traditional renovation kills 30% of annual revenue through closures. SpaceLift&apos;s &apos;Invis-Mode&apos; transformation happens in 72-hour sprints. While your competitors are losing months to dust and permits, {company} remains open for business. We spend your budget exclusively on the &apos;Revenue Layer&apos; yielding a 12-18% ADR lift.",
         stats: [25, 95]
     },
     corporate: {
         theme: "Workplace Magnetism",
-        p1: "The office is no longer a utility; it is a Cultural Destination. For {company}, the primary challenge is &apos;Commute Justification.&apos; If your workplace feels like a clinical container, your workforce will treat work as a transaction. To win the war for talent, your environment must feel more premium and intentional than the employee&apos;s home. SpaceLift transforms your square footage into a powerful tool for recruitment.",
-        p2: "We kill the &apos;Stagnation Loop.&apos; Corporate Beige is a productivity killer. Generic surfaces drive visual fatigue and signal a low-investment culture. Our playbook involves physicalizing your brand identity through matte finishes and biophilic textures. SpaceLift is a Strategic Pivot. We refresh your culture&apos;s physical home overnight by focusing on high-impact zones like reception and breakout lounges.",
-        p3: "Consider the 5X Visual ROI. Traditional construction wastes 80% of the budget on pipes and infrastructure the team never sees. SpaceLift flips the script. We spend your entire budget on the Visible Layer. Our data shows that assets investing in &apos;Tactile Modernity&apos; see a 40% increase in employee engagement scores. You achieve world-class headquarters impact at 20% of the capital requirement.",
+        p1: "The office is no longer a utility; it is a Cultural Destination. For {company}, the challenge is &apos;Commute Justification.&apos; If your workplace feels like a clinical container, your workforce will treat work as a transaction. SpaceLift transforms your square footage into a powerful tool for recruitment and cultural alignment. If the space doesn&apos;t inspire, it devalues the talent within it.",
+        p2: "We kill the &apos;Stagnation Loop.&apos; Corporate Beige is a productivity killer. Our playbook involves physicalizing your brand identity through high-performance matte finishes and biophilic textures in collaboration nodes. We solve the Commitment Conflict: structural rebuilds are 20-year liabilities. SpaceLift is a Strategic Pivot that refreshes your culture overnight.",
+        p3: "Traditional construction wastes 80% of the budget on infrastructure the team never sees. SpaceLift flips the script. We spend your entire budget on the Visible Layer. Our data shows that assets investing in &apos;Tactile Modernity&apos; see a 40% increase in employee engagement scores.",
         stats: [40, 88]
     },
     retail: {
         theme: "Social Currency",
-        p1: "If a store isn&apos;t worth a photo, it&apos;s barely worth the visit. In 2026, physical retail has shifted to an Experience-Center. Your walls are the frame, and your product is the art. A dated frame devalues your inventory and weakens your brand&apos;s authority. SpaceLift bridges the gap between your digital perfection and your physical reality.",
-        p2: "We engineer Dwell-Time. If a store feels interchangeable, the customer defaults to e-commerce. We use high-contrast surface logic—deeply textured backgrounds and architectural metals—to create a sense of exclusivity. By transforming transactional checkout nodes into high-end concierge desks, we remove friction and increase atmospheric quality. Customers spend 9% more in high-curation environments.",
-        p3: "Speed is your competitive moat. Traditional retail fit-outs are slow and loud. SpaceLift is Sustainable Luxury. We refresh your entire aesthetic in 4 days with 75% less waste and zero operational downtime. By remaining 100% operational, {company} captures the &apos;Hidden Revenue&apos; that competitors lose during their 3-month construction closures.",
+        p1: "If a store isn&apos;t worth a photo, it&apos;s barely worth the visit. In 2026, physical retail has shifted to an Experience-Center. Every square foot must provide &apos;Social Currency&apos; to the customer. Your walls are the frame, and your product is the art. A dated frame devalues your inventory and weakens your brand&apos;s authority.",
+        p2: "We engineer Dwell-Time. If a store feels interchangeable, the customer defaults to e-commerce. We use high-contrast surface logic to create a sense of exclusivity. By transforming transactional checkout nodes into high-end concierge desks, we remove friction and increase atmospheric quality. Customers linger longer and spend more.",
+        p3: "Speed is your competitive moat. SpaceLift is Sustainable Luxury. We refresh your entire aesthetic in 4 days with 75% less waste and zero operational downtime. While competitors lose months to closures, {company} captures the &apos;Hidden Revenue&apos; by remaining 100% operational.",
         stats: [15, 92]
     },
     healthcare: {
         theme: "Trust Protocol",
-        p1: "In healthcare, the environment is the first interaction of care. Patients form impressions of clinical quality based on visual clarity and calm before they ever speak to a doctor. If {company} looks dated, the Trust Gap widens, increasing patient anxiety and devaluing your care standards. SpaceLift closes that gap by signaling elite care through elite aesthetics.",
-        p2: "We specialize in Atmospheric Calm. High-stress environments require Visual Decompression. Our playbook replaces clinical surfaces with warm, self-healing natural textures. We focus on reception and circulation nodes. By signaling safety and modernity, we solve for &apos;Atmospheric Anxiety&apos; and improve patient satisfaction scores (HCAHPS).",
-        p3: "We offer a non-invasive &apos;Surgical Transformation.&apos; Construction in healthcare is usually a nightmare of hygiene disruption. SpaceLift works in low-traffic windows with zero dust and zero noise, ensuring your care continuity remains 100% operational. Modernizing via resurfacing costs 70% less per square foot than traditional renovation.",
+        p1: "In healthcare, the environment is the first interaction of care. Patients form impressions of clinical quality based on visual clarity before they ever speak to a doctor. If {company} looks dated, the Trust Gap widens. SpaceLift closes that gap by signaling elite care through elite aesthetics, matching the caliber of your practitioners.",
+        p2: "We specialize in Atmospheric Calm. High-stress environments require Visual Decompression. Our playbook replaces clinical surfaces with warm, self-healing natural textures. By signaling safety and modernity, we solve for &apos;Atmospheric Anxiety&apos; and improve patient satisfaction scores (HCAHPS).",
+        p3: "Construction in healthcare is usually a nightmare of hygiene disruption. SpaceLift works in low-traffic windows with zero dust and zero noise, ensuring care continuity remains 100% operational. Modernizing via resurfacing costs 70% less per square foot than traditional renovation.",
         stats: [45, 90]
     },
     venue: {
         theme: "Visual Agility",
-        p1: "Event planners don&apos;t just book space; they book Possibility. If your venue at {company} feels locked into an old design language, you lose high-value bookings to competitors with &apos;Visual Agility.&apos; In a fast-moving market where &apos;New&apos; is the only currency, SpaceLift provides the agility needed to stay relevant without going dark for months.",
-        p2: "We focus on &apos;Photographability.&apos; Planners and guests are looking for &apos;The Money Shot.&apos; By resurfacing focal bars and stages with high-depth films, we make your space look like a multi-million dollar custom build. We solve the &apos;Season Gap&apos; by transforming your aesthetic between event bookings—overnight.",
-        p3: "The ROI is found in Revenue Gap Protection. A 3-month renovation closure equals a 100% loss of seasonal revenue. SpaceLift is a Rapid Refresh. We transform while you sell, protecting your bottom line while increasing your venue&apos;s market positioning. You get 4x the perceived value increase relative to capital spent.",
+        p1: "Event planners don&apos;t just book space; they book Possibility. If your venue at {company} feels locked into an old design, you lose high-value bookings. In a market where &apos;New&apos; is the only currency, SpaceLift provides the agility needed to stay relevant without going dark for months.",
+        p2: "We focus on &apos;Photographability.&apos; By resurfacing focal bars and stages with high-depth architectural films, we make your space look like a multi-million dollar custom build. We solve the &apos;Season Gap&apos; by transforming your aesthetic between event bookings—overnight.",
+        p3: "The ROI is found in Revenue Gap Protection. A 3-month renovation closure equals a 100% loss of seasonal revenue. SpaceLift is a Rapid Refresh. We transform while you sell, protecting your bottom line. You get 4x the perceived value increase relative to the capital spent.",
         stats: [30, 96]
     },
     mixeduse: {
         theme: "Prestige Life-Cycle",
-        p1: "Developments like {company} no longer compete on amenities; you compete on &apos;Lifestyle Promise.&apos; When common areas drift visually, the asset feels less premium—and your rent-roll follows. SpaceLift protects your asset&apos;s valuation by maintaining a Visual Moat. We ensure your development remains the most desirable address in the zip code.",
-        p2: "We focus on the Resident Journey. Shared spaces age 5x faster than structural systems. Our playbook targets the &apos;Perception Loop&apos;—entry lobbies and social commons. We solve &apos;Asset Drift&apos; by maintaining a visual standard that keeps occupancy high and vacancies low, ensuring your rent-roll remains elite.",
-        p3: "A property feels &apos;dated&apos; in just 5 years. Our strategy refreshes high-impact surfaces at 10% of the cost of a full rebuild. This is the most efficient way to protect your building&apos;s cap rate and overall market valuation. We turn your CapEx into a visual asset.",
+        p1: "Developments like {company} no longer compete on amenities; you compete on &apos;Lifestyle Promise.&apos; When common areas drift visually, the asset feels less premium. SpaceLift protects your asset&apos;s valuation by maintaining a Visual Moat around your property, ensuring it remains the most desirable address.",
+        p2: "We focus on the Resident Journey. Shared spaces age 5x faster than structural systems. Our playbook targets entry lobbies and social commons. We solve &apos;Asset Drift&apos; by maintaining a visual standard that keeps occupancy high and vacancies low, ensuring Grade-A status remains permanent.",
+        p3: "A property feels &apos;dated&apos; in just 5 years. Our strategy refreshes high-impact surfaces at 10% of the cost of a full rebuild. This is the most efficient way to protect your building&apos;s cap rate. We turn your CapEx from a structural burden into a visual asset.",
         stats: [50, 92]
     }
 };
@@ -117,8 +114,8 @@ export default function SpaceLiftPortal() {
                                 </div>
                                 <div className="bg-white p-8 lg:p-12 rounded-b-[38px] space-y-7">
                                     <div className="grid gap-5 md:grid-cols-2">
-                                        <TextInput label="Full Name" value={form.fullName} onChange={(v: string) => setForm({ ...form, fullName: v })} placeholder="Name" />
-                                        <TextInput label="Company" value={form.company} onChange={(v: string) => setForm({ ...form, company: v })} placeholder="Company" />
+                                        <TextInput label="Full Name" value={form.fullName} onChange={(v: string) => setForm({ ...form, fullName: v })} placeholder="Your Name" />
+                                        <TextInput label="Company" value={form.company} onChange={(v: string) => setForm({ ...form, company: v })} placeholder="Company Name" />
                                     </div>
                                     <div className="grid gap-5 md:grid-cols-2">
                                         <Select label="Industry Focus" value={form.industry} onChange={(v: string) => setForm({ ...form, industry: v })}>
@@ -131,7 +128,7 @@ export default function SpaceLiftPortal() {
                                         <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 flex items-center gap-2"><Layers className="w-3 h-3" /> Target Environments (Multi-Select)</label>
                                         <div className="flex flex-wrap gap-2">
                                             {ENVIRONMENT_OPTIONS.map(e => (
-                                                <button key={e} type="button" onClick={() => toggleList(selectedEnvs, setSelectedEnvs, e)} className={`px-4 py-2.5 rounded-full text-[10px] font-bold border transition-all ${selectedEnvs.includes(e) ? 'bg-black border-black text-white' : 'bg-white border-neutral-200 text-neutral-400 hover:border-neutral-300'}`}>{e}</button>
+                                                <button key={e} type="button" onClick={() => toggleList(selectedEnvs, setSelectedEnvs, e)} className={`px-4 py-2.5 rounded-full text-[10px] font-bold border transition-all ${selectedEnvs.includes(e) ? 'bg-black border-black text-white shadow-lg scale-[1.02]' : 'bg-white border-neutral-200 text-neutral-400 hover:border-neutral-300'}`}>{e}</button>
                                             ))}
                                         </div>
                                     </div>
@@ -139,7 +136,7 @@ export default function SpaceLiftPortal() {
                                         <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 flex items-center gap-2"><MousePointer2 className="w-3 h-3" /> Desired Scope (Multi-Select)</label>
                                         <div className="grid grid-cols-2 gap-2">
                                             {SCOPE_OPTIONS.map(s => (
-                                                <button key={s} type="button" onClick={() => toggleList(selectedServices, setSelectedServices, s)} className={`px-4 py-3 rounded-xl text-[10px] font-bold text-left border transition-all ${selectedServices.includes(s) ? 'bg-[#FF6A17] border-[#FF6A17] text-white shadow-lg' : 'bg-white border-neutral-200 text-neutral-400 hover:border-neutral-300'}`}>{s}</button>
+                                                <button key={s} type="button" onClick={() => toggleList(selectedServices, setSelectedServices, s)} className={`px-4 py-3 rounded-xl text-[10px] font-bold text-left border transition-all ${selectedServices.includes(s) ? 'bg-[#FF6A17] border-[#FF6A17] text-white shadow-lg scale-[1.02]' : 'bg-white border-neutral-200 text-neutral-400 hover:border-neutral-300'}`}>{s}</button>
                                             ))}
                                         </div>
                                     </div>
@@ -189,7 +186,7 @@ function StrategyPage({ num, title, subtitle, text, isLast, stats }: any) {
                     </div>
                 )}
             </div>
-            {isLast && <button onClick={() => window.location.href = 'mailto:hello@spacelift-studio.com'} className="mt-16 px-10 py-5 bg-[#FF6A17] text-white rounded-2xl font-bold text-lg shadow-xl transition-all flex items-center gap-4 print:hidden">Initiate Transformation <ChevronRight className="w-5 h-5" /></button>}
+            {isLast && <button onClick={() => window.location.href = 'mailto:hello@spacelift-studio.com'} className="mt-16 px-10 py-5 bg-[#FF6A17] text-white rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all flex items-center gap-4 print:hidden">Initiate Transformation <ChevronRight className="w-5 h-5" /></button>}
         </section>
     );
 }
