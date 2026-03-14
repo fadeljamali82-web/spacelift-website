@@ -10,6 +10,7 @@ const navItems = [
     { name: 'Process', href: '/process' },
     { name: 'Projects', href: '/projects' },
     { name: 'About', href: '/about' },
+    { name: 'Strategic Audit', href: '/contact' },
 ];
 
 export default function Navbar() {
@@ -156,7 +157,11 @@ export default function Navbar() {
                         <span
                             ref={underlineRef}
                             className="pointer-events-none absolute bottom-0 h-[3px] rounded-full bg-brand-orange transition-all duration-300 ease-out"
-                            style={{ width: 0, opacity: 0, transform: 'translateX(0px)' }}
+                            style={{
+                                width: 0,
+                                opacity: 0,
+                                transform: 'translateX(0px)',
+                            }}
                         />
                     </div>
 
